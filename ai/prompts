@@ -1,0 +1,65 @@
+### File: PRODUCT_REQUIREMENTS.md
+
+```
+You will act as world-class product owner and we will be working on Product Requirement Document for my next project. Main problem I want to solve is to address the needs of the merchant on fantasy conventions / trades. I want to have app with authentication so I could keep my sales and inventory data for my own. Application would support multitenancy so each of the tenant must be separated regarding the data. I want to have easy to use mobile first app that would allow me to trach all of my sales during the events. Ideally with touch interface which would be mobile/tablet friendly. System would need to work offline as there is often connectivity problems during the fantasy fairs. I want to be able to track all of the costs related to book fairs/ fantasy conventions that I will attend as a mechant. I want to track upcoming and past events having nice overview over financial results of them. Create a document in the project called 'prompts' where you will be dumping all of the prompts with the reference to the actual files you will have interfere with.
+```
+
+### File: PRODUCT_REQUIREMENTS.md
+
+```
+Add second persona would be self-publishing book author
+```
+
+### File: PRODUCT_REQUIREMENTS.md
+
+```
+q1: it should be possible to buy multiple items at once
+```
+
+### File: PRODUCT_REQUIREMENTS.md
+
+```
+Q2: The single most important job is quickly processing a sale which means record what has been sold
+```
+
+### File: PRODUCT_REQUIREMENTS.md
+
+```
+Q3: App should be rather opened whole time. I would like to have option to quick tap into correct categories and actual items with thumbmails and add them to cart then easy proceed with accepting the sales. Payment and recipts would be handled outside of application
+```
+
+### File: PRODUCT_REQUIREMENTS.md
+
+```
+Q4: I would like to have 6 merchants using application with good app reviews
+```
+
+### File: PRODUCT_REQUIREMENTS.md
+
+```
+Q5: Make system event based and allow for manual resolution by creating compensation commands that would be available after going back to online
+```
+
+### File: PRODUCT_REQUIREMENTS.md
+
+```
+Q6: Regarding schedule and resources: What is the assumed team size and target timeframe for the MVP launch? - it would be single senior developer with assistance of AI agents. Timeline would be around 40h of work
+```
+
+### File: PRODUCT_REQUIREMENTS.md
+
+```
+2) Make it possible to export data about single event into CSV file. App needs to have authentication and multitenancy. Backend for it will be based on Supabase 3) UI needs to have thumbnails and categories
+```
+
+### File: PRODUCT_REQUIREMENTS.md
+
+```
+2.
+```
+
+### File: tech_stack.md
+
+```
+Let's go and create tech_stack.md file to capture stack of the application. I'm fullstack engineer with knowledge of JavaScript/Typescript and React on frontend and mostly Java on the backend but I don't mind learning JavaScript on the backend as well. As Already stated for most of the backend project I would be using Supabase to store online/cloud data
+```
