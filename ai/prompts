@@ -63,3 +63,15 @@ Q6: Regarding schedule and resources: What is the assumed team size and target t
 ```
 Let's go and create tech_stack.md file to capture stack of the application. I'm fullstack engineer with knowledge of JavaScript/Typescript and React on frontend and mostly Java on the backend but I don't mind learning JavaScript on the backend as well. As Already stated for most of the backend project I would be using Supabase to store online/cloud data
 ```
+
+### File: ai/GEMINI.md
+
+```
+Please read @ai/GEMINI.md and applying recommendations from the file.
+```
+
+### File: README.md
+
+```
+Created README.md and will apply recommendations from ai/GEMINI.md.
+```
