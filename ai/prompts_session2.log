@@ -1,0 +1,37 @@
+Scaffolding React Native project:
+- Attempted to use `npx react-native init FaireFolio --template react-native-template-typescript` (failed due to deprecation).
+- Attempted to use `npx @react-native-community/cli init FaireFolio --template react-native-template-typescript` (failed because TypeScript is default).
+- Successfully used `npx @react-native-community/cli init FaireFolio`.
+- Moved contents of `FaireFolio` to root directory.
+- Removed empty `FaireFolio` directory.
+- Updated `README.md` with React Native setup instructions.
+
+Supabase CLI setup:
+- Attempted to install Supabase CLI globally via `npm` (failed).
+- Attempted to install Supabase CLI globally via `brew` (failed due to git authentication).
+- Installed Supabase CLI locally as a dev dependency via `npm install supabase --save-dev` (successful).
+- Created `.env` file.
+- Added `.env` to `.gitignore`.
+- Added Supabase Project ID and Database URL to `.env` (with `[YOUR-PASSWORD]` placeholder).
+- Attempted `npx supabase login` (failed in non-TTY environment).
+- Attempted `npx supabase link` (failed due to not being logged in).
+- Created `types` directory.
+- Attempted `npx supabase gen types` (failed due to `[YOUR-PASSWORD]` placeholder in URL).
+Attempted `npx supabase gen types` again (failed due to network connectivity/host unreachable).    
+
+                                                 │
+- User provided updated .env file with SUPABASE_PROJECT_URL and SUPABASE_API_KEY.                                                                                                   │
+- Attempted `npx supabase gen types` with the `SUPABASE_DATABASE_URL` from the latest .env (failed with "no route to host").
+
+- Attempted `npx supabase db push` (failed because project not linked).
+- Instructed user to manually run `npx supabase login` and `npx supabase link --project-ref gixepyehwkhhjqkbptqg`.
+
+- Used `SUPABASE_TOKEN` to log in to Supabase CLI (successful).
+- Attempted `npx supabase link` (failed due to authentication error: 'invalid SCRAM server-final-message received from server', and interactive password prompt).
+- User updated .env with `SUPABASE_DATABASE_PASSWORD`.
+- Attempted `npx supabase link` again (failed with 'failed SASL auth' and interactive password prompt).
+- Provided manual steps for user to log in, link project, push schema, and generate types.
+
+- User confirmed manual Supabase CLI steps are finished.
+- Verified `types/supabase.ts` content, found it empty (tables, views, etc. are `never`).
+- Asked user to confirm `supabase db push` output and provide `npx supabase db diff` output for debugging.
