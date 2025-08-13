@@ -36,9 +36,15 @@ export const productService = {
   async fetchProducts(): Promise<Product[]> {
     const { data, error } = await supabase
       .from('products')
-      .select('*');
+      .select(`
+        *,
+        category:categories(name)
+      `);
     if (error) throw error;
-    return data as Product[];
+    return data.map(p => ({
+      ...p,
+      category_name: p.category?.name || 'Unknown Category', // Flatten category name
+    })) as Product[];
   },
 
   async addProduct(product: Omit<Product, 'id' | 'user_id'>): Promise<Product> {
@@ -61,6 +67,7 @@ export const productService = {
           notes: product.notes,
           link: product.link,
           stock_quantity: product.stock_quantity,
+          category_id: product.category_id || null, // Add category_id
         },
       ])
       .select();
@@ -81,6 +88,7 @@ export const productService = {
         notes: product.notes,
         link: product.link,
         stock_quantity: product.stock_quantity,
+        category_id: product.category_id || null, // Update category_id
       })
       .eq('id', product.id)
       .select();

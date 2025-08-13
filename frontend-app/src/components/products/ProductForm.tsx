@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import type { Product } from '../../types';
 import {
   addProductCommand,
   updateProductCommand,
 } from '../../store/features/products/productsSlice';
 import { productService } from '../../services/productService'; // NEW IMPORT
+
+import { addCategoryCommand, fetchCategoriesCommand } from '../../store/features/categories/categoriesSlice';
 import {
   Box,
   Button,
@@ -13,12 +15,18 @@ import {
   Typography,
   Paper,
   InputAdornment,
-  IconButton,
   Avatar,
-  CircularProgress, // NEW IMPORT
-  Alert, // NEW IMPORT
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from '@mui/material';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import type { RootState } from '../../store';
 
 interface ProductFormProps {
   product?: Product; // Optional, for editing existing products
@@ -27,6 +35,8 @@ interface ProductFormProps {
 
 const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
   const dispatch = useDispatch();
+  const categories = useSelector((state: RootState) => state.categories.categories);
+  const { loading: categoriesLoading } = useSelector((state: RootState) => state.categories);
 
   const [name, setName] = useState(product?.name || '');
   const [description, setDescription] = useState(product?.description || '');
@@ -35,10 +45,32 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
   const [price, setPrice] = useState(product?.price.toString() || '');
   const [cost, setCost] = useState(product?.cost.toString() || '');
   const [stockQuantity, setStockQuantity] = useState(product?.stock_quantity?.toString() || '0');
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | ''>(
+    product?.category_id || ''
+  );
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageUrlPreview, setImageUrlPreview] = useState<string | null>(product?.image_url || null);
-  const [loading, setLoading] = useState(false); // NEW STATE
-  const [error, setError] = useState<string | null>(null); // NEW STATE
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [openNewCategoryDialog, setOpenNewCategoryDialog] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
+
+  useEffect(() => {
+    dispatch(fetchCategoriesCommand());
+  }, [dispatch]);
+
+  // Effect to automatically select the newly added category
+  useEffect(() => {
+    if (!categoriesLoading && categories.length > 0 && newCategoryName === '') {
+      // Find the category that was just added (assuming it's the last one or has a new ID)
+      // This might need refinement if categories are not always added to the end
+      const newlyAddedCategory = categories[categories.length - 1];
+      if (newlyAddedCategory && newlyAddedCategory.id !== selectedCategoryId) {
+        setSelectedCategoryId(newlyAddedCategory.id);
+      }
+    }
+  }, [categories, categoriesLoading]); // Depend on categories and loading state
 
   useEffect(() => {
     if (product) {
@@ -49,6 +81,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
       setPrice(product.price.toString());
       setCost(product.cost.toString());
       setStockQuantity(product.stock_quantity?.toString() || '0');
+      setSelectedCategoryId(product.category_id || '');
       setImageUrlPreview(product.image_url || null);
       setImageFile(null); // Clear file input when editing a new product
     } else {
@@ -60,6 +93,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
       setPrice('');
       setCost('');
       setStockQuantity('0');
+      setSelectedCategoryId('');
       setImageFile(null);
       setImageUrlPreview(null);
     }
@@ -73,21 +107,31 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
     }
   };
 
-  const handleSubmit = async (event: React.FormEvent) => { // Made async
+  const handleAddNewCategory = () => {
+    setOpenNewCategoryDialog(true);
+  };
+
+  const handleSaveNewCategory = () => {
+    if (newCategoryName.trim() !== '') {
+      dispatch(addCategoryCommand(newCategoryName));
+      setNewCategoryName('');
+      setOpenNewCategoryDialog(false);
+    }
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    setLoading(true); // Add loading state
-    setError(null); // Add error state
+    setLoading(true);
+    setError(null);
 
-    let imageUrl: string | undefined = imageUrlPreview || undefined; // Start with existing preview or undefined
+    let imageUrl: string | undefined = imageUrlPreview || undefined;
 
     try {
-      let currentProductId = product?.id; // Use existing product ID if editing
+      let currentProductId = product?.id;
 
       if (imageFile) {
-        // Generate a UUID for the image filename if adding a new product
-        // or use existing product ID for updates
-        const imageFileName = currentProductId || crypto.randomUUID(); // Use product ID or new UUID
+        const imageFileName = currentProductId || crypto.randomUUID();
         imageUrl = await productService.uploadProductImage(imageFile, imageFileName);
       }
 
@@ -99,22 +143,21 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
         price: parseFloat(price),
         cost: parseFloat(cost),
         stock_quantity: parseInt(stockQuantity),
-        image_url: imageUrl, // Include image_url in productData
+        image_url: imageUrl,
+        category_id: selectedCategoryId === '' ? null : selectedCategoryId, // Pass selected category ID
       };
 
       if (product) {
-        // Update existing product
-        dispatch(updateProductCommand({ ...product, ...productData })); // Pass only product data
+        dispatch(updateProductCommand({ ...product, ...productData }));
       } else {
-        // Add new product
-        dispatch(addProductCommand(productData)); // Pass only product data
+        dispatch(addProductCommand(productData));
       }
-      onClose(); // Close form after submission
+      onClose();
     } catch (err: any) {
-      setError(err.message); // Set error message
+      setError(err.message);
       console.error('Error during product submission:', err);
     } finally {
-      setLoading(false); // Reset loading state
+      setLoading(false);
     }
   };
 
@@ -153,6 +196,26 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
           onChange={(e) => setLink(e.target.value)}
           fullWidth
         />
+        <FormControl fullWidth sx={{ mt: 1, mb: 1 }}>
+          <InputLabel id="category-select-label">Category</InputLabel>
+          <Select
+            labelId="category-select-label"
+            id="category-select"
+            value={selectedCategoryId}
+            label="Category"
+            onChange={(e) => setSelectedCategoryId(e.target.value as string)}
+          >
+            <MenuItem value="">Unknown Category</MenuItem>
+            {categories.map((category) => (
+              <MenuItem key={category.id} value={category.id}>
+                {category.name}
+              </MenuItem>
+            ))}
+            <MenuItem value="add-new-category" onClick={handleAddNewCategory}>
+              Add New Category
+            </MenuItem>
+          </Select>
+        </FormControl>
         <TextField
           label="Price"
           type="number"
@@ -206,6 +269,25 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
           Cancel
         </Button>
       </Box>
+
+      <Dialog open={openNewCategoryDialog} onClose={() => setOpenNewCategoryDialog(false)}>
+        <DialogTitle>Add New Category</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Category Name"
+            type="text"
+            fullWidth
+            value={newCategoryName}
+            onChange={(e) => setNewCategoryName(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenNewCategoryDialog(false)}>Cancel</Button>
+          <Button onClick={handleSaveNewCategory} disabled={categoriesLoading}>Add</Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 };

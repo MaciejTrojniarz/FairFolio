@@ -10,6 +10,7 @@ export interface Product {
   notes?: string;
   link?: string;
   stock_quantity?: number;
+  category_name?: string; // New field for category name
 }
 
 export interface Category {

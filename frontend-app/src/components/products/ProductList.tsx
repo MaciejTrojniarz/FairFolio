@@ -19,10 +19,15 @@ import {
   Box,
   Avatar,
   ListItemButton,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'; // NEW IMPORT
 import { useI18n } from '../../contexts/I18nContext'; // NEW IMPORT
+import { getInitials } from '../../utils/imageHelpers'; // NEW IMPORT
 
 interface ProductListProps {
   onEdit: (product: Product) => void;
@@ -46,6 +51,16 @@ const ProductList: React.FC<ProductListProps> = ({ onEdit }) => {
     navigate(`/products/${id}`);
   };
 
+  // Group products by category
+  const categorizedProducts = products.reduce((acc, product) => {
+    const categoryId = product.category_id || 'unknown';
+    if (!acc[categoryId]) {
+      acc[categoryId] = [];
+    }
+    acc[categoryId].push(product);
+    return acc;
+  }, {} as Record<string, Product[]>);
+
   return (
     <Box>
       <Typography variant="h5" component="h2" gutterBottom>
@@ -55,25 +70,66 @@ const ProductList: React.FC<ProductListProps> = ({ onEdit }) => {
       {loading && <CircularProgress />}
       {error && <Alert severity="error">Error: {error}</Alert>}
 
-      <List>
-        {products.map((product) => (
-          <ListItem key={product.id} divider>
-            <ListItemButton onClick={() => handleViewDetails(product.id)}>
-              {product.image_url && (
-                <img
-                  src={product.image_url}
-                  alt={product.name}
-                  style={{ width: 56, height: 56, marginRight: 16, objectFit: 'contain' }}
-                />
-              )}
-              <ListItemText
-                primary={product.name}
-                secondary={`${t('price')}: ${product.price.toFixed(2)} | ${t('cost')}: ${product.cost.toFixed(2)} | ${t('description')}: ${product.description || t('no_description_provided')}`}
-              />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
+      {
+        Object.keys(categorizedProducts).map((categoryId) => {
+          const categoryName = categoryId === 'unknown' ? t('unknown_category') : categorizedProducts[categoryId][0].category_name;
+          return (
+            <Accordion key={categoryId} defaultExpanded={true}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography variant="h6">{categoryName}</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <List>
+                  {categorizedProducts[categoryId].map((product) => (
+                    <ListItem key={product.id} divider>
+                      <ListItemButton onClick={() => handleViewDetails(product.id)}>
+                        {product.image_url ? (
+                          <img
+                            src={product.image_url}
+                            alt={product.name}
+                            style={{ width: 56, height: 56, marginRight: 16, objectFit: 'contain' }}
+                          />
+                        ) : (
+                          <Avatar sx={{ width: 56, height: 56, marginRight: 16, bgcolor: '#e0e0e0', color: '#757575' }}>
+                            {getInitials(product.name)}
+                          </Avatar>
+                        )}
+                        <ListItemText
+                          primary={product.name}
+                          secondary={
+                            <>
+                              <Typography component="span" variant="body2" color="text.primary">
+                                {t('price')}: ${product.price.toFixed(2)} | {t('cost')}: ${product.cost.toFixed(2)}
+                              </Typography>
+                              <br />
+                              <Typography component="span" variant="body2" color="text.secondary">
+                                {t('description')}: {product.description || t('no_description_provided')}
+                              </Typography>
+                              {product.stock_quantity !== undefined && (
+                                <Typography component="span" variant="body2" color="text.secondary">
+                                  <br />{t('stock_quantity')}: {product.stock_quantity}
+                                </Typography>
+                              )}
+                            </>
+                          }
+                        />
+                      </ListItemButton>
+                      <ListItemSecondaryAction>
+                        <IconButton edge="end" aria-label="edit" onClick={() => onEdit(product)}>
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteProduct(product.id)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                  ))}
+                </List>
+              </AccordionDetails>
+            </Accordion>
+          );
+        })
+      }
     </Box>
   );
 };

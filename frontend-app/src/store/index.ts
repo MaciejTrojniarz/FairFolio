@@ -14,6 +14,8 @@ import costsReducer from './features/costs/costsSlice';
 import { costsEpics as allCostsEpics } from './features/costs/costsEpics';
 import uiReducer from './features/ui/uiSlice';
 import authReducer from './features/auth/authSlice';
+import categoriesReducer from './features/categories/categoriesSlice'; // NEW IMPORT
+import { categoriesEpics as allCategoriesEpics } from './features/categories/categoriesEpics'; // NEW IMPORT
 
 export const rootEpic = combineEpics(
   counterEpics,
@@ -21,7 +23,8 @@ export const rootEpic = combineEpics(
   ...allSalesEpics,
   fetchMerchantEpic,
   ...allEventsEpics,
-  ...allCostsEpics // Add all costs epics
+  ...allCostsEpics, // Add all costs epics
+  ...allCategoriesEpics, // NEW: Add all categories epics
 );
 
 const epicMiddleware = createEpicMiddleware();
@@ -36,6 +39,7 @@ export const store = configureStore({
     costs: costsReducer,
     ui: uiReducer, // Add ui reducer
     auth: authReducer, // Add auth reducer
+    categories: categoriesReducer, // NEW: Add categories reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(epicMiddleware),

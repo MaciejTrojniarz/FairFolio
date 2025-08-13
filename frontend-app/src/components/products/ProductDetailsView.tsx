@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import type { Product } from '../../types';
 import { useI18n } from '../../contexts/I18nContext'; // NEW IMPORT
+import { getInitials } from '../../utils/imageHelpers'; // NEW IMPORT
 
 interface ProductDetailsViewProps {
   product: Product;
@@ -20,18 +21,37 @@ const ProductDetailsView: React.FC<ProductDetailsViewProps> = ({ product }) => {
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
         {/* Product Image */}
         <Box sx={{ flexShrink: 0, width: { xs: '100%', md: '40%' } }}>
-          <CardMedia
-            component="img"
-            image={product.image_url || 'https://via.placeholder.com/400?text=No+Image'}
-            alt={product.name}
-            sx={{
-              width: '100%',
-              height: 'auto',
-              maxHeight: 400,
-              objectFit: 'contain',
-              borderRadius: 1,
-            }}
-          />
+          {product.image_url ? (
+            <CardMedia
+              component="img"
+              image={product.image_url}
+              alt={product.name}
+              sx={{
+                width: '100%',
+                height: 'auto',
+                maxHeight: 400,
+                objectFit: 'contain',
+                borderRadius: 1,
+              }}
+            />
+          ) : (
+            <Box
+              sx={{
+                width: '100%',
+                height: 400,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                bgcolor: '#e0e0e0',
+                borderRadius: 1,
+                color: '#757575',
+                fontSize: 100,
+                fontWeight: 'bold',
+              }}
+            >
+              {getInitials(product.name)}
+            </Box>
+          )}
         </Box>
 
         {/* Product Details */}
@@ -42,6 +62,12 @@ const ProductDetailsView: React.FC<ProductDetailsViewProps> = ({ product }) => {
           <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
             {product.description || t('no_description_provided')} {/* Translated */}
           </Typography>
+
+          {product.category_name && (
+            <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+              <strong>{t('category')}:</strong> {product.category_name}
+            </Typography>
+          )}
 
           <Typography variant="h6">{t('price')}: ${product.price.toFixed(2)}</Typography> {/* Translated */}
           <Typography variant="h6">{t('cost')}: ${product.cost.toFixed(2)}</Typography> {/* Translated */}
