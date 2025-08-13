@@ -1,11 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { Product, BasketItem, Sale, DetailedSaleItem } from '../../../types'; // Added DetailedSaleItem
+import type { Product, BasketItem, Sale, DetailedSaleItem } from '../../../types';
 
 interface SalesState {
   basket: BasketItem[];
   totalAmount: number;
-  salesHistory: (Sale & { items: DetailedSaleItem[] })[]; // Changed type
+  salesHistory: (Sale & { items: DetailedSaleItem[] })[];
   selectedSale: Sale | null;
   selectedSaleItems: DetailedSaleItem[];
   loading: boolean;
@@ -31,7 +31,7 @@ export const salesSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
-    fetchSaleDetailsCommand: (state, action: PayloadAction<string>) => { // New command
+    fetchSaleDetailsCommand: (state, action: PayloadAction<string>) => {
       state.loading = true;
       state.error = null;
       state.selectedSale = null;
@@ -73,17 +73,17 @@ export const salesSlice = createSlice({
     },
 
     // Events (actions that update state based on side effect results)
-    salesFetchedEvent: (state, action: PayloadAction<(Sale & { items: DetailedSaleItem[] })[]>) => { // Changed payload type
+    salesFetchedEvent: (state, action: PayloadAction<(Sale & { items: DetailedSaleItem[] })[]>) => {
       state.salesHistory = action.payload;
       state.loading = false;
     },
-    saleRecordedEvent: (state, action: PayloadAction<Sale & { items: DetailedSaleItem[] }>) => { // Changed payload type
+    saleRecordedEvent: (state, action: PayloadAction<Sale & { items: DetailedSaleItem[] }>) => {
       state.salesHistory.push(action.payload);
-      state.basket = []; // Clear basket after successful sale
+      state.basket = [];
       state.totalAmount = 0;
       state.loading = false;
     },
-    saleDetailsFetchedEvent: (state, action: PayloadAction<{ sale: Sale; items: DetailedSaleItem[] }>) => { // Changed payload type
+    saleDetailsFetchedEvent: (state, action: PayloadAction<{ sale: Sale; items: DetailedSaleItem[] }>) => {
       state.selectedSale = action.payload.sale;
       state.selectedSaleItems = action.payload.items;
       state.loading = false;
@@ -99,7 +99,7 @@ export const {
   fetchSalesCommand,
   fetchSaleDetailsCommand,
   recordSaleCommand,
-  updateSaleCommand, // New export
+  updateSaleCommand,
   addToBasket,
   removeFromBasket,
   clearBasket,

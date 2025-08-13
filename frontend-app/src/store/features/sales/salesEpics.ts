@@ -21,14 +21,8 @@ export const fetchSalesEpic = (action$: any) =>
     ofType(fetchSalesCommand.type),
     switchMap(() =>
       from(saleService.fetchSales()).pipe(
-        map((sales: Sale[]) => {
-          console.log('Sales fetched by epic:', sales); // ADDED LOG
-          return salesFetchedEvent(sales);
-        }),
-        catchError((error) => {
-          console.error('Error fetching sales in epic:', error); // ADDED LOG
-          return of(salesErrorEvent(error.message));
-        })
+        map((sales: Sale[]) => salesFetchedEvent(sales)),
+        catchError((error) => of(salesErrorEvent(error.message)))
       )
     )
   );

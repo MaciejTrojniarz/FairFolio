@@ -35,7 +35,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useNavigate } from 'react-router-dom';
-import EventSelector from './events/EventSelector';
+import EventSelector from './common/EventSelector';
 
 interface SaleEditFormProps {
   sale: Sale;

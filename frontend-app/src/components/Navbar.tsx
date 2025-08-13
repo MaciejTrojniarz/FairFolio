@@ -9,6 +9,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../store';
 import { supabase } from '../supabaseClient';
 import GravatarAvatar from './common/GravatarAvatar'; // NEW IMPORT
+import { useI18n } from '../contexts/I18nContext'; // NEW IMPORT 
+import { useThemeMode } from '../contexts/ThemeContext'; // NEW IMPORT
+import { useTheme } from '@mui/material/styles'; // NEW IMPORT
 
 const Navbar: React.FC = () => {
   const location = useLocation();
@@ -19,6 +22,9 @@ const Navbar: React.FC = () => {
 
   const dispatch = useDispatch();
   const { user } = useSelector((state: RootState) => state.auth);
+  const { t } = useI18n(); // NEW: useI18n hook
+  const { mode } = useThemeMode(); // NEW: useThemeMode hook
+  const theme = useTheme(); // NEW: useTheme hook
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -48,14 +54,23 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar
+      position="static"
+      color="inherit" // Inherit color to allow custom background
+      sx={{
+        backgroundColor: mode === 'light' ? theme.palette.background.paper : theme.palette.primary.main, // Conditional background
+      }}
+    >
       <Toolbar>
         <RouterLink to="/">
-          <Typography variant="h6" component="div">
-            FaireFolio
-          </Typography>
+          <Box
+            component="img"
+            src="/fair_merchant_logo.png" // Updated path to the new image
+            alt={t('app_name')} // Alt text for accessibility
+            sx={{ height: 40, mr: 1 }} // Adjust height and margin as needed
+          />
         </RouterLink>
-        <Box sx={{ flexGrow: 1 }}>
+        <Box sx={{ flexGrow: 1, ml: 2 }}>
           <Breadcrumbs aria-label="breadcrumb" color="inherit">
             {pathnames.map((value, index) => {
               // Skip 'edit' segment in breadcrumbs for both products and sales
@@ -75,17 +90,16 @@ const Navbar: React.FC = () => {
                   displayValue = product.name;
                 }
               } else if (pathnames[index - 1] === 'sales' && index === pathnames.length - 1) { // Sales detail
-                displayValue = `Sale ${value.substring(0, 4)}...`; // Shorten ID for display
+                displayValue = `${t('sale')} ${value.substring(0, 4)}...`; // Translated
               } else if (pathnames[index - 2] === 'sales' && pathnames[index - 1] === 'edit' && index === pathnames.length - 1) { // Sales edit
                 const saleId = value;
-                // Similar to product, getting sale name here is hard without fetching
-                displayValue = 'Edit Sale'; // Simplified for debugging
+                displayValue = t('edit_sale'); // Translated
               } else if (pathnames[index - 1] === 'new') { // For 'new' pages
-                displayValue = `New ${pathnames[index - 2].charAt(0).toUpperCase() + pathnames[index - 2].slice(1)}`;
+                displayValue = `${t('new')} ${pathnames[index - 2].charAt(0).toUpperCase() + pathnames[index - 2].slice(1)}`; // Translated
               } else if (value === 'record' && pathnames[index - 1] === 'sales') {
-                displayValue = 'Record Sale';
+                displayValue = t('record_sale'); // Translated
               } else if (value === 'sales' && index === 0) { // For the top-level /sales
-                displayValue = 'Sales History';
+                displayValue = t('sales_history'); // Translated
               } else if (pathnames[index - 1] === 'events' && index === pathnames.length - 1) { // Event detail
                 const eventId = value;
                 const event = events.find(e => e.id === eventId);
@@ -96,9 +110,9 @@ const Navbar: React.FC = () => {
                 const eventId = value;
                 const event = events.find(e => e.id === eventId);
                 if (event) {
-                  displayValue = `Edit ${event.name}`;
+                  displayValue = `${t('edit_event')} ${event.name}`; // Translated
                 } else {
-                  displayValue = `Edit Event ${eventId.substring(0, 4)}...`;
+                  displayValue = `${t('edit_event')} ${eventId.substring(0, 4)}...`; // Translated
                 }
               }
               return last ? (
@@ -110,22 +124,21 @@ const Navbar: React.FC = () => {
                   {displayValue}
                 </MuiLink>
               );
-            })
-          }
+            })}
           </Breadcrumbs>
         </Box>
         <RouterLink to="/product">
-          <IconButton color="inherit" aria-label="product management">
+          <IconButton color="primary" aria-label={t('product_management')}>
             <InventoryIcon />
           </IconButton>
         </RouterLink>
         <RouterLink to="/sales">
-          <IconButton color="inherit" aria-label="sales history">
+          <IconButton color="primary" aria-label={t('sales_history')}>
             <HistoryIcon />
           </IconButton>
         </RouterLink>
         <RouterLink to="/events">
-          <IconButton color="inherit" aria-label="event management">
+          <IconButton color="primary" aria-label={t('event_management')}>
             <EventIcon />
           </IconButton>
         </RouterLink>
@@ -135,13 +148,13 @@ const Navbar: React.FC = () => {
             <>
               <IconButton
                 size="large"
-                aria-label="account of current user"
+                aria-label={t('user_profile')}
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
                 onClick={handleMenu}
                 color="inherit"
               >
-                <GravatarAvatar email={user?.email} size={40} /> {/* Use GravatarAvatar */}
+                <GravatarAvatar email={user?.email} size={40} />
               </IconButton>
               <Menu
                 id="menu-appbar"
@@ -159,16 +172,16 @@ const Navbar: React.FC = () => {
                 onClose={handleClose}
               >
                 <MenuItem onClick={handleProfile}>
-                  <SettingsIcon sx={{ mr: 1 }} /> Profile
+                  <SettingsIcon sx={{ mr: 1 }} /> {t('profile')}
                 </MenuItem>
                 <MenuItem onClick={handleLogout}>
-                  Logout
+                  {t('logout')}
                 </MenuItem>
               </Menu>
             </>
           ) : (
             <Button color="inherit" onClick={handleLogin}>
-              Login
+              {t('login')}
             </Button>
           )}
         </Box>

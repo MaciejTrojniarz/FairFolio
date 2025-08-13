@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../store';
 import { fetchSaleDetailsCommand } from '../store/features/sales/salesSlice';
-import { fetchEventsCommand } from '../store/features/events/eventsSlice'; // New import
+import { fetchEventsCommand } from '../store/features/events/eventsSlice';
 import {
   Container,
   Typography,
@@ -16,10 +16,11 @@ import {
   Paper,
   Button,
   Avatar,
-  Link as MuiLink, // NEW IMPORT
+  Link as MuiLink,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import LaunchIcon from '@mui/icons-material/Launch'; // NEW IMPORT
+import LaunchIcon from '@mui/icons-material/Launch';
+import { useI18n } from '../contexts/I18nContext';
 
 const SaleDetailView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -27,13 +28,14 @@ const SaleDetailView: React.FC = () => {
   const dispatch = useDispatch();
 
   const { selectedSale, selectedSaleItems, loading: salesLoading, error: salesError } = useSelector((state: RootState) => state.sales);
-  const { events, loading: eventsLoading, error: eventsError } = useSelector((state: RootState) => state.events); // New
+  const { events, loading: eventsLoading, error: eventsError } = useSelector((state: RootState) => state.events);
+  const { t } = useI18n();
 
   useEffect(() => {
     if (id) {
       dispatch(fetchSaleDetailsCommand(id));
     }
-    dispatch(fetchEventsCommand()); // Fetch events
+    dispatch(fetchEventsCommand());
   }, [id, dispatch]);
 
   if (salesLoading || eventsLoading) {
@@ -52,7 +54,7 @@ const SaleDetailView: React.FC = () => {
         <Box sx={{ my: 4 }}>
           <Alert severity="error">Error: {salesError || eventsError}</Alert>
           <Button variant="contained" onClick={() => navigate('/sales')} sx={{ mt: 2 }}>
-            <ArrowBackIcon sx={{ mr: 1 }} /> Back to Sales History
+            <ArrowBackIcon sx={{ mr: 1 }} /> {t('back_to_sales_history')}
           </Button>
         </Box>
       </Container>
@@ -63,9 +65,9 @@ const SaleDetailView: React.FC = () => {
     return (
       <Container maxWidth="md">
         <Box sx={{ my: 4 }}>
-          <Alert severity="warning">Sale not found.</Alert>
+          <Alert severity="warning">{t('sale_not_found')}</Alert>
           <Button variant="contained" onClick={() => navigate('/sales')} sx={{ mt: 2 }}>
-            <ArrowBackIcon sx={{ mr: 1 }} /> Back to Sales History
+            <ArrowBackIcon sx={{ mr: 1 }} /> {t('back_to_sales_history')}
           </Button>
         </Box>
       </Container>
@@ -76,43 +78,43 @@ const SaleDetailView: React.FC = () => {
     <Container maxWidth="md">
       <Box sx={{ my: 4 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Button variant="outlined" onClick={() => navigate('/sales')}> {/* Changed to /sales */}
-            <ArrowBackIcon sx={{ mr: 1 }} /> Back to Sales History
+          <Button variant="outlined" onClick={() => navigate('/sales')}>
+            <ArrowBackIcon sx={{ mr: 1 }} /> {t('back_to_sales_history')}
           </Button>
-          <Button variant="contained" onClick={() => navigate(`/sales/${selectedSale.id}/edit`)}> {/* Changed to /sales/:id/edit */}
-            Edit Sale
+          <Button variant="contained" onClick={() => navigate(`/sales/${selectedSale.id}/edit`)}>
+            {t('edit_sale')}
           </Button>
         </Box>
         <Typography variant="h4" component="h1" gutterBottom>
-          Sale Details
+          {t('sale_details')}
         </Typography>
 
         <Paper elevation={2} sx={{ p: 2, mb: 3 }}>
-          <Typography variant="h6">Sale ID: {selectedSale.id}</Typography>
-          <Typography variant="body1">Total Amount: ${selectedSale.total_amount.toFixed(2)}</Typography>
-          <Typography variant="body1">Date: {new Date(selectedSale.timestamp).toLocaleString()}</Typography>
+          <Typography variant="h6">{t('sale_id')}: {selectedSale.id}</Typography>
+          <Typography variant="body1">{t('total_amount')}: ${selectedSale.total_amount.toFixed(2)}</Typography>
+          <Typography variant="body1">{t('date')}: {new Date(selectedSale.timestamp).toLocaleString()}</Typography>
           {selectedSale.event_id && (
-            <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}> {/* Use Box for layout */}
-              <Typography variant="body1" sx={{ mr: 1 }}>Event:</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+              <Typography variant="body1" sx={{ mr: 1 }}>{t('event')}:</Typography>
               <Button
                 variant="outlined"
                 size="small"
                 startIcon={<LaunchIcon />}
                 onClick={() => navigate(`/events/${selectedSale.event_id}`)}
               >
-                {events.find(e => e.id === selectedSale.event_id)?.name || 'Unknown Event'}
+                {events.find(e => e.id === selectedSale.event_id)?.name || t('unknown_event')}
               </Button>
             </Box>
           )}
         </Paper>
 
         <Typography variant="h5" component="h2" gutterBottom>
-          Items in Sale
+          {t('items_in_sale')}
         </Typography>
         <List>
           {selectedSaleItems.length === 0 ? (
             <ListItem>
-              <ListItemText primary="No items found for this sale." />
+              <ListItemText primary={t('no_items_found')} />
             </ListItem>
           ) : (
             selectedSaleItems.map((item) => (
@@ -135,9 +137,9 @@ const SaleDetailView: React.FC = () => {
                         variant="body2"
                         color="text.primary"
                       >
-                        Price at Sale: ${item.price_at_sale.toFixed(2)}
+                        {t('price_at_sale')}: ${item.price_at_sale.toFixed(2)}
                       </Typography>
-                      {` — Cost: ${item.product_cost.toFixed(2)}`}
+                      {` — ${t('cost_at_sale')}: ${item.product_cost.toFixed(2)}`}
                     </React.Fragment>
                   }
                 />

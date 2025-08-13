@@ -6,7 +6,7 @@ import {
   deleteEventCommand,
 } from '../../store/features/events/eventsSlice';
 import type { Event } from '../../types';
-import { useNavigate } from 'react-router-dom'; // New import
+import { useNavigate } from 'react-router-dom';
 import {
   Typography,
   List,
@@ -17,16 +17,18 @@ import {
   CircularProgress,
   Alert,
   Box,
-  ListItemButton, // NEW IMPORT
+  Avatar,
+  ListItemButton,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-// import VisibilityIcon from '@mui/icons-material/Visibility'; // REMOVE THIS IMPORT
+import { useI18n } from '../../contexts/I18nContext';
 
-const EventList: React.FC = () => { // Removed onEdit prop
+const EventList: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { events, loading, error } = useSelector((state: RootState) => state.events);
+  const { t } = useI18n();
 
   useEffect(() => {
     dispatch(fetchEventsCommand());
@@ -36,30 +38,30 @@ const EventList: React.FC = () => { // Removed onEdit prop
     navigate(`/events/${id}`);
   };
 
-  const handleEditEvent = (id: string) => { // ADDED: handle edit event
+  const handleEditEvent = (id: string) => {
     navigate(`/events/${id}/edit`);
   };
 
-  const handleDeleteEvent = (id: string) => { // ADDED: handle delete event
+  const handleDeleteEvent = (id: string) => {
     dispatch(deleteEventCommand(id));
   };
 
   return (
     <Box>
       <Typography variant="h5" component="h2" gutterBottom>
-        Event List
+        {t('event_list')}
       </Typography>
 
       {loading && <CircularProgress />}
       {error && <Alert severity="error">Error: {error}</Alert>}
 
       <List>
-        {events.map((event) => ( // Use events directly
-          <ListItem key={event.id} divider> {/* Outer ListItem */}
-            <ListItemButton onClick={() => handleViewDetails(event.id)}> {/* Make entire button clickable */}
+        {events.map((event) => (
+          <ListItem key={event.id} divider>
+            <ListItemButton onClick={() => handleViewDetails(event.id)}>
               <ListItemText
                 primary={event.name}
-                secondary={`Venue: ${event.venue}, ${event.city} | ${new Date(event.start_date).toLocaleDateString()} - ${new Date(event.end_date).toLocaleDateString()}`}
+                secondary={`${t('venue')}: ${event.venue}, ${event.city} | ${new Date(event.start_date).toLocaleDateString()} - ${new Date(event.end_date).toLocaleDateString()}`}
               />
             </ListItemButton>
           </ListItem>

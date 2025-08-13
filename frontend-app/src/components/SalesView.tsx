@@ -35,14 +35,13 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import EventSelector from './events/EventSelector';
+import EventSelector from './common/EventSelector'; // Corrected path
 
 const SalesView: React.FC = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const location = useLocation();
   const { products, loading: productsLoading, error: productsError } = useSelector((state: RootState) => state.products);
-  const { events, loading: eventsLoading, error: eventsError } = useSelector((state: RootState) => state.events);
+  const { loading: eventsLoading, error: eventsError } = useSelector((state: RootState) => state.events);
   const { basket, totalAmount, loading: salesLoading, error: salesError } = useSelector((state: RootState) => state.sales);
 
   const [selectedEventId, setSelectedEventId] = useState<string | undefined>(undefined);

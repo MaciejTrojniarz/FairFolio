@@ -6,7 +6,7 @@ import {
   deleteProductCommand,
 } from '../../store/features/products/productsSlice';
 import type { Product } from '../../types';
-import { useNavigate } from 'react-router-dom'; // NEW IMPORT
+import { useNavigate } from 'react-router-dom';
 import {
   Typography,
   List,
@@ -18,10 +18,11 @@ import {
   Alert,
   Box,
   Avatar,
-  ListItemButton, // NEW IMPORT
+  ListItemButton,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { useI18n } from '../../contexts/I18nContext'; // NEW IMPORT
 
 interface ProductListProps {
   onEdit: (product: Product) => void;
@@ -29,8 +30,9 @@ interface ProductListProps {
 
 const ProductList: React.FC<ProductListProps> = ({ onEdit }) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
   const { products, loading, error } = useSelector((state: RootState) => state.products);
+  const { t } = useI18n(); // NEW: useI18n hook
 
   useEffect(() => {
     dispatch(fetchProductsCommand());
@@ -40,14 +42,14 @@ const ProductList: React.FC<ProductListProps> = ({ onEdit }) => {
     dispatch(deleteProductCommand(id));
   };
 
-  const handleViewDetails = (id: string) => { // NEW: handle view details
+  const handleViewDetails = (id: string) => {
     navigate(`/products/${id}`);
   };
 
   return (
     <Box>
       <Typography variant="h5" component="h2" gutterBottom>
-        Product List
+        {t('product_list')}
       </Typography>
 
       {loading && <CircularProgress />}
@@ -56,7 +58,7 @@ const ProductList: React.FC<ProductListProps> = ({ onEdit }) => {
       <List>
         {products.map((product) => (
           <ListItem key={product.id} divider>
-            <ListItemButton onClick={() => handleViewDetails(product.id)}> {/* Make entire button clickable */}
+            <ListItemButton onClick={() => handleViewDetails(product.id)}>
               {product.image_url && (
                 <img
                   src={product.image_url}
@@ -66,17 +68,9 @@ const ProductList: React.FC<ProductListProps> = ({ onEdit }) => {
               )}
               <ListItemText
                 primary={product.name}
-                secondary={`Price: ${product.price.toFixed(2)} | Cost: ${product.cost.toFixed(2)} | Desc: ${product.description || 'N/A'}`}
+                secondary={`${t('price')}: ${product.price.toFixed(2)} | ${t('cost')}: ${product.cost.toFixed(2)} | ${t('description')}: ${product.description || t('no_description_provided')}`}
               />
             </ListItemButton>
-            <ListItemSecondaryAction>
-              <IconButton edge="end" aria-label="edit" onClick={() => onEdit(product)}>
-                <EditIcon />
-              </IconButton>
-              <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteProduct(product.id)}>
-                <DeleteIcon />
-              </IconButton>
-            </ListItemSecondaryAction>
           </ListItem>
         ))}
       </List>

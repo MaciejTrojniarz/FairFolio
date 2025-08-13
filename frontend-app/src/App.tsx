@@ -24,6 +24,9 @@ import { supabase } from './supabaseClient';
 import { setUser, setLoading } from './store/features/auth/authSlice';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 
+import { I18nProvider } from './contexts/I18nContext';
+import { AppThemeProvider } from './contexts/ThemeContext'; // NEW IMPORT
+
 function App() {
   const dispatch = useDispatch();
   const merchant = useSelector((state: RootState) => state.merchant.merchant);
@@ -60,35 +63,38 @@ function App() {
   }, [merchant]);
 
   return (
-    <BrowserRouter>
-      <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}> {/* Main container for full height */}
-        <Navbar /> {/* Render Navbar outside Routes */}
-        <Box sx={{ flexGrow: 1, mt: 2 }}> {/* Content area, grows to fill remaining space */}
-          <Routes>
-            <Route path="/login" element={<Login />} /> {/* NEW ROUTE */}
-
-            {/* Protected Routes */}
-            <Route element={<ProtectedRoute />}>
-              <Route path="/profile" element={<Profile />} /> {/* NEW ROUTE */}
-            <Route path="/products/:id" element={<ProductDetailsPage />} /> {/* NEW ROUTE */}
-            <Route path="/" element={<Home />} /> {/* Home is now protected */}
-              <Route path="/products" element={<ProductManagementList />} />
-              <Route path="/products/new" element={<ProductFormPage />} />
-              <Route path="/products/:id/edit" element={<ProductFormPage />} />
-              <Route path="/sales/record" element={<SalesView />} />
-              <Route path="/sales" element={<SalesHistoryView />} />
-              <Route path="/sales/:id" element={<SaleDetailView />} />
-              <Route path="/sales/:id/edit" element={<SaleEditPage />} />
-              <Route path="/events" element={<EventManagementPage />} />
-              <Route path="/events/new" element={<EventFormPage />} />
-              <Route path="/events/:id" element={<EventDetailView />} />
-              <Route path="/events/:id/edit" element={<EventFormPage />} />
-            </Route>
-          </Routes>
-        </Box>
-      </Box>
-      <ToastNotification /> {/* Render ToastNotification globally */}
-    </BrowserRouter>
+    <AppThemeProvider>
+      <I18nProvider>
+        <BrowserRouter>
+          <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+            <Navbar />
+            <Box sx={{ flexGrow: 1, mt: 2 }}>
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/products/:id" element={<ProductDetailsPage />} />
+                <Route path="/" element={<Home />} />
+                {/* Protected Routes */}
+                <Route element={<ProtectedRoute />}>
+                  <Route path="/products" element={<ProductManagementList />} />
+                  <Route path="/products/new" element={<ProductFormPage />} />
+                  <Route path="/products/:id/edit" element={<ProductFormPage />} />
+                  <Route path="/sales/record" element={<SalesView />} />
+                  <Route path="/sales" element={<SalesHistoryView />} />
+                  <Route path="/sales/:id" element={<SaleDetailView />} />
+                  <Route path="/sales/:id/edit" element={<SaleEditPage />} />
+                  <Route path="/events" element={<EventManagementPage />} />
+                  <Route path="/events/new" element={<EventFormPage />} />
+                  <Route path="/events/:id" element={<EventDetailView />} />
+                  <Route path="/events/:id/edit" element={<EventFormPage />} />
+                </Route>
+              </Routes>
+            </Box>
+          </Box>
+          <ToastNotification />
+        </BrowserRouter>
+      </I18nProvider>
+    </AppThemeProvider>
   );
 }
 
