@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react'; // Re-added
-import { useSelector, useDispatch } from 'react-redux'; // Re-added
-import type { RootState } from '../store'; // Re-added
-import { fetchSalesCommand } from '../store/features/sales/salesSlice'; // Re-added
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import type { RootState } from '../store';
+import { fetchSalesCommand } from '../store/features/sales/salesSlice';
 import { fetchEventsCommand } from '../store/features/events/eventsSlice';
-import { fetchCostsCommand } from '../store/features/costs/costsSlice'; // New import
+import { fetchCostsCommand } from '../store/features/costs/costsSlice';
 import { useNavigate } from 'react-router-dom';
 import {
   Container,
@@ -18,22 +18,25 @@ import {
   ListItemButton,
   Accordion, AccordionSummary, AccordionDetails,
   Avatar, Badge,
-  Button, // Added Button
+  Button,
+  IconButton,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import AddIcon from '@mui/icons-material/Add'; // New import
+import AddIcon from '@mui/icons-material/Add';
+import LaunchIcon from '@mui/icons-material/Launch';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 
 const SalesHistoryView: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { salesHistory, loading: salesLoading, error: salesError } = useSelector((state: RootState) => state.sales);
   const { events, loading: eventsLoading, error: eventsError } = useSelector((state: RootState) => state.events);
-  const { costs, loading: costsLoading, error: costsError } = useSelector((state: RootState) => state.costs); // New
+  const { costs, loading: costsLoading, error: costsError } = useSelector((state: RootState) => state.costs);
 
   useEffect(() => {
     dispatch(fetchSalesCommand());
     dispatch(fetchEventsCommand());
-    dispatch(fetchCostsCommand()); // Fetch costs
+    dispatch(fetchCostsCommand());
   }, [dispatch]);
 
   const handleSaleClick = (saleId: string) => {
@@ -41,11 +44,11 @@ const SalesHistoryView: React.FC = () => {
   };
 
   const handleAddSaleToEvent = (eventId: string) => {
-    navigate('/sales/record', { state: { eventId } }); // Pass eventId as state
+    navigate('/sales/record', { state: { eventId } });
   };
 
   const groupedSales = salesHistory.reduce((acc, sale) => {
-    const eventId = sale.event_id || 'no-event'; // Group sales without event_id under a special key
+    const eventId = sale.event_id || 'no-event';
     if (!acc[eventId]) {
       acc[eventId] = [];
     }
@@ -68,12 +71,12 @@ const SalesHistoryView: React.FC = () => {
             <Typography variant="body1">No sales recorded yet.</Typography>
           )}
           {Object.keys(groupedSales).sort((a, b) => {
+            // Events are already sorted by fetch operation, so just handle 'no-event'
             const eventA = events.find(e => e.id === a);
             const eventB = events.find(e => e.id === b);
-            if (eventA && eventB) {
-              return new Date(eventA.start_date).getTime() - new Date(eventB.start_date).getTime();
-            }
-            return a.localeCompare(b);
+            if (eventA && !eventB) return -1; // eventA comes before eventB
+            if (!eventA && eventB) return 1;  // eventB comes before eventA
+            return a.localeCompare(b); // Fallback for non-event groups or if both not found
           }).map((eventId) => {
             const event = events.find(e => e.id === eventId);
             const eventDisplayName = event ? event.name : 'Sales without Event';
@@ -87,32 +90,78 @@ const SalesHistoryView: React.FC = () => {
             return (
               <Accordion key={eventId} sx={{ mb: 2 }}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-                    <Typography variant="h6">
-                      {eventDisplayName}
-                      {eventDetails && (
-                        <Typography component="span" variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-                          {eventDetails}
-                        </Typography>
-                      )}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Total Sales: ${totalSalesAmount.toFixed(2)} | Total Costs: ${totalCosts.toFixed(2)} | Net: ${netProfit.toFixed(2)}
-                    </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%', pr: 2 }}>
+                    <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                      <Typography variant="h6">
+                        {eventDisplayName}
+                        {eventDetails && (
+                          <Typography component="span" variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+                            {eventDetails}
+                          </Typography>
+                        )}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Total Sales: ${totalSalesAmount.toFixed(2)} | Total Costs: ${totalCosts.toFixed(2)} | Net: ${netProfit.toFixed(2)}
+                      </Typography>
+                    </Box>
+                    {event && eventId !== 'no-event' && (
+                      <> {/* Use Fragment to group buttons */}
+                        <Box // Replaced IconButton with Box
+                          component="span" // Render as span to avoid button nesting
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/events/${eventId}`);
+                          }}
+                          sx={{
+                            ml: 2,
+                            flexShrink: 0,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: 32,
+                            height: 32,
+                            borderRadius: '50%',
+                            cursor: 'pointer',
+                            '&:hover': {
+                              backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                            },
+                          }}
+                          aria-label={`View details for ${eventDisplayName}`}
+                          title={`View details for ${eventDisplayName}`}
+                        >
+                          <LaunchIcon fontSize="small" />
+                        </Box>
+                        <Box // Replaced Button with Box
+                          component="span" // Render as span to avoid button nesting
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleAddSaleToEvent(eventId);
+                          }}
+                          sx={{
+                            ml: 1,
+                            flexShrink: 0,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: 32,
+                            height: 32,
+                            borderRadius: '50%',
+                            cursor: 'pointer',
+                            '&:hover': {
+                              backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                            },
+                          }}
+                          aria-label="Add Sale" // Accessibility
+                          title="Add Sale" // Tooltip
+                        >
+                          <AddShoppingCartIcon fontSize="small" />
+                        </Box>
+                      </>
+                    )}
                   </Box>
                 </AccordionSummary>
                 <AccordionDetails>
-                  {eventId !== 'no-event' && ( // Only show button for actual events
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      startIcon={<AddIcon />}
-                      onClick={() => handleAddSaleToEvent(eventId)}
-                      sx={{ mb: 2 }}
-                    >
-                      Add Sale to this Event
-                    </Button>
-                  )}
+                  {/* Remove the button from here */}
                   <List>
                     {salesInGroup.map((sale) => (
                       <Paper key={sale.id} elevation={1} sx={{ mb: 1 }}>

@@ -10,7 +10,7 @@ import {
 import {
   updateSaleCommand,
 } from '../store/features/sales/salesSlice';
-import type { Product, DetailedSaleItem, Event, Sale } from '../types';
+import type { Product, DetailedSaleItem, Sale } from '../types';
 import {
   Container,
   Typography,
@@ -28,14 +28,14 @@ import {
   IconButton,
   CircularProgress,
   Alert,
-  FormControl, InputLabel, Select, MenuItem,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import ClearAllIcon from '@mui/icons-material/ClearAll';
+
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useNavigate } from 'react-router-dom';
+import EventSelector from './events/EventSelector';
 
 interface SaleEditFormProps {
   sale: Sale;
@@ -47,7 +47,7 @@ const SaleEditForm: React.FC<SaleEditFormProps> = ({ sale, saleItems }) => {
   const navigate = useNavigate();
 
   const { products, loading: productsLoading, error: productsError } = useSelector((state: RootState) => state.products);
-  const { events, loading: eventsLoading, error: eventsError } = useSelector((state: RootState) => state.events);
+  const { loading: eventsLoading, error: eventsError } = useSelector((state: RootState) => state.events);
   const { loading: salesLoading, error: salesError } = useSelector((state: RootState) => state.sales);
 
   const [currentBasket, setCurrentBasket] = useState<DetailedSaleItem[]>(saleItems);
@@ -107,9 +107,11 @@ const SaleEditForm: React.FC<SaleEditFormProps> = ({ sale, saleItems }) => {
   };
 
   const handleUpdateSale = () => {
+    const eventIdToSend = selectedEventId === '' ? null : selectedEventId; // Convert empty string to null
+
     dispatch(updateSaleCommand({
       saleId: sale.id,
-      updatedSaleData: { total_amount: currentTotalAmount, event_id: selectedEventId },
+      updatedSaleData: { total_amount: currentTotalAmount, event_id: eventIdToSend }, // Use eventIdToSend
       updatedSaleItems: currentBasket,
       originalSaleItems: saleItems, // Pass original items for comparison
     }));
@@ -130,24 +132,10 @@ const SaleEditForm: React.FC<SaleEditFormProps> = ({ sale, saleItems }) => {
         {(productsLoading || salesLoading || eventsLoading) && <CircularProgress />}
         {(productsError || salesError || eventsError) && <Alert severity="error">Error: {productsError || salesError || eventsError}</Alert>}
 
-        <FormControl fullWidth sx={{ mb: 2 }}>
-          <InputLabel id="event-select-label">Select Event (Optional)</InputLabel>
-          <Select
-            labelId="event-select-label"
-            value={selectedEventId || ''}
-            label="Select Event (Optional)"
-            onChange={(e) => setSelectedEventId(e.target.value as string)}
-          >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-            {events.map((event: Event) => (
-              <MenuItem key={event.id} value={event.id}>
-                {event.name} ({new Date(event.start_date).toLocaleDateString()})
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <EventSelector
+          selectedEventId={selectedEventId}
+          onSelectEvent={(id) => setSelectedEventId(id)}
+        />
 
         <Grid container spacing={3}>
           {/* Product Cards */}

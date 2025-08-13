@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom'; // Added useNavigate // Added useNavigate
+import { useLocation, useNavigate } from 'react-router-dom';
 import type { RootState } from '../store';
 import {
   fetchProductsCommand
 } from '../store/features/products/productsSlice';
-import { fetchEventsCommand } from '../store/features/events/eventsSlice'; // New import
+import { fetchEventsCommand } from '../store/features/events/eventsSlice';
 import {
   addToBasket,
   removeFromBasket,
   clearBasket,
   recordSaleCommand,
 } from '../store/features/sales/salesSlice';
-import type { Product, BasketItem, Event } from '../types'; // Added Event
+import type { Product, BasketItem, Event } from '../types';
 import {
   Container,
   Typography,
@@ -30,18 +30,16 @@ import {
   IconButton,
   CircularProgress,
   Alert,
-  FormControl, InputLabel, Select, MenuItem,
-  InputAdornment, // Added InputAdornment
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import VisibilityIcon from '@mui/icons-material/Visibility'; // Added VisibilityIcon
+import EventSelector from './events/EventSelector';
 
 const SalesView: React.FC = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Added
+  const navigate = useNavigate();
   const location = useLocation();
   const { products, loading: productsLoading, error: productsError } = useSelector((state: RootState) => state.products);
   const { events, loading: eventsLoading, error: eventsError } = useSelector((state: RootState) => state.events);
@@ -89,63 +87,40 @@ const SalesView: React.FC = () => {
         {(productsLoading || salesLoading || eventsLoading) && <CircularProgress />}
         {(productsError || salesError || eventsError) && <Alert severity="error">Error: {productsError || salesError || eventsError}</Alert>}
 
-        <FormControl fullWidth sx={{ mb: 2 }}>
-          <InputLabel id="event-select-label">Select Event (Optional)</InputLabel>
-          <Select
-            labelId="event-select-label"
-            value={selectedEventId || ''}
-            label="Select Event (Optional)"
-            onChange={(e) => setSelectedEventId(e.target.value as string)}
-            endAdornment={ // Add endAdornment for the button
-              selectedEventId && (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => {
-                      console.log('Navigating to event:', selectedEventId);
-                      navigate(`/events/${selectedEventId}`);
-                    }}
-                    edge="end"
-                    aria-label="view event details"
-                    disabled={!selectedEventId}
-                  >
-                    <VisibilityIcon />
-                  </IconButton>
-                </InputAdornment>
-              )
-            }
-          >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-            {events.map((event: Event) => (
-              <MenuItem key={event.id} value={event.id}>
-                {event.name} ({new Date(event.start_date).toLocaleDateString()})
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <EventSelector
+          selectedEventId={selectedEventId}
+          onSelectEvent={(id) => setSelectedEventId(id)}
+        />
 
-        <Grid container spacing={3}>
-          {/* Product Cards */}
-          <Grid item xs={12} md={8}>
+        {/* Main content area - Products and Basket */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}> {/* Main flex container */}
+
+          {/* Product Cards Section */}
+          <Box>
             <Typography variant="h5" gutterBottom>Products</Typography>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} alignItems="stretch" sx={{ width: '100%' }}> {/* ADD width: '100%' */} {/* Ensure alignItems="stretch" */}
               {products.map((product) => (
-                <Grid item xs={6} sm={4} md={3} key={product.id}>
-                  <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <Grid item xs={6} sm={4} md={3} key={product.id} sx={{ height: '100%', display: 'flex' }}> {/* ADD display: 'flex' back to Grid item */}
+                  <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', width: '100%', minHeight: 300 }}> {/* ADD minHeight */} {/* Ensure width: '100%' */}
                     <CardActionArea onClick={() => handleAddToBasket(product)}>
                       <CardMedia
                         component="img"
                         sx={{
-                          height: { xs: 100, sm: 140, md: 180 }, // Responsive height
+                          height: { xs: 100, sm: 140, md: 180 },
                           objectFit: 'contain',
-                          // Removed p: 1
                         }}
                         image={product.image_url || 'https://via.placeholder.com/150?text=No+Image'}
                         alt={product.name}
                       />
-                      <CardContent>
-                        <Typography gutterBottom variant="h6" component="div">
+                      <CardContent sx={{ flexGrow: 1 }}> {/* Ensure flexGrow: 1 */}
+                        <Typography
+                          gutterBottom
+                          variant="h6"
+                          component="div"
+                          noWrap // Ensure noWrap
+                          title={product.name}
+                          sx={{width: '100%'}} // Ensure width: '100%' for Typography
+                        >
                           {product.name}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
@@ -157,10 +132,10 @@ const SalesView: React.FC = () => {
                 </Grid>
               ))}
             </Grid>
-          </Grid>
+          </Box>
 
-          {/* Basket */}
-          <Grid item xs={12} md={4}>
+          {/* Basket Section */}
+          <Box>
             <Typography variant="h5" gutterBottom>Basket</Typography>
             <List sx={{ bgcolor: 'background.paper', borderRadius: 1, p: 1 }}>
               {basket.length === 0 ? (
@@ -211,8 +186,9 @@ const SalesView: React.FC = () => {
                 </Button>
               </Box>
             </Box>
-          </Grid>
-        </Grid>
+          </Box>
+
+        </Box> {/* End Main flex container */}
       </Box>
     </Container>
   );

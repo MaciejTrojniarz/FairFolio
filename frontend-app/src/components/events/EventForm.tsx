@@ -29,6 +29,10 @@ const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
   const [venue, setVenue] = useState(event?.venue || '');
   const [city, setCity] = useState(event?.city || '');
 
+  const [startDateError, setStartDateError] = useState<string | null>(null); // NEW STATE
+  const [endDateError, setEndDateError] = useState<string | null>(null); // NEW STATE
+
+
   useEffect(() => {
     if (event) {
       setName(event.name);
@@ -52,6 +56,24 @@ const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Reset errors
+    setStartDateError(null);
+    setEndDateError(null);
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    let hasError = false;
+
+    if (start > end) {
+      setEndDateError('End date cannot be before start date.');
+      hasError = true;
+    }
+
+    if (hasError) {
+      return; // Prevent form submission if there are errors
+    }
 
     const eventData = {
       name,
@@ -108,6 +130,8 @@ const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
           InputLabelProps={{
             shrink: true,
           }}
+          error={!!startDateError} // Apply error state
+          helperText={startDateError} // Display error message
         />
         <TextField
           label="End Date"
@@ -119,6 +143,8 @@ const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
           InputLabelProps={{
             shrink: true,
           }}
+          error={!!endDateError} // Apply error state
+          helperText={endDateError} // Display error message
         />
         <TextField
           label="Venue"

@@ -5,6 +5,7 @@ import {
   addProductCommand,
   updateProductCommand,
 } from '../../store/features/products/productsSlice';
+import { productService } from '../../services/productService'; // NEW IMPORT
 import {
   Box,
   Button,
@@ -14,6 +15,8 @@ import {
   InputAdornment,
   IconButton,
   Avatar,
+  CircularProgress, // NEW IMPORT
+  Alert, // NEW IMPORT
 } from '@mui/material';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 
@@ -31,6 +34,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
   const [cost, setCost] = useState(product?.cost.toString() || '');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageUrlPreview, setImageUrlPreview] = useState<string | null>(product?.image_url || null);
+  const [loading, setLoading] = useState(false); // NEW STATE
+  const [error, setError] = useState<string | null>(null); // NEW STATE
 
   useEffect(() => {
     if (product) {
@@ -59,24 +64,46 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
     }
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => { // Made async
     event.preventDefault();
 
-    const productData = {
-      name,
-      description,
-      price: parseFloat(price),
-      cost: parseFloat(cost),
-    };
+    setLoading(true); // Add loading state
+    setError(null); // Add error state
 
-    if (product) {
-      // Update existing product
-      dispatch(updateProductCommand({ ...product, ...productData }, imageFile));
-    } else {
-      // Add new product
-      dispatch(addProductCommand(productData, imageFile));
+    let imageUrl: string | undefined = imageUrlPreview || undefined; // Start with existing preview or undefined
+
+    try {
+      let currentProductId = product?.id; // Use existing product ID if editing
+
+      if (imageFile) {
+        // Generate a UUID for the image filename if adding a new product
+        // or use existing product ID for updates
+        const imageFileName = currentProductId || crypto.randomUUID(); // Use product ID or new UUID
+        imageUrl = await productService.uploadProductImage(imageFile, imageFileName);
+      }
+
+      const productData = {
+        name,
+        description,
+        price: parseFloat(price),
+        cost: parseFloat(cost),
+        image_url: imageUrl, // Include image_url in productData
+      };
+
+      if (product) {
+        // Update existing product
+        dispatch(updateProductCommand({ ...product, ...productData })); // Pass only product data
+      } else {
+        // Add new product
+        dispatch(addProductCommand(productData)); // Pass only product data
+      }
+      onClose(); // Close form after submission
+    } catch (err: any) {
+      setError(err.message); // Set error message
+      console.error('Error during product submission:', err);
+    } finally {
+      setLoading(false); // Reset loading state
     }
-    onClose(); // Close form after submission
   };
 
   return (

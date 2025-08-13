@@ -1,24 +1,59 @@
-import React from 'react';
-import { AppBar, Toolbar, Typography, Button, Breadcrumbs, Link as MuiLink, Box, IconButton } from '@mui/material'; // Added IconButton
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { AppBar, Toolbar, Typography, Button, Breadcrumbs, Link as MuiLink, Box, IconButton, Menu, MenuItem, Avatar } from '@mui/material';
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import InventoryIcon from '@mui/icons-material/Inventory';
-import HistoryIcon from '@mui/icons-material/History'; // New import
-import EventIcon from '@mui/icons-material/Event'; // New import
-import { useSelector } from 'react-redux';
+import HistoryIcon from '@mui/icons-material/History';
+import EventIcon from '@mui/icons-material/Event';
+import SettingsIcon from '@mui/icons-material/Settings'; // NEW IMPORT
+import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../store';
+import { supabase } from '../supabaseClient';
+import GravatarAvatar from './common/GravatarAvatar'; // NEW IMPORT
 
 const Navbar: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const pathnames = location.pathname.split('/').filter((x) => x);
   const products = useSelector((state: RootState) => state.products.products);
-  const events = useSelector((state: RootState) => state.events.events); // Get events from Redux store
+  const events = useSelector((state: RootState) => state.events.events);
+
+  const dispatch = useDispatch();
+  const { user } = useSelector((state: RootState) => state.auth);
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    handleClose();
+    navigate('/login');
+  };
+
+  const handleProfile = () => {
+    handleClose();
+    navigate('/profile');
+  };
+
+  const handleLogin = () => {
+    handleClose();
+    navigate('/login');
+  };
 
   return (
     <AppBar position="static">
       <Toolbar>
-        <RouterLink to="/"><Typography variant="h6" component="div">
-          FaireFolio
-        </Typography>
+        <RouterLink to="/">
+          <Typography variant="h6" component="div">
+            FaireFolio
+          </Typography>
         </RouterLink>
         <Box sx={{ flexGrow: 1 }}>
           <Breadcrumbs aria-label="breadcrumb" color="inherit">
@@ -47,7 +82,7 @@ const Navbar: React.FC = () => {
                 displayValue = 'Edit Sale'; // Simplified for debugging
               } else if (pathnames[index - 1] === 'new') { // For 'new' pages
                 displayValue = `New ${pathnames[index - 2].charAt(0).toUpperCase() + pathnames[index - 2].slice(1)}`;
-              } else if (value === 'record' && pathnames[index - 1] === 'sales') { // For /sales/record
+              } else if (value === 'record' && pathnames[index - 1] === 'sales') {
                 displayValue = 'Record Sale';
               } else if (value === 'sales' && index === 0) { // For the top-level /sales
                 displayValue = 'Sales History';
@@ -94,6 +129,49 @@ const Navbar: React.FC = () => {
             <EventIcon />
           </IconButton>
         </RouterLink>
+        {/* User Icon and Menu */}
+        <Box sx={{ flexGrow: 0 }}>
+          {user ? (
+            <>
+              <IconButton
+                size="large"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleMenu}
+                color="inherit"
+              >
+                <GravatarAvatar email={user?.email} size={40} /> {/* Use GravatarAvatar */}
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={open}
+                onClose={handleClose}
+              >
+                <MenuItem onClick={handleProfile}>
+                  <SettingsIcon sx={{ mr: 1 }} /> Profile
+                </MenuItem>
+                <MenuItem onClick={handleLogout}>
+                  Logout
+                </MenuItem>
+              </Menu>
+            </>
+          ) : (
+            <Button color="inherit" onClick={handleLogin}>
+              Login
+            </Button>
+          )}
+        </Box>
       </Toolbar>
     </AppBar>
   );

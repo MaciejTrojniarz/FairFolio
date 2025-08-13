@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'; // New imports
 import type { RootState } from './store'; // New import
 import { fetchMerchantCommand } from './store/features/merchant/merchantSlice'; // New import
 import ProductManagementList from './components/products/ProductManagementList';
+import ProductDetailsPage from './components/products/ProductDetailsPage'; // NEW IMPORT
 import ProductFormPage from './components/products/ProductFormPage';
 import Home from './components/Home';
 import SalesView from './components/SalesView';
@@ -17,9 +18,34 @@ import Navbar from './components/Navbar';
 import { Box } from '@mui/material';
 import ToastNotification from './components/ToastNotification'; // New import
 
+import Login from './components/Auth/Login';
+import Profile from './components/Auth/Profile'; // NEW IMPORT
+import { supabase } from './supabaseClient';
+import { setUser, setLoading } from './store/features/auth/authSlice';
+import ProtectedRoute from './components/Auth/ProtectedRoute';
+
 function App() {
   const dispatch = useDispatch();
   const merchant = useSelector((state: RootState) => state.merchant.merchant);
+
+  // Supabase Auth Listener
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      dispatch(setUser(session?.user || null));
+      dispatch(setLoading(false));
+    });
+
+    // Initial check for user session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      dispatch(setUser(session?.user || null));
+      dispatch(setLoading(false));
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, [dispatch]);
+
 
   useEffect(() => {
     dispatch(fetchMerchantCommand()); // Fetch merchant data on mount
@@ -39,18 +65,25 @@ function App() {
         <Navbar /> {/* Render Navbar outside Routes */}
         <Box sx={{ flexGrow: 1, mt: 2 }}> {/* Content area, grows to fill remaining space */}
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/products" element={<ProductManagementList />} />
-            <Route path="/products/new" element={<ProductFormPage />} />
-            <Route path="/products/:id/edit" element={<ProductFormPage />} />
-            <Route path="/sales/record" element={<SalesView />} /> {/* New path for recording sales */}
-            <Route path="/sales" element={<SalesHistoryView />} /> {/* Sales history is now just /sales */}
-            <Route path="/sales/:id" element={<SaleDetailView />} /> {/* Sale detail is now /sales/:id */}
-            <Route path="/sales/:id/edit" element={<SaleEditPage />} /> {/* Sale edit is now /sales/:id/edit */}
-            <Route path="/events" element={<EventManagementPage />} />
-            <Route path="/events/new" element={<EventFormPage />} />
-            <Route path="/events/:id" element={<EventDetailView />} /> {/* New read-only view */}
-            <Route path="/events/:id/edit" element={<EventFormPage />} /> {/* Changed edit path */}
+            <Route path="/login" element={<Login />} /> {/* NEW ROUTE */}
+
+            {/* Protected Routes */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/profile" element={<Profile />} /> {/* NEW ROUTE */}
+            <Route path="/products/:id" element={<ProductDetailsPage />} /> {/* NEW ROUTE */}
+            <Route path="/" element={<Home />} /> {/* Home is now protected */}
+              <Route path="/products" element={<ProductManagementList />} />
+              <Route path="/products/new" element={<ProductFormPage />} />
+              <Route path="/products/:id/edit" element={<ProductFormPage />} />
+              <Route path="/sales/record" element={<SalesView />} />
+              <Route path="/sales" element={<SalesHistoryView />} />
+              <Route path="/sales/:id" element={<SaleDetailView />} />
+              <Route path="/sales/:id/edit" element={<SaleEditPage />} />
+              <Route path="/events" element={<EventManagementPage />} />
+              <Route path="/events/new" element={<EventFormPage />} />
+              <Route path="/events/:id" element={<EventDetailView />} />
+              <Route path="/events/:id/edit" element={<EventFormPage />} />
+            </Route>
           </Routes>
         </Box>
       </Box>

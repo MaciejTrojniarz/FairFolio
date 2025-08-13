@@ -21,8 +21,14 @@ export const fetchSalesEpic = (action$: any) =>
     ofType(fetchSalesCommand.type),
     switchMap(() =>
       from(saleService.fetchSales()).pipe(
-        map((sales: Sale[]) => salesFetchedEvent(sales)),
-        catchError((error) => of(salesErrorEvent(error.message)))
+        map((sales: Sale[]) => {
+          console.log('Sales fetched by epic:', sales); // ADDED LOG
+          return salesFetchedEvent(sales);
+        }),
+        catchError((error) => {
+          console.error('Error fetching sales in epic:', error); // ADDED LOG
+          return of(salesErrorEvent(error.message));
+        })
       )
     )
   );
@@ -57,7 +63,7 @@ export const recordSaleEpic = (action$: any, state$: any) =>
         price_at_sale: item.price,
       }));
 
-      return from(saleService.recordSale(saleData, saleItemsData)).pipe(
+      return from(saleService.addSale(saleData, saleItemsData)).pipe(
         mergeMap((sale) => of(
           saleRecordedEvent(sale),
           showToast({ message: 'Sale recorded successfully!', severity: 'success' })

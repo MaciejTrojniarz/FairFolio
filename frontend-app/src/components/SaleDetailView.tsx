@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../store';
 import { fetchSaleDetailsCommand } from '../store/features/sales/salesSlice';
@@ -16,8 +16,10 @@ import {
   Paper,
   Button,
   Avatar,
+  Link as MuiLink, // NEW IMPORT
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import LaunchIcon from '@mui/icons-material/Launch'; // NEW IMPORT
 
 const SaleDetailView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -90,9 +92,17 @@ const SaleDetailView: React.FC = () => {
           <Typography variant="body1">Total Amount: ${selectedSale.total_amount.toFixed(2)}</Typography>
           <Typography variant="body1">Date: {new Date(selectedSale.timestamp).toLocaleString()}</Typography>
           {selectedSale.event_id && (
-            <Typography variant="body1">
-              Event: {events.find(e => e.id === selectedSale.event_id)?.name || 'Unknown Event'}
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}> {/* Use Box for layout */}
+              <Typography variant="body1" sx={{ mr: 1 }}>Event:</Typography>
+              <Button
+                variant="outlined"
+                size="small"
+                startIcon={<LaunchIcon />}
+                onClick={() => navigate(`/events/${selectedSale.event_id}`)}
+              >
+                {events.find(e => e.id === selectedSale.event_id)?.name || 'Unknown Event'}
+              </Button>
+            </Box>
           )}
         </Paper>
 

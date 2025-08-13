@@ -15,12 +15,7 @@ const ProductFormPage: React.FC = () => {
   const { products, loading, error } = useSelector((state: RootState) => state.products);
   const [productToEdit, setProductToEdit] = useState<Product | undefined>(undefined);
 
-  useEffect(() => {
-    // Ensure products are loaded to find the one to edit
-    if (products.length === 0 && !loading && !error) {
-      dispatch(fetchProductsCommand());
-    }
-  }, [products, loading, error, dispatch]);
+  
 
   useEffect(() => {
     if (id && products.length > 0) {

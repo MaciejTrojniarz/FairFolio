@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'; // Added useState
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../store';
-import { fetchEventsCommand } from '../store/features/events/eventsSlice';
+import { fetchEventsCommand, deleteEventCommand } from '../store/features/events/eventsSlice';
 import { fetchSalesCommand } from '../store/features/sales/salesSlice'; // New import
 import {
   Container,

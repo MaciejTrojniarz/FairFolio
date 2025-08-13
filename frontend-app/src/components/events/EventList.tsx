@@ -17,10 +17,11 @@ import {
   CircularProgress,
   Alert,
   Box,
+  ListItemButton, // NEW IMPORT
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import VisibilityIcon from '@mui/icons-material/Visibility'; // New import
+// import VisibilityIcon from '@mui/icons-material/Visibility'; // REMOVE THIS IMPORT
 
 const EventList: React.FC = () => { // Removed onEdit prop
   const dispatch = useDispatch();
@@ -35,6 +36,14 @@ const EventList: React.FC = () => { // Removed onEdit prop
     navigate(`/events/${id}`);
   };
 
+  const handleEditEvent = (id: string) => { // ADDED: handle edit event
+    navigate(`/events/${id}/edit`);
+  };
+
+  const handleDeleteEvent = (id: string) => { // ADDED: handle delete event
+    dispatch(deleteEventCommand(id));
+  };
+
   return (
     <Box>
       <Typography variant="h5" component="h2" gutterBottom>
@@ -45,17 +54,14 @@ const EventList: React.FC = () => { // Removed onEdit prop
       {error && <Alert severity="error">Error: {error}</Alert>}
 
       <List>
-        {events.map((event) => (
-          <ListItem key={event.id} divider>
-            <ListItemText
-              primary={event.name}
-              secondary={`Venue: ${event.venue}, ${event.city} | ${new Date(event.start_date).toLocaleDateString()} - ${new Date(event.end_date).toLocaleDateString()}`}
-            />
-            <ListItemSecondaryAction>
-              <IconButton edge="end" aria-label="view details" onClick={() => handleViewDetails(event.id)}>
-                <VisibilityIcon />
-              </IconButton>
-            </ListItemSecondaryAction>
+        {events.map((event) => ( // Use events directly
+          <ListItem key={event.id} divider> {/* Outer ListItem */}
+            <ListItemButton onClick={() => handleViewDetails(event.id)}> {/* Make entire button clickable */}
+              <ListItemText
+                primary={event.name}
+                secondary={`Venue: ${event.venue}, ${event.city} | ${new Date(event.start_date).toLocaleDateString()} - ${new Date(event.end_date).toLocaleDateString()}`}
+              />
+            </ListItemButton>
           </ListItem>
         ))}
       </List>
