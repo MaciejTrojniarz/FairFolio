@@ -42,13 +42,14 @@ export const recordSaleEpic = (action$: any, state$: any) =>
   action$.pipe(
     ofType(recordSaleCommand.type),
     withLatestFrom(state$),
-    switchMap(([action, state]: [PayloadAction<string | undefined>, RootState]) => { // Modified action type
+    switchMap(([action, state]: [PayloadAction<{ eventId?: string; comment?: string }>, RootState]) => {
       const { basket, totalAmount } = state.sales;
-      const eventId = action.payload; // Get eventId from action payload
+      const { eventId, comment } = action.payload; // Get eventId and comment from action payload
 
       const saleData = {
         total_amount: totalAmount,
-        event_id: eventId, // Pass event_id
+        event_id: eventId,
+        comment: comment, // Pass comment
       };
 
       const saleItemsData = basket.map(item => ({

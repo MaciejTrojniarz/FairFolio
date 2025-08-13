@@ -37,7 +37,7 @@ export const salesSlice = createSlice({
       state.selectedSale = null;
       state.selectedSaleItems = [];
     },
-    recordSaleCommand: (state) => {
+    recordSaleCommand: (state, action: PayloadAction<{ eventId?: string; comment?: string }>) => {
       state.loading = true;
       state.error = null;
     },

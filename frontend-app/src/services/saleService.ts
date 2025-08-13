@@ -12,7 +12,15 @@ export const saleService = {
 
     const { data: saleData, error: saleError } = await supabase
       .from('sales')
-      .insert([saleWithUserId]) // Insert with user_id
+      .insert([
+        {
+          user_id: user.id,
+          event_id: sale.event_id,
+          timestamp: new Date().toISOString(),
+          total_amount: sale.total_amount,
+          comment: sale.comment,
+        },
+      ])
       .select();
 
     if (saleError) throw saleError;
@@ -148,7 +156,11 @@ export const saleService = {
     // Supabase implementation
     const { data: saleData, error: saleError } = await supabase
       .from('sales')
-      .update(updatedSaleData)
+      .update({
+        total_amount: updatedSaleData.total_amount,
+        event_id: updatedSaleData.event_id,
+        comment: updatedSaleData.comment,
+      })
       .eq('id', saleId)
       .select()
       .single();

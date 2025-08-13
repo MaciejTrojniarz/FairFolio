@@ -50,7 +50,18 @@ export const productService = {
 
     const { data, error } = await supabase
       .from('products')
-      .insert([productWithUserId])
+      .insert([
+        {
+          user_id: user.id,
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          cost: product.cost,
+          image_url: product.image_url,
+          notes: product.notes,
+          link: product.link,
+        },
+      ])
       .select();
     if (error) throw error;
 
@@ -60,7 +71,15 @@ export const productService = {
   async updateProduct(product: Product): Promise<Product> {
     const { data, error } = await supabase
       .from('products')
-      .update(product)
+      .update({
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        cost: product.cost,
+        image_url: product.image_url,
+        notes: product.notes,
+        link: product.link,
+      })
       .eq('id', product.id)
       .select();
     if (error) throw error;

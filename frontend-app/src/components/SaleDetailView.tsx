@@ -93,6 +93,9 @@ const SaleDetailView: React.FC = () => {
           <Typography variant="h6">{t('sale_id')}: {selectedSale.id}</Typography>
           <Typography variant="body1">{t('total_amount')}: ${selectedSale.total_amount.toFixed(2)}</Typography>
           <Typography variant="body1">{t('date')}: {new Date(selectedSale.timestamp).toLocaleString()}</Typography>
+          {selectedSale.comment && (
+            <Typography variant="body1"><strong>{t('comment')}:</strong> {selectedSale.comment}</Typography>
+          )}
           {selectedSale.event_id && (
             <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
               <Typography variant="body1" sx={{ mr: 1 }}>{t('event')}:</Typography>

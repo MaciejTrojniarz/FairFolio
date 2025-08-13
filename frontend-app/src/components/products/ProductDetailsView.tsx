@@ -46,6 +46,18 @@ const ProductDetailsView: React.FC<ProductDetailsViewProps> = ({ product }) => {
           <Typography variant="h6">{t('price')}: ${product.price.toFixed(2)}</Typography> {/* Translated */}
           <Typography variant="h6">{t('cost')}: ${product.cost.toFixed(2)}</Typography> {/* Translated */}
 
+          {product.notes && (
+            <Typography variant="body1" sx={{ mt: 2 }}>
+              <strong>{t('notes')}:</strong> {product.notes}
+            </Typography>
+          )}
+
+          {product.link && (
+            <Typography variant="body1" sx={{ mt: 2 }}>
+              <strong>{t('link')}:</strong> <a href={product.link} target="_blank" rel="noopener noreferrer">{product.link}</a>
+            </Typography>
+          )}
+
           {/* Add more details as needed */}
           {/* Example: Category if available */}
           {/* {product.category_id && (

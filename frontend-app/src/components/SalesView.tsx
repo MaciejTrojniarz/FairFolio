@@ -30,6 +30,7 @@ import {
   IconButton,
   CircularProgress,
   Alert,
+  TextField,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -45,6 +46,7 @@ const SalesView: React.FC = () => {
   const { basket, totalAmount, loading: salesLoading, error: salesError } = useSelector((state: RootState) => state.sales);
 
   const [selectedEventId, setSelectedEventId] = useState<string | undefined>(undefined);
+  const [comment, setComment] = useState('');
 
   useEffect(() => {
     dispatch(fetchProductsCommand());
@@ -72,7 +74,7 @@ const SalesView: React.FC = () => {
 
   const handleRecordSale = () => {
     if (basket.length > 0) {
-      dispatch(recordSaleCommand(selectedEventId)); // Pass selected event ID
+      dispatch(recordSaleCommand({ eventId: selectedEventId, comment: comment })); // Pass selected event ID and comment
     }
   };
 
@@ -89,6 +91,15 @@ const SalesView: React.FC = () => {
         <EventSelector
           selectedEventId={selectedEventId}
           onSelectEvent={(id) => setSelectedEventId(id)}
+        />
+        <TextField
+          label="Comment"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          fullWidth
+          multiline
+          rows={2}
+          sx={{ mt: 2, mb: 2 }}
         />
 
         {/* Main content area - Products and Basket */}

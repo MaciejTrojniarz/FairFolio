@@ -30,6 +30,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
 
   const [name, setName] = useState(product?.name || '');
   const [description, setDescription] = useState(product?.description || '');
+  const [notes, setNotes] = useState(product?.notes || '');
+  const [link, setLink] = useState(product?.link || '');
   const [price, setPrice] = useState(product?.price.toString() || '');
   const [cost, setCost] = useState(product?.cost.toString() || '');
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -41,6 +43,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
     if (product) {
       setName(product.name);
       setDescription(product.description || '');
+      setNotes(product.notes || '');
+      setLink(product.link || '');
       setPrice(product.price.toString());
       setCost(product.cost.toString());
       setImageUrlPreview(product.image_url || null);
@@ -49,6 +53,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
       // Reset form for new product
       setName('');
       setDescription('');
+      setNotes('');
+      setLink('');
       setPrice('');
       setCost('');
       setImageFile(null);
@@ -85,6 +91,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
       const productData = {
         name,
         description,
+        notes,
+        link,
         price: parseFloat(price),
         cost: parseFloat(cost),
         image_url: imageUrl, // Include image_url in productData
@@ -126,6 +134,20 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
           fullWidth
           multiline
           rows={2}
+        />
+        <TextField
+          label="Notes"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          fullWidth
+          multiline
+          rows={2}
+        />
+        <TextField
+          label="Link"
+          value={link}
+          onChange={(e) => setLink(e.target.value)}
+          fullWidth
         />
         <TextField
           label="Price"

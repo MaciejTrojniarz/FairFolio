@@ -28,6 +28,7 @@ import {
   IconButton,
   CircularProgress,
   Alert,
+  TextField,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -53,6 +54,7 @@ const SaleEditForm: React.FC<SaleEditFormProps> = ({ sale, saleItems }) => {
   const [currentBasket, setCurrentBasket] = useState<DetailedSaleItem[]>(saleItems);
   const [currentTotalAmount, setCurrentTotalAmount] = useState(sale.total_amount);
   const [selectedEventId, setSelectedEventId] = useState<string | undefined>(sale.event_id);
+  const [comment, setComment] = useState(sale.comment || '');
 
   useEffect(() => {
     dispatch(fetchProductsCommand());
@@ -111,7 +113,7 @@ const SaleEditForm: React.FC<SaleEditFormProps> = ({ sale, saleItems }) => {
 
     dispatch(updateSaleCommand({
       saleId: sale.id,
-      updatedSaleData: { total_amount: currentTotalAmount, event_id: eventIdToSend }, // Use eventIdToSend
+      updatedSaleData: { total_amount: currentTotalAmount, event_id: eventIdToSend, comment: comment }, // Use eventIdToSend and comment
       updatedSaleItems: currentBasket,
       originalSaleItems: saleItems, // Pass original items for comparison
     }));
@@ -135,6 +137,15 @@ const SaleEditForm: React.FC<SaleEditFormProps> = ({ sale, saleItems }) => {
         <EventSelector
           selectedEventId={selectedEventId}
           onSelectEvent={(id) => setSelectedEventId(id)}
+        />
+        <TextField
+          label="Comment"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          fullWidth
+          multiline
+          rows={2}
+          sx={{ mt: 2, mb: 2 }}
         />
 
         <Grid container spacing={3}>

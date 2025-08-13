@@ -7,6 +7,8 @@ export interface Product {
   price: number;
   cost: number;
   image_url?: string; // New field for product image
+  notes?: string;
+  link?: string;
 }
 
 export interface Category {
@@ -21,6 +23,7 @@ export interface Sale {
   event_id?: string; // New: Optional link to an event
   timestamp: string; // ISO date string
   total_amount: number;
+  comment?: string;
 }
 
 export interface SaleItem {
