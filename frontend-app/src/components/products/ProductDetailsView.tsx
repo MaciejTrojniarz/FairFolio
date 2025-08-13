@@ -45,6 +45,9 @@ const ProductDetailsView: React.FC<ProductDetailsViewProps> = ({ product }) => {
 
           <Typography variant="h6">{t('price')}: ${product.price.toFixed(2)}</Typography> {/* Translated */}
           <Typography variant="h6">{t('cost')}: ${product.cost.toFixed(2)}</Typography> {/* Translated */}
+          {product.stock_quantity !== undefined && (
+            <Typography variant="h6">{t('stock_quantity')}: {product.stock_quantity}</Typography>
+          )}
 
           {product.notes && (
             <Typography variant="body1" sx={{ mt: 2 }}>

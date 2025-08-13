@@ -3,6 +3,7 @@ import { from, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, withLatestFrom } from 'rxjs/operators'; // Added mergeMap
 import { saleService } from '../../../services/saleService';
 import { showToast } from '../ui/uiSlice'; // New import
+import { fetchProductsCommand } from '../products/productsSlice'; // NEW IMPORT
 import {
   fetchSalesCommand,
   fetchSaleDetailsCommand,
@@ -61,6 +62,7 @@ export const recordSaleEpic = (action$: any, state$: any) =>
       return from(saleService.addSale(saleData, saleItemsData)).pipe(
         mergeMap((sale) => of(
           saleRecordedEvent(sale),
+          fetchProductsCommand(), // Re-fetch products to update stock levels
           showToast({ message: 'Sale recorded successfully!', severity: 'success' })
         )),
         catchError((error) => of(

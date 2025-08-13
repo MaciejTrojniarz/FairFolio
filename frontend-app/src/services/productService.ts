@@ -60,6 +60,7 @@ export const productService = {
           image_url: product.image_url,
           notes: product.notes,
           link: product.link,
+          stock_quantity: product.stock_quantity,
         },
       ])
       .select();
@@ -79,6 +80,7 @@ export const productService = {
         image_url: product.image_url,
         notes: product.notes,
         link: product.link,
+        stock_quantity: product.stock_quantity,
       })
       .eq('id', product.id)
       .select();
@@ -95,5 +97,35 @@ export const productService = {
       .delete()
       .eq('id', id);
     if (error) throw error;
+  },
+
+  async decrementProductStock(productId: string, quantity: number): Promise<void> {
+    if (quantity < 0) {
+      throw new Error('Quantity for decrementProductStock must be positive.');
+    }
+    const { data, error } = await supabase.rpc('decrement_product_stock', {
+      product_id_param: productId,
+      quantity_param: quantity,
+    });
+
+    if (error) {
+      console.error('Error decrementing stock:', error);
+      throw new Error(`Failed to decrement stock for product ${productId}: ${error.message}`);
+    }
+  },
+
+  async incrementProductStock(productId: string, quantity: number): Promise<void> {
+    if (quantity < 0) {
+      throw new Error('Quantity for incrementProductStock must be positive.');
+    }
+    const { data, error } = await supabase.rpc('increment_product_stock', {
+      product_id_param: productId,
+      quantity_param: quantity,
+    });
+
+    if (error) {
+      console.error('Error incrementing stock:', error);
+      throw new Error(`Failed to increment stock for product ${productId}: ${error.message}`);
+    }
   },
 };

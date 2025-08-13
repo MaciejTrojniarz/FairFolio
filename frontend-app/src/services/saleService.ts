@@ -1,5 +1,6 @@
 import { supabase } from '../supabaseClient';
 import type { Sale, SaleItem, Product, DetailedSaleItem } from '../types';
+import { productService } from './productService';
 
 export const saleService = {
   async addSale(sale: Omit<Sale, 'id' | 'timestamp'>, items: SaleItem[]): Promise<Sale & { items: DetailedSaleItem[] }> { // Changed return type
@@ -39,6 +40,11 @@ export const saleService = {
       // If sale items fail, consider rolling back the sale (requires more complex logic or database functions)
       // For now, we'll just throw the error.
       throw itemsError;
+    }
+
+    // Decrement stock for each sold item
+    for (const item of itemsToInsert) {
+      await productService.decrementProductStock(item.product_id, item.quantity);
     }
 
     // After all inserts, re-fetch the complete sale details with items
@@ -188,13 +194,27 @@ export const saleService = {
         quantity: item.quantity,
         price_at_sale: item.price_at_sale,
       })));
+      // Decrement stock for newly added items
+      for (const item of itemsToAdd) {
+        await productService.decrementProductStock(item.product_id, item.quantity);
+      }
     }
 
     for (const item of itemsToUpdate) {
-      await supabase.from('sale_items')
-        .update({ quantity: item.quantity })
-        .eq('sale_id', saleId)
-        .eq('product_id', item.product_id);
+      const originalItem = originalSaleItems.find(oldItem => oldItem.product_id === item.product_id);
+      if (originalItem) {
+        const quantityDifference = item.quantity - originalItem.quantity;
+        await supabase.from('sale_items')
+          .update({ quantity: item.quantity })
+          .eq('sale_id', saleId)
+          .eq('product_id', item.product_id);
+        // Adjust stock based on quantity difference
+        if (quantityDifference > 0) {
+          await productService.decrementProductStock(item.product_id, quantityDifference);
+        } else if (quantityDifference < 0) {
+          await productService.incrementProductStock(item.product_id, quantityDifference * -1); // Increment stock
+        }
+      }
     }
 
     if (itemsToDelete.length > 0) {
@@ -202,6 +222,10 @@ export const saleService = {
         .delete()
         .eq('sale_id', saleId)
         .in('product_id', itemsToDelete.map(item => item.product_id));
+      // Increment stock for deleted items
+      for (const item of itemsToDelete) {
+        await productService.incrementProductStock(item.product_id, item.quantity); // Increment stock
+      }
     }
 
     // After all updates, re-fetch the complete sale details with items

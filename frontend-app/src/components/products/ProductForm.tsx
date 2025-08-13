@@ -34,6 +34,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
   const [link, setLink] = useState(product?.link || '');
   const [price, setPrice] = useState(product?.price.toString() || '');
   const [cost, setCost] = useState(product?.cost.toString() || '');
+  const [stockQuantity, setStockQuantity] = useState(product?.stock_quantity?.toString() || '0');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageUrlPreview, setImageUrlPreview] = useState<string | null>(product?.image_url || null);
   const [loading, setLoading] = useState(false); // NEW STATE
@@ -47,6 +48,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
       setLink(product.link || '');
       setPrice(product.price.toString());
       setCost(product.cost.toString());
+      setStockQuantity(product.stock_quantity?.toString() || '0');
       setImageUrlPreview(product.image_url || null);
       setImageFile(null); // Clear file input when editing a new product
     } else {
@@ -57,6 +59,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
       setLink('');
       setPrice('');
       setCost('');
+      setStockQuantity('0');
       setImageFile(null);
       setImageUrlPreview(null);
     }
@@ -95,6 +98,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
         link,
         price: parseFloat(price),
         cost: parseFloat(cost),
+        stock_quantity: parseInt(stockQuantity),
         image_url: imageUrl, // Include image_url in productData
       };
 
@@ -169,6 +173,17 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
           required
           InputProps={{
             startAdornment: <InputAdornment position="start">$</InputAdornment>,
+          }}
+        />
+        <TextField
+          label="Stock Quantity"
+          type="number"
+          value={stockQuantity}
+          onChange={(e) => setStockQuantity(e.target.value)}
+          fullWidth
+          required
+          InputProps={{
+            inputProps: { min: 0 },
           }}
         />
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>

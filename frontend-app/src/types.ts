@@ -9,6 +9,7 @@ export interface Product {
   image_url?: string; // New field for product image
   notes?: string;
   link?: string;
+  stock_quantity?: number;
 }
 
 export interface Category {

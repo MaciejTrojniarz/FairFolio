@@ -58,7 +58,7 @@ const Navbar: React.FC = () => {
       position="static"
       color="inherit" // Inherit color to allow custom background
       sx={{
-        backgroundColor: mode === 'light' ? theme.palette.background.paper : theme.palette.primary.main, // Conditional background
+        backgroundColor: theme.palette.background.paper, // Always use paper background for consistency
       }}
     >
       <Toolbar>

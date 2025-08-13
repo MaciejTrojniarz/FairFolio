@@ -37,6 +37,8 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import EventSelector from './common/EventSelector'; // Corrected path
+import { showToast } from '../store/features/ui/uiSlice'; // NEW IMPORT
+import { useI18n } from '../contexts/I18nContext'; // NEW IMPORT
 
 const SalesView: React.FC = () => {
   const dispatch = useDispatch();
@@ -44,6 +46,7 @@ const SalesView: React.FC = () => {
   const { products, loading: productsLoading, error: productsError } = useSelector((state: RootState) => state.products);
   const { loading: eventsLoading, error: eventsError } = useSelector((state: RootState) => state.events);
   const { basket, totalAmount, loading: salesLoading, error: salesError } = useSelector((state: RootState) => state.sales);
+  const { t } = useI18n(); // NEW: useI18n hook
 
   const [selectedEventId, setSelectedEventId] = useState<string | undefined>(undefined);
   const [comment, setComment] = useState('');
@@ -61,6 +64,13 @@ const SalesView: React.FC = () => {
   }, [location.state]);
 
   const handleAddToBasket = (product: Product) => {
+    const existingItem = basket.find(item => item.id === product.id);
+    const currentQuantityInBasket = existingItem ? existingItem.quantity : 0;
+
+    if (product.stock_quantity !== undefined && product.stock_quantity <= currentQuantityInBasket) {
+      dispatch(showToast({ message: t('insufficient_stock_warning', { productName: product.name }), severity: 'warning' }));
+      return;
+    }
     dispatch(addToBasket(product));
   };
 
@@ -111,8 +121,8 @@ const SalesView: React.FC = () => {
             <Grid container spacing={2} alignItems="stretch" sx={{ width: '100%' }}> {/* ADD width: '100%' */} {/* Ensure alignItems="stretch" */}
               {products.map((product) => (
                 <Grid item xs={6} sm={4} md={3} key={product.id} sx={{ height: '100%', display: 'flex' }}> {/* ADD display: 'flex' back to Grid item */}
-                  <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', width: '100%', minHeight: 300 }}> {/* ADD minHeight */} {/* Ensure width: '100%' */}
-                    <CardActionArea onClick={() => handleAddToBasket(product)}>
+                  <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', width: '100%', minHeight: 300, opacity: product.stock_quantity !== undefined && product.stock_quantity <= 0 ? 0.5 : 1 }}> {/* ADD minHeight */} {/* Ensure width: '100%' */}
+                    <CardActionArea onClick={() => handleAddToBasket(product)} disabled={product.stock_quantity !== undefined && product.stock_quantity <= 0}>
                       <CardMedia
                         component="img"
                         sx={{
@@ -136,6 +146,11 @@ const SalesView: React.FC = () => {
                         <Typography variant="body2" color="text.secondary">
                           ${product.price.toFixed(2)}
                         </Typography>
+                        {product.stock_quantity !== undefined && (
+                          <Typography variant="body2" color={product.stock_quantity <= 0 ? "error" : "text.secondary"}>
+                            Stock: {product.stock_quantity}
+                          </Typography>
+                        )}
                       </CardContent>
                     </CardActionArea>
                   </Card>

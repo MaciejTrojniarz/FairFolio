@@ -32,6 +32,7 @@
   "description": "Opis",
   "price": "Cena",
   "cost": "Koszt",
+  "stock_quantity": "Ilość w magazynie",
   "notes": "Notatki",
   "upload_image": "Prześlij Zdjęcie",
   "cancel": "Anuluj",
@@ -88,5 +89,6 @@
   "event": "Wydarzenie",
   "unknown_event": "Nieznane Wydarzenie",
   "price_at_sale": "Cena w momencie sprzedaży",
-  "cost_at_sale": "Koszt"
+  "cost_at_sale": "Koszt",
+  "insufficient_stock_warning": "Nie można dodać więcej {productName}. Niewystarczająca ilość w magazynie."
 }

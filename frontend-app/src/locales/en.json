@@ -32,6 +32,7 @@
   "description": "Description",
   "price": "Price",
   "cost": "Cost",
+  "stock_quantity": "Stock Quantity",
   "notes": "Notes",
   "upload_image": "Upload Image",
   "cancel": "Cancel",
@@ -86,5 +87,6 @@
   "product_image": "Product Image",
   "sale_not_found": "Sale not found.",
   "event": "Event",
-  "unknown_event": "Unknown Event"
+  "unknown_event": "Unknown Event",
+  "insufficient_stock_warning": "Cannot add more {productName}. Insufficient stock."
 }
