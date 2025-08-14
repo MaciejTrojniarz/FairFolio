@@ -72,7 +72,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
         setSelectedCategoryId(newlyAddedCategory.id);
       }
     }
-  }, [categories, categoriesLoading, newCategoryName, selectedCategoryId]);
+  }, [categories, categoriesLoading]);
 
   useEffect(() => {
     if (product) {
