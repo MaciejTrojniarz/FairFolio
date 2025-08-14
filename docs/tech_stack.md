@@ -1,6 +1,6 @@
-# Technology Stack: FaireFolio
+# Technology Stack: FairMerchant
 
-This document outlines the proposed technology stack for the FaireFolio application, considering the project constraints (40-hour MVP, single senior developer with AI assistance) and the user's preferences.
+This document outlines the proposed technology stack for the FairMerchant application, considering the project constraints (40-hour MVP, single senior developer with AI assistance) and the user's preferences.
 
 ## 1. Frontend (Web Application)
 

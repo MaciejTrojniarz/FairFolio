@@ -1,7 +1,7 @@
-describe('FaireFolio App', () => {
+describe('FairMerchant App', () => {
   it('should display the main title', () => {
     cy.visit('/');
-    cy.contains('FaireFolio App');
+    cy.contains('FairMerchant App');
   });
 
   it('should increment the counter', () => {

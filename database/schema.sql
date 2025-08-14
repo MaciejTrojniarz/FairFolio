@@ -1,4 +1,4 @@
--- Schema for FaireFolio Application
+-- Schema for FairMerchant Application
 
 -- Table for Categories
 -- Groups products into different categories (e.g., Books, Jewelry)

@@ -1,4 +1,4 @@
-# Product Requirements Document: FaireFolio
+# Product Requirements Document: FairMerchant
 
 **Author:** Gemini Product Owner
 **Version:** 0.1
@@ -10,7 +10,7 @@
 
 Merchants at fantasy conventions, comic-cons, and trade fairs operate in a dynamic and often challenging environment. They require a simple, reliable tool to manage their business on-the-go. Key challenges include unreliable internet connectivity on convention floors, the need for rapid transaction processing, and the difficulty of tracking both sales and event-related expenses in one place.
 
-**FaireFolio** is a mobile-first application designed specifically for these merchants. It will provide a robust, offline-capable system for tracking sales, inventory, and event costs, ensuring that each merchant's data is private, secure, and always accessible.
+**FairMerchant** is a mobile-first application designed specifically for these merchants. It will provide a robust, offline-capable system for tracking sales, inventory, and event costs, ensuring that each merchant's data is private, secure, and always accessible.
 
 ## 2. Goals & Objectives
 

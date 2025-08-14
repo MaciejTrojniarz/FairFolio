@@ -17,7 +17,7 @@
   "add_sale_to_this_event": "Add sale to this event",
   "add_sale_tooltip": "Add Sale",
   "already_have_account": "Already have an account? Login",
-  "app_name": "FaireFolio",
+  "app_name": "FairMerchant",
   "are_you_sure_delete_event": "Are you sure you want to delete the event \"{eventName}\"? This action cannot be undone.",
   "are_you_sure_delete_event_confirm": "Are you sure you want to delete the event \"{eventName}\"? This action cannot be undone.",
   "are_you_sure_delete_product": "Are you sure you want to delete the product \"{productName}\"? This action cannot be undone.",
@@ -172,5 +172,5 @@
   "venue": "Venue",
   "view_details": "View Details",
   "view_details_for": "View details for {eventDisplayName}",
-  "welcome_message": "Welcome to FaireFolio! Manage your products, sales, and events with ease."
+  "welcome_message": "Welcome to FairMerchant! Manage your products, sales, and events with ease."
 }
