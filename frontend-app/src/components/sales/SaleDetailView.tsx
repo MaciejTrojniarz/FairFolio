@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import type { RootState } from '../store';
-import { fetchSaleDetailsCommand } from '../store/features/sales/salesSlice';
-import { fetchEventsCommand } from '../store/features/events/eventsSlice';
+import type { RootState } from '../../store';
+import { fetchSaleDetailsCommand } from '../../store/features/sales/salesSlice';
+import { fetchEventsCommand } from '../../store/features/events/eventsSlice';
 import {
   Container,
   Typography,
@@ -15,12 +15,11 @@ import {
   ListItemText,
   Paper,
   Button,
-  Avatar,
-  Link as MuiLink,
+  Avatar
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import LaunchIcon from '@mui/icons-material/Launch';
-import { useI18n } from '../contexts/I18nContext';
+import { useI18n } from '../../contexts/useI18n';
 
 const SaleDetailView: React.FC = () => {
   const { id } = useParams<{ id: string }>();

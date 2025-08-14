@@ -14,7 +14,7 @@ export const productService = {
     // Store images in a user-specific folder: user_id/product_id.extension
     const filePath = `${user.id}/${productId}.${fileExtension}`;
 
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from(PRODUCT_IMAGES_BUCKET)
       .upload(filePath, file, {
         cacheControl: '3600',
@@ -52,7 +52,6 @@ export const productService = {
     if (!user) {
       throw new Error('User not authenticated.');
     }
-    const productWithUserId = { ...product, user_id: user.id };
 
     const { data, error } = await supabase
       .from('products')
@@ -111,7 +110,7 @@ export const productService = {
     if (quantity < 0) {
       throw new Error('Quantity for decrementProductStock must be positive.');
     }
-    const { data, error } = await supabase.rpc('decrement_product_stock', {
+    const { error } = await supabase.rpc('decrement_product_stock', {
       product_id_param: productId,
       quantity_param: quantity,
     });
@@ -126,7 +125,7 @@ export const productService = {
     if (quantity < 0) {
       throw new Error('Quantity for incrementProductStock must be positive.');
     }
-    const { data, error } = await supabase.rpc('increment_product_stock', {
+    const { error } = await supabase.rpc('increment_product_stock', {
       product_id_param: productId,
       quantity_param: quantity,
     });

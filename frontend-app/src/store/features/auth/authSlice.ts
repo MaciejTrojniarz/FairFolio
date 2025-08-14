@@ -2,8 +2,14 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { User } from '@supabase/supabase-js';
 
+interface AuthUser extends User {
+  name?: string;
+  language?: string;
+  theme?: string;
+}
+
 interface AuthState {
-  user: User | null;
+  user: AuthUser | null;
   isLoading: boolean;
 }
 
@@ -16,7 +22,7 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<User | null>) => {
+    setUser: (state, action: PayloadAction<AuthUser | null>) => {
       state.user = action.payload;
       state.isLoading = false;
     },

@@ -5,32 +5,28 @@ import {
   addEventCommand,
   updateEventCommand,
 } from '../../store/features/events/eventsSlice';
-import {
-  Box,
-  Button,
-  TextField,
-  Typography,
-  Paper,
-} from '@mui/material';
+import { useI18n } from '../../contexts/useI18n';
+import { Box, Button, TextField, Typography, Paper } from '@mui/material';
 
 interface EventFormProps {
-  event?: Event; // Optional, for editing existing events
-  onClose: () => void; // Callback to close form/dialog
+  event?: Event;
+  onClose: () => void;
 }
 
 const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
+  const { t } = useI18n();
   const dispatch = useDispatch();
 
   const [name, setName] = useState(event?.name || '');
   const [description, setDescription] = useState(event?.description || '');
   const [link, setLink] = useState(event?.link || '');
-  const [startDate, setStartDate] = useState(event?.start_date.split('T')[0] || ''); // Format for date input
-  const [endDate, setEndDate] = useState(event?.end_date.split('T')[0] || ''); // Format for date input
+  const [startDate, setStartDate] = useState(event?.start_date.split('T')[0] || '');
+  const [endDate, setEndDate] = useState(event?.end_date.split('T')[0] || '');
   const [venue, setVenue] = useState(event?.venue || '');
   const [city, setCity] = useState(event?.city || '');
 
-  const [startDateError, setStartDateError] = useState<string | null>(null); // NEW STATE
-  const [endDateError, setEndDateError] = useState<string | null>(null); // NEW STATE
+  const [startDateError, setStartDateError] = useState<string | null>(null);
+  const [endDateError, setEndDateError] = useState<string | null>(null);
 
 
   useEffect(() => {
@@ -43,7 +39,6 @@ const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
       setVenue(event.venue);
       setCity(event.city);
     } else {
-      // Reset form for new event
       setName('');
       setDescription('');
       setLink('');
@@ -57,7 +52,6 @@ const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Reset errors
     setStartDateError(null);
     setEndDateError(null);
 
@@ -72,7 +66,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
     }
 
     if (hasError) {
-      return; // Prevent form submission if there are errors
+      return;
     }
 
     const eventData = {
@@ -96,18 +90,18 @@ const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
   return (
     <Paper elevation={3} sx={{ p: 3, mt: 3 }}>
       <Typography variant="h6" gutterBottom>
-        {event ? 'Edit Event' : 'Add New Event'}
+        {event ? t('edit_event_form_title') : t('add_new_event_form_title')}
       </Typography>
       <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <TextField
-          label="Event Name"
+          label={t('event_name')}
           value={name}
           onChange={(e) => setName(e.target.value)}
           fullWidth
           required
         />
         <TextField
-          label="Description"
+          label={t('event_description')}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           fullWidth
@@ -115,13 +109,13 @@ const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
           rows={2}
         />
         <TextField
-          label="Link"
+          label={t('event_link')}
           value={link}
           onChange={(e) => setLink(e.target.value)}
           fullWidth
         />
         <TextField
-          label="Start Date"
+          label={t('event_start_date')}
           type="date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
@@ -134,7 +128,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
           helperText={startDateError} // Display error message
         />
         <TextField
-          label="End Date"
+          label={t('event_end_date')}
           type="date"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
@@ -147,24 +141,24 @@ const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
           helperText={endDateError} // Display error message
         />
         <TextField
-          label="Venue"
+          label={t('event_venue')}
           value={venue}
           onChange={(e) => setVenue(e.target.value)}
           fullWidth
           required
         />
         <TextField
-          label="City"
+          label={t('event_city')}
           value={city}
           onChange={(e) => setCity(e.target.value)}
           fullWidth
           required
         />
         <Button type="submit" variant="contained" color="primary">
-          {event ? 'Update Event' : 'Add Event'}
+          {event ? t('update_event_button') : t('add_event_button')}
         </Button>
         <Button type="button" variant="outlined" onClick={onClose}>
-          Cancel
+          {t('cancel_button')}
         </Button>
       </Box>
     </Paper>

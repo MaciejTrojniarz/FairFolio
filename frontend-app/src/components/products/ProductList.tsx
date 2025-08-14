@@ -25,9 +25,9 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'; // NEW IMPORT
-import { useI18n } from '../../contexts/I18nContext'; // NEW IMPORT
-import { getInitials } from '../../utils/imageHelpers'; // NEW IMPORT
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useI18n } from '../../contexts/useI18n';
+import { getInitials } from '../../utils/imageHelpers';
 
 interface ProductListProps {
   onEdit: (product: Product) => void;
@@ -37,7 +37,7 @@ const ProductList: React.FC<ProductListProps> = ({ onEdit }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { products, loading, error } = useSelector((state: RootState) => state.products);
-  const { t } = useI18n(); // NEW: useI18n hook
+  const { t } = useI18n();
 
   useEffect(() => {
     dispatch(fetchProductsCommand());

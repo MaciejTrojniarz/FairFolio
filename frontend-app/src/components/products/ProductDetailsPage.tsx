@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store';
 import { fetchProductsCommand, deleteProductCommand } from '../../store/features/products/productsSlice';
-import type { Product } from '../../types';
 import {
   Container,
   Typography,
@@ -17,9 +16,9 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ProductDetailsView from './ProductDetailsView';
-import { useI18n } from '../../contexts/I18nContext';
+import { useI18n } from '../../contexts/useI18n';
 
-const ProductDetailsPage: React.FC = () => { // RESTORED COMPONENT DECLARATION
+const ProductDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -29,10 +28,9 @@ const ProductDetailsPage: React.FC = () => { // RESTORED COMPONENT DECLARATION
 
   const [openConfirmDelete, setOpenConfirmDelete] = React.useState(false);
 
-  const { t } = useI18n(); // NEW: useI18n hook
+  const { t } = useI18n();
 
   useEffect(() => {
-    // Fetch products if not already loaded or if the specific product is missing
     if (products.length === 0 || !product) {
       dispatch(fetchProductsCommand());
     }
@@ -113,7 +111,6 @@ const ProductDetailsPage: React.FC = () => { // RESTORED COMPONENT DECLARATION
         <ProductDetailsView product={product} />
       </Box>
 
-      {/* Delete Confirmation Dialog */}
       <Dialog
         open={openConfirmDelete}
         onClose={handleCloseConfirmDelete}

@@ -2,8 +2,10 @@ import React from 'react';
 import { Container, Typography, Box, Button } from '@mui/material';
 import ProductList from './ProductList';
 import { useNavigate } from 'react-router-dom';
+import { useI18n } from '../../contexts/useI18n';
 
 const ProductManagementList: React.FC = () => {
+  const { t } = useI18n();
   const navigate = useNavigate();
 
   const handleAddNewProduct = () => {
@@ -18,11 +20,11 @@ const ProductManagementList: React.FC = () => {
     <Container maxWidth={false}>
       <Box sx={{ my: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Product Management
+          {t('product_management_title')}
         </Typography>
 
         <Button variant="contained" onClick={handleAddNewProduct} sx={{ mb: 2 }}>
-          Add New Product
+          {t('add_new_product_button')}
         </Button>
 
         <ProductList onEdit={(product) => handleEditProduct(product.id)} />

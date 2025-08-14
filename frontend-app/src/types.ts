@@ -1,7 +1,7 @@
 export interface Product {
   id: string;
   user_id: string;
-  category_id?: string;
+  category_id?: string | null;
   name: string;
   description?: string;
   price: number;
@@ -22,10 +22,14 @@ export interface Category {
 export interface Sale {
   id: string;
   user_id: string;
-  event_id?: string; // New: Optional link to an event
+  event_id?: string | null; // New: Optional link to an event
   timestamp: string; // ISO date string
   total_amount: number;
   comment?: string;
+}
+
+export interface SaleWithSaleItems extends Sale {
+  items: DetailedSaleItem[];
 }
 
 export interface SaleItem {
@@ -59,10 +63,7 @@ export interface BasketItem extends Product {
   quantity: number;
 }
 
-export interface Merchant {
-  id: string;
-  name: string;
-}
+
 
 export interface Cost {
   id: string;
@@ -71,4 +72,11 @@ export interface Cost {
   description: string;
   amount: number;
   date: string; // ISO date string
+}
+
+export interface Profile {
+  id: string;
+  name: string;
+  language: string;
+  theme: string;
 }

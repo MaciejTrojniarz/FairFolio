@@ -1,8 +1,10 @@
 import { ofType } from 'redux-observable';
 import { from, of } from 'rxjs';
 import { catchError, map, switchMap, mergeMap } from 'rxjs/operators';
+import { type PayloadAction } from '@reduxjs/toolkit';
 import { categoryService } from '../../../services/categoryService';
 import { showToast } from '../ui/uiSlice';
+import type { Category } from '../../../types';
 import {
   fetchCategoriesCommand,
   addCategoryCommand,
@@ -15,6 +17,7 @@ import {
   categoriesErrorEvent,
 } from './categoriesSlice';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const fetchCategoriesEpic = (action$: any) =>
   action$.pipe(
     ofType(fetchCategoriesCommand.type),
@@ -26,10 +29,11 @@ export const fetchCategoriesEpic = (action$: any) =>
     )
   );
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const addCategoryEpic = (action$: any) =>
   action$.pipe(
     ofType(addCategoryCommand.type),
-    mergeMap((action) =>
+    mergeMap((action: PayloadAction<string>) =>
       from(categoryService.addCategory(action.payload)).pipe(
         mergeMap((category) => of(
           categoryAddedEvent(category),
@@ -43,10 +47,11 @@ export const addCategoryEpic = (action$: any) =>
     )
   );
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const updateCategoryEpic = (action$: any) =>
   action$.pipe(
     ofType(updateCategoryCommand.type),
-    mergeMap((action) =>
+    mergeMap((action: PayloadAction<Category>) =>
       from(categoryService.updateCategory(action.payload)).pipe(
         mergeMap((category) => of(
           categoryUpdatedEvent(category),
@@ -60,10 +65,11 @@ export const updateCategoryEpic = (action$: any) =>
     )
   );
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const deleteCategoryEpic = (action$: any) =>
   action$.pipe(
     ofType(deleteCategoryCommand.type),
-    mergeMap((action) =>
+    mergeMap((action: PayloadAction<string>) =>
       from(categoryService.deleteCategory(action.payload)).pipe(
         mergeMap(() => of(
           categoryDeletedEvent(action.payload),

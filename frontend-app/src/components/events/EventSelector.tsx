@@ -8,10 +8,10 @@ import {
   InputAdornment, IconButton, Typography, Box,
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { useI18n } from '../../contexts/I18nContext'; // NEW IMPORT
+import { useI18n } from '../../contexts/useI18n';
 
 interface EventSelectorProps {
-  selectedEventId: string | undefined;
+  selectedEventId: string | undefined | null;
   onSelectEvent: (eventId: string | undefined) => void;
   label?: string;
   allowNone?: boolean;
@@ -24,10 +24,10 @@ const EventSelector: React.FC<EventSelectorProps> = ({
 }) => {
   const navigate = useNavigate();
   const { events } = useSelector((state: RootState) => state.events);
-  const { t } = useI18n(); // NEW: useI18n hook
+  const { t } = useI18n();
 
   const handleViewEventDetails = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent select from opening/closing
+    e.stopPropagation();
     if (selectedEventId) {
       navigate(`/events/${selectedEventId}`);
     }

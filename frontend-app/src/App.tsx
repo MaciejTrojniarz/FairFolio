@@ -1,98 +1,64 @@
-import React, { useEffect } from 'react';
+
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux'; // New imports
-import type { RootState } from './store'; // New import
-import { fetchMerchantCommand } from './store/features/merchant/merchantSlice'; // New import
 import ProductManagementList from './components/products/ProductManagementList';
-import ProductDetailsPage from './components/products/ProductDetailsPage'; // NEW IMPORT
+import ProductDetailsPage from './components/products/ProductDetailsPage';
 import ProductFormPage from './components/products/ProductFormPage';
 import Home from './components/Home';
-import SalesView from './components/SalesView';
-import SalesHistoryView from './components/SalesHistoryView';
-import SaleDetailView from './components/SaleDetailView';
-import SaleEditPage from './components/SaleEditPage'; // New import
-import EventManagementPage from './components/events/EventManagementPage'; // New import
-import EventFormPage from './components/events/EventFormPage'; // New import
-import EventDetailView from './components/EventDetailView'; // New import
-import Navbar from './components/Navbar';
+import SalesView from './components/sales/SalesView';
+import SalesHistoryView from './components/sales/SalesHistoryView';
+import SaleDetailView from './components/sales/SaleDetailView';
+import SaleEditPage from './components/sales/SaleEditPage';
+import EventManagementPage from './components/events/EventManagementPage';
+import EventFormPage from './components/events/EventFormPage';
+import EventDetailView from './components/events/EventDetailView';
+import Navbar from './components/navbar/Navbar';
 import { Box } from '@mui/material';
-import ToastNotification from './components/ToastNotification'; // New import
+import ToastNotification from './components/ToastNotification';
 
-import Login from './components/Auth/Login';
-import Profile from './components/Auth/Profile'; // NEW IMPORT
-import { supabase } from './supabaseClient';
-import { setUser, setLoading } from './store/features/auth/authSlice';
-import ProtectedRoute from './components/Auth/ProtectedRoute';
+import Login from './components/auth/Login';
+import Profile from './components/auth/Profile';
+import ProfileEditPage from './components/auth/ProfileEditPage';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
 import { I18nProvider } from './contexts/I18nContext';
-import { AppThemeProvider } from './contexts/ThemeContext'; // NEW IMPORT
+import { AppThemeProvider } from './contexts/ThemeContext';
+import AuthInitializer from './components/AuthInitializer';
 
-function App() {
-  const dispatch = useDispatch();
-  const merchant = useSelector((state: RootState) => state.merchant.merchant);
-
-  // Supabase Auth Listener
-  useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-      dispatch(setUser(session?.user || null));
-      dispatch(setLoading(false));
-    });
-
-    // Initial check for user session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      dispatch(setUser(session?.user || null));
-      dispatch(setLoading(false));
-    });
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, [dispatch]);
-
-
-  useEffect(() => {
-    dispatch(fetchMerchantCommand()); // Fetch merchant data on mount
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (merchant?.name) {
-      document.title = `FaireFolio - ${merchant.name}`;
-    } else {
-      document.title = `FaireFolio`; // Default title if merchant name not available
-    }
-  }, [merchant]);
-
+const App = () => {
   return (
     <AppThemeProvider>
       <I18nProvider>
-        <BrowserRouter>
-          <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-            <Navbar />
-            <Box sx={{ flexGrow: 1, mt: 2 }}>
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/products/:id" element={<ProductDetailsPage />} />
-                <Route path="/" element={<Home />} />
-                {/* Protected Routes */}
-                <Route element={<ProtectedRoute />}>
-                  <Route path="/products" element={<ProductManagementList />} />
-                  <Route path="/products/new" element={<ProductFormPage />} />
-                  <Route path="/products/:id/edit" element={<ProductFormPage />} />
-                  <Route path="/sales/record" element={<SalesView />} />
-                  <Route path="/sales" element={<SalesHistoryView />} />
-                  <Route path="/sales/:id" element={<SaleDetailView />} />
-                  <Route path="/sales/:id/edit" element={<SaleEditPage />} />
-                  <Route path="/events" element={<EventManagementPage />} />
-                  <Route path="/events/new" element={<EventFormPage />} />
-                  <Route path="/events/:id" element={<EventDetailView />} />
-                  <Route path="/events/:id/edit" element={<EventFormPage />} />
-                </Route>
-              </Routes>
+        <AuthInitializer>
+          <BrowserRouter>
+            <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh'}}>
+              <Navbar />
+              <Box sx={{ flexGrow: 1, mt: '64px', overflowY: 'auto', minHeight: 'calc(100vh - 64px)' }}>
+                <Routes>
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/profile/edit" element={<ProfileEditPage />} />
+                  <Route path="/products/:id" element={<ProductDetailsPage />} />
+                  <Route path="/" element={<Home />} />
+                  {/* Protected Routes */}
+                  <Route element={<ProtectedRoute />}>
+                    <Route path="/products" element={<ProductManagementList />} />
+                    <Route path="/products/new" element={<ProductFormPage />} />
+                    <Route path="/products/:id/edit" element={<ProductFormPage />} />
+                    <Route path="/sales/record" element={<SalesView />} />
+                    <Route path="/sales" element={<SalesHistoryView />} />
+                    <Route path="/sales/:id" element={<SaleDetailView />} />
+                    <Route path="/sales/:id/edit" element={<SaleEditPage />} />
+                    <Route path="/events" element={<EventManagementPage />} />
+                    <Route path="/events/new" element={<EventFormPage />} />
+                    <Route path="/events/:id" element={<EventDetailView />} />
+                    <Route path="/events/:id/edit" element={<EventFormPage />} />
+                  </Route>
+                </Routes>
+              </Box>
             </Box>
-          </Box>
-          <ToastNotification />
-        </BrowserRouter>
+            <ToastNotification />
+          </BrowserRouter>
+        </AuthInitializer>
       </I18nProvider>
     </AppThemeProvider>
   );

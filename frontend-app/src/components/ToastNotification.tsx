@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { type SyntheticEvent } from 'react';
 import { Snackbar, Alert } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../store';
@@ -8,8 +8,9 @@ const ToastNotification: React.FC = () => {
   const dispatch = useDispatch();
   const { open, message, severity } = useSelector((state: RootState) => state.ui.toast);
 
-  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleClose = (event?: Event | SyntheticEvent<any, Event>) => {
+    if (event?.type === 'clickaway') {
       return;
     }
     dispatch(hideToast());

@@ -15,6 +15,7 @@ import {
 } from './productsSlice';
 import type { Product } from '../../../types';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const fetchProductsEpic = (action$: any) =>
   action$.pipe(
     ofType(fetchProductsCommand.type),
@@ -26,6 +27,7 @@ export const fetchProductsEpic = (action$: any) =>
     )
   );
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const addProductEpic = (action$: any) =>
   action$.pipe(
     ofType(addProductCommand.type),
@@ -37,6 +39,7 @@ export const addProductEpic = (action$: any) =>
     )
   );
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const updateProductEpic = (action$: any) =>
   action$.pipe(
     ofType(updateProductCommand.type),
@@ -48,6 +51,7 @@ export const updateProductEpic = (action$: any) =>
     )
   );
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const deleteProductEpic = (action$: any) =>
   action$.pipe(
     ofType(deleteProductCommand.type),

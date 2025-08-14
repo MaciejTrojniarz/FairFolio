@@ -15,6 +15,7 @@ import {
 } from './eventsSlice';
 import type { Event } from '../../../types';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const fetchEventsEpic = (action$: any) =>
   action$.pipe(
     ofType(fetchEventsCommand.type),
@@ -26,6 +27,7 @@ export const fetchEventsEpic = (action$: any) =>
     )
   );
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const addEventEpic = (action$: any) =>
   action$.pipe(
     ofType(addEventCommand.type),
@@ -37,6 +39,7 @@ export const addEventEpic = (action$: any) =>
     )
   );
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const updateEventEpic = (action$: any) =>
   action$.pipe(
     ofType(updateEventCommand.type),
@@ -48,6 +51,7 @@ export const updateEventEpic = (action$: any) =>
     )
   );
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const deleteEventEpic = (action$: any) =>
   action$.pipe(
     ofType(deleteEventCommand.type),

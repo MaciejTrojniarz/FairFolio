@@ -1,28 +1,22 @@
 import React from 'react';
-import { Breadcrumbs, Link as MuiLink, Box, Typography } from '@mui/material';
+import { Breadcrumbs, Typography, Link as MuiLink } from '@mui/material';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-import HomeIcon from '@mui/icons-material/Home';
 import { useSelector } from 'react-redux';
-import type { RootState } from '../store';
-import type { Event } from '../types';
+import type { RootState } from '../../store';
+import { useI18n } from '../../contexts/useI18n';
 
 const CustomBreadcrumbs: React.FC = () => {
   const location = useLocation();
   const pathnames = location.pathname.split('/').filter((x) => x);
   const products = useSelector((state: RootState) => state.products.products);
   const events = useSelector((state: RootState) => state.events.events);
+  const { t } = useI18n();
 
   return (
     <Breadcrumbs aria-label="breadcrumb" color="inherit">
-      <MuiLink component={RouterLink} underline="hover" color="inherit" to="/">
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />
-          Home
-        </Box>
-      </MuiLink>
       {pathnames.map((value, index) => {
         // Skip 'edit' segment in breadcrumbs for both products and sales
-        if (value === 'edit' && (pathnames[index - 1] === 'product' || pathnames[index - 1] === 'sales' || pathnames[index - 1] === 'events')) {
+        if (value === 'edit' && (pathnames[index - 1] === 'product' || pathnames[index - 1] === 'sales')) {
           return null;
         }
 
@@ -38,16 +32,15 @@ const CustomBreadcrumbs: React.FC = () => {
             displayValue = product.name;
           }
         } else if (pathnames[index - 1] === 'sales' && index === pathnames.length - 1) { // Sales detail
-          displayValue = `Sale ${value.substring(0, 4)}...`; // Shorten ID for display
+          displayValue = `${t('sale')} ${value.substring(0, 4)}...`; // Translated
         } else if (pathnames[index - 2] === 'sales' && pathnames[index - 1] === 'edit' && index === pathnames.length - 1) { // Sales edit
-          const saleId = value;
-          displayValue = `Edit Sale ${saleId.substring(0, 4)}...`;
+          displayValue = t('edit_sale'); // Translated
         } else if (pathnames[index - 1] === 'new') { // For 'new' pages
-          displayValue = `New ${pathnames[index - 2].charAt(0).toUpperCase() + pathnames[index - 2].slice(1)}`;
-        } else if (value === 'record' && pathnames[index - 1] === 'sales') { // For /sales/record
-          displayValue = 'Record Sale';
+          displayValue = `${t('new')} ${pathnames[index - 2].charAt(0).toUpperCase() + pathnames[index - 2].slice(1)}`; // Translated
+        } else if (value === 'record' && pathnames[index - 1] === 'sales') {
+          displayValue = t('record_sale'); // Translated
         } else if (value === 'sales' && index === 0) { // For the top-level /sales
-          displayValue = 'Sales History';
+          displayValue = t('sales_history'); // Translated
         } else if (pathnames[index - 1] === 'events' && index === pathnames.length - 1) { // Event detail
           const eventId = value;
           const event = events.find(e => e.id === eventId);
@@ -58,12 +51,11 @@ const CustomBreadcrumbs: React.FC = () => {
           const eventId = value;
           const event = events.find(e => e.id === eventId);
           if (event) {
-            displayValue = `Edit ${event.name}`;
+            displayValue = `${t('edit_event')} ${event.name}`; // Translated
           } else {
-            displayValue = `Edit Event ${eventId.substring(0, 4)}...`;
+            displayValue = `${t('edit_event')} ${eventId.substring(0, 4)}...`; // Translated
           }
         }
-
         return last ? (
           <Typography color="text.primary" key={to}>
             {displayValue}

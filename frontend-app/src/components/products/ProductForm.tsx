@@ -5,7 +5,8 @@ import {
   addProductCommand,
   updateProductCommand,
 } from '../../store/features/products/productsSlice';
-import { productService } from '../../services/productService'; // NEW IMPORT
+import { productService } from '../../services/productService';
+import { showToast } from '../../store/features/ui/uiSlice';
 
 import { addCategoryCommand, fetchCategoriesCommand } from '../../store/features/categories/categoriesSlice';
 import {
@@ -24,8 +25,11 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  CircularProgress,
+  Alert,
 } from '@mui/material';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import { useI18n } from '../../contexts/useI18n';
 import type { RootState } from '../../store';
 
 interface ProductFormProps {
@@ -34,6 +38,7 @@ interface ProductFormProps {
 }
 
 const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
+  const { t } = useI18n();
   const dispatch = useDispatch();
   const categories = useSelector((state: RootState) => state.categories.categories);
   const { loading: categoriesLoading } = useSelector((state: RootState) => state.categories);
@@ -60,17 +65,14 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
     dispatch(fetchCategoriesCommand());
   }, [dispatch]);
 
-  // Effect to automatically select the newly added category
   useEffect(() => {
     if (!categoriesLoading && categories.length > 0 && newCategoryName === '') {
-      // Find the category that was just added (assuming it's the last one or has a new ID)
-      // This might need refinement if categories are not always added to the end
       const newlyAddedCategory = categories[categories.length - 1];
       if (newlyAddedCategory && newlyAddedCategory.id !== selectedCategoryId) {
         setSelectedCategoryId(newlyAddedCategory.id);
       }
     }
-  }, [categories, categoriesLoading]); // Depend on categories and loading state
+  }, [categories, categoriesLoading, newCategoryName, selectedCategoryId]);
 
   useEffect(() => {
     if (product) {
@@ -83,9 +85,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
       setStockQuantity(product.stock_quantity?.toString() || '0');
       setSelectedCategoryId(product.category_id || '');
       setImageUrlPreview(product.image_url || null);
-      setImageFile(null); // Clear file input when editing a new product
+      setImageFile(null);
     } else {
-      // Reset form for new product
       setName('');
       setDescription('');
       setNotes('');
@@ -103,7 +104,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       setImageFile(file);
-      setImageUrlPreview(URL.createObjectURL(file)); // Create a preview URL
+      setImageUrlPreview(URL.createObjectURL(file));
     }
   };
 
@@ -128,7 +129,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
     let imageUrl: string | undefined = imageUrlPreview || undefined;
 
     try {
-      let currentProductId = product?.id;
+      const currentProductId = product?.id;
 
       if (imageFile) {
         const imageFileName = currentProductId || crypto.randomUUID();
@@ -144,7 +145,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
         cost: parseFloat(cost),
         stock_quantity: parseInt(stockQuantity),
         image_url: imageUrl,
-        category_id: selectedCategoryId === '' ? null : selectedCategoryId, // Pass selected category ID
+        category_id: selectedCategoryId === '' ? null : selectedCategoryId,
       };
 
       if (product) {
@@ -153,9 +154,11 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
         dispatch(addProductCommand(productData));
       }
       onClose();
-    } catch (err: any) {
-      setError(err.message);
-      console.error('Error during product submission:', err);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      setError(error.message);
+      console.error('Error during product submission:', error);
+      dispatch(showToast({ message: error.message, severity: 'error' }));
     } finally {
       setLoading(false);
     }
@@ -164,18 +167,20 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
   return (
     <Paper elevation={3} sx={{ p: 3, mt: 3 }}>
       <Typography variant="h6" gutterBottom>
-        {product ? 'Edit Product' : 'Add New Product'}
+        {product ? t('edit_product_title') : t('add_new_product_title')}
       </Typography>
+      {loading && <CircularProgress sx={{ my: 2 }} />}
+      {error && <Alert severity="error" sx={{ my: 2 }}>{error}</Alert>}
       <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <TextField
-          label="Product Name"
+          label={t('product_name_label')}
           value={name}
           onChange={(e) => setName(e.target.value)}
           fullWidth
           required
         />
         <TextField
-          label="Description"
+          label={t('description_label')}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           fullWidth
@@ -183,7 +188,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
           rows={2}
         />
         <TextField
-          label="Notes"
+          label={t('notes_label')}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           fullWidth
@@ -191,33 +196,33 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
           rows={2}
         />
         <TextField
-          label="Link"
+          label={t('link_label')}
           value={link}
           onChange={(e) => setLink(e.target.value)}
           fullWidth
         />
         <FormControl fullWidth sx={{ mt: 1, mb: 1 }}>
-          <InputLabel id="category-select-label">Category</InputLabel>
+          <InputLabel id="category-select-label">{t('category_label')}</InputLabel>
           <Select
             labelId="category-select-label"
             id="category-select"
             value={selectedCategoryId}
-            label="Category"
+            label={t('category_label')}
             onChange={(e) => setSelectedCategoryId(e.target.value as string)}
           >
-            <MenuItem value="">Unknown Category</MenuItem>
+            <MenuItem value="">{t('unknown_category_option')}</MenuItem>
             {categories.map((category) => (
               <MenuItem key={category.id} value={category.id}>
                 {category.name}
               </MenuItem>
             ))}
             <MenuItem value="add-new-category" onClick={handleAddNewCategory}>
-              Add New Category
+              {t('add_new_category_option')}
             </MenuItem>
           </Select>
         </FormControl>
         <TextField
-          label="Price"
+          label={t('price_label')}
           type="number"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
@@ -228,7 +233,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
           }}
         />
         <TextField
-          label="Cost"
+          label={t('cost_label')}
           type="number"
           value={cost}
           onChange={(e) => setCost(e.target.value)}
@@ -239,7 +244,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
           }}
         />
         <TextField
-          label="Stock Quantity"
+          label={t('stock_quantity_label')}
           type="number"
           value={stockQuantity}
           onChange={(e) => setStockQuantity(e.target.value)}
@@ -255,7 +260,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
             component="label"
             startIcon={<PhotoCamera />}
           >
-            Upload Image
+            {t('upload_image_button')}
             <input type="file" hidden accept="image/*" onChange={handleImageChange} />
           </Button>
           {imageUrlPreview && (
@@ -263,20 +268,20 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
           )}
         </Box>
         <Button type="submit" variant="contained" color="primary">
-          {product ? 'Update Product' : 'Add Product'}
+          {product ? t('update_product_button') : t('add_product_button')}
         </Button>
         <Button type="button" variant="outlined" onClick={onClose}>
-          Cancel
+          {t('cancel_button')}
         </Button>
       </Box>
 
       <Dialog open={openNewCategoryDialog} onClose={() => setOpenNewCategoryDialog(false)}>
-        <DialogTitle>Add New Category</DialogTitle>
+        <DialogTitle>{t('add_new_category_dialog_title')}</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
             margin="dense"
-            label="Category Name"
+            label={t('category_name_label')}
             type="text"
             fullWidth
             value={newCategoryName}
@@ -284,8 +289,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenNewCategoryDialog(false)}>Cancel</Button>
-          <Button onClick={handleSaveNewCategory} disabled={categoriesLoading}>Add</Button>
+          <Button onClick={() => setOpenNewCategoryDialog(false)}>{t('cancel_button')}</Button>
+          <Button onClick={handleSaveNewCategory} disabled={categoriesLoading}>{t('add_button')}</Button>
         </DialogActions>
       </Dialog>
     </Paper>

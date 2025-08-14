@@ -22,16 +22,16 @@ export const productsSlice = createSlice({
     fetchProductsCommand: (state) => {
       state.loading = true;
       state.error = null;
-    },
-    addProductCommand: (state, action: PayloadAction<Omit<Product, 'id' | 'user_id'>>) => {
+    }, // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    addProductCommand: (state, _action: PayloadAction<Omit<Product, 'id' | 'user_id'>>) => {
       state.loading = true;
       state.error = null;
-    },
-    updateProductCommand: (state, action: PayloadAction<Product>) => {
+    }, // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    updateProductCommand: (state, _action: PayloadAction<Product>) => {
       state.loading = true;
       state.error = null;
-    },
-    deleteProductCommand: (state, action: PayloadAction<string>) => {
+    }, // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    deleteProductCommand: (state, _action: PayloadAction<string>) => {
       state.loading = true;
       state.error = null;
     },

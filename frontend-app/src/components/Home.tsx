@@ -1,14 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState } from '../store';
+import { fetchEventsCommand } from '../store/features/events/eventsSlice';
 import { Link } from 'react-router-dom';
-import { Box, Typography, IconButton, Container } from '@mui/material';
+import { Box, Typography, IconButton, Container, List, ListItem, ListItemText, Paper } from '@mui/material';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import HistoryIcon from '@mui/icons-material/History';
 import EventIcon from '@mui/icons-material/Event';
-import { useI18n } from '../contexts/I18nContext'; // NEW IMPORT
+import { useI18n } from '../contexts/useI18n';
 
 const Home: React.FC = () => {
-  const { t } = useI18n(); // NEW: useI18n hook
+  const { t } = useI18n();
+  const dispatch = useDispatch();
+  const { events, loading, error } = useSelector((state: RootState) => state.events);
+
+  useEffect(() => {
+    if (events.length === 0) {
+      dispatch(fetchEventsCommand());
+    }
+  }, [dispatch, events.length]);
+
+  const upcomingEvents = events.filter(event => new Date(event.end_date) >= new Date());
 
   return (
     <Container maxWidth={false}>
@@ -53,6 +66,37 @@ const Home: React.FC = () => {
             </IconButton>
             <Typography variant="subtitle1" color="text.primary">{t('event_management')}</Typography>
           </Link>
+        </Box>
+
+        {/* Upcoming Events Section */}
+        <Box sx={{ width: '100%', maxWidth: 600, mt: 4 }}>
+          <Typography variant="h5" component="h2" gutterBottom textAlign="center">
+            {t('upcoming_events')}
+          </Typography>
+          {loading ? (
+            <Typography textAlign="center">{t('loading_events')}</Typography>
+          ) : error ? (
+            <Typography color="error" textAlign="center">Error: {error}</Typography>
+          ) : upcomingEvents.length === 0 ? (
+            <Typography textAlign="center">{t('no_upcoming_events')}</Typography>
+          ) : (
+            <List>
+              {upcomingEvents.map((event) => (
+                <Paper key={event.id} elevation={1} sx={{ mb: 1 }}>
+                  <ListItem component={Link} to={`/events/${event.id}`} sx={{ textDecoration: 'none', color: 'inherit' }}>
+                    <ListItemText
+                      primary={event.name}
+                      secondary={`
+                        ${event.venue ? `${event.venue}, ` : ''}
+                        ${event.city ? `${event.city} - ` : ''}
+                        ${new Date(event.start_date).toLocaleDateString()} - ${new Date(event.end_date).toLocaleDateString()}
+                      `}
+                    />
+                  </ListItem>
+                </Paper>
+              ))}
+            </List>
+          )}
         </Box>
       </Box>
     </Container>

@@ -1,28 +1,19 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store';
-import {
-  fetchEventsCommand,
-  deleteEventCommand,
-} from '../../store/features/events/eventsSlice';
-import type { Event } from '../../types';
+import { fetchEventsCommand, } from '../../store/features/events/eventsSlice';
 import { useNavigate } from 'react-router-dom';
 import {
   Typography,
   List,
   ListItem,
   ListItemText,
-  ListItemSecondaryAction,
-  IconButton,
   CircularProgress,
   Alert,
   Box,
-  Avatar,
   ListItemButton,
 } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import { useI18n } from '../../contexts/I18nContext';
+import { useI18n } from '../../contexts/useI18n';
 
 const EventList: React.FC = () => {
   const dispatch = useDispatch();
@@ -36,14 +27,6 @@ const EventList: React.FC = () => {
 
   const handleViewDetails = (id: string) => {
     navigate(`/events/${id}`);
-  };
-
-  const handleEditEvent = (id: string) => {
-    navigate(`/events/${id}/edit`);
-  };
-
-  const handleDeleteEvent = (id: string) => {
-    dispatch(deleteEventCommand(id));
   };
 
   return (

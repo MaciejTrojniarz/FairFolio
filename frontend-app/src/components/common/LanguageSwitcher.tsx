@@ -1,20 +1,31 @@
 import React from 'react';
 import { Button, ButtonGroup } from '@mui/material';
-import { useI18n } from '../../contexts/I18nContext';
+import { useI18n } from '../../contexts/useI18n';
 
-const LanguageSwitcher: React.FC = () => {
+interface LanguageSwitcherProps {
+  onLanguageChange?: (lang: string) => void;
+}
+
+const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onLanguageChange }) => {
   const { lang, setLang } = useI18n();
+
+  const handleLanguageChange = (newLang: string) => {
+    setLang(newLang);
+    if (onLanguageChange) {
+      onLanguageChange(newLang);
+    }
+  };
 
   return (
     <ButtonGroup variant="outlined" aria-label="language switcher">
       <Button
-        onClick={() => setLang('en')}
+        onClick={() => handleLanguageChange('en')}
         variant={lang === 'en' ? 'contained' : 'outlined'}
       >
         EN
       </Button>
       <Button
-        onClick={() => setLang('pl')}
+        onClick={() => handleLanguageChange('pl')}
         variant={lang === 'pl' ? 'contained' : 'outlined'}
       >
         PL

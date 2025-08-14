@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store';
-import { fetchProductsCommand } from '../../store/features/products/productsSlice';
 import type { Product } from '../../types';
 import { Container, CircularProgress, Alert } from '@mui/material';
+import { showToast } from '../../store/features/ui/uiSlice';
+import { useI18n } from '../../contexts/useI18n';
 import ProductForm from './ProductForm';
 
 const ProductFormPage: React.FC = () => {
+  const { t } = useI18n();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -23,18 +25,17 @@ const ProductFormPage: React.FC = () => {
       if (foundProduct) {
         setProductToEdit(foundProduct);
       } else if (!loading) {
-        // If product not found and not loading, navigate back or show error
         console.error(`Product with ID ${id} not found.`);
-        navigate('/products'); // Navigate back to list if not found
+        dispatch(showToast({ message: t('error_loading_product_message'), severity: 'error' }));
+        navigate('/products');
       }
     } else if (!id) {
-      // For new product creation, ensure no product is set for editing
       setProductToEdit(undefined);
     }
-  }, [id, products, loading, navigate]);
+  }, [id, products, loading, navigate, dispatch, t]);
 
   const handleClose = () => {
-    navigate('/products'); // Navigate back to product list after form submission/cancellation
+    navigate('/products');
   };
 
   if (id && loading) {
@@ -42,12 +43,11 @@ const ProductFormPage: React.FC = () => {
   }
 
   if (id && error) {
-    return <Container maxWidth="md"><Alert severity="error">Error loading product: {error}</Alert></Container>;
+    return <Container maxWidth="md"><Alert severity="error">{t('error_loading_product_message')}: {error}</Alert></Container>;
   }
 
   if (id && !productToEdit && !loading) {
-    // This case handles when a product ID is in the URL but the product isn't found after loading
-    return <Container maxWidth="md"><Alert severity="warning">Product not found.</Alert></Container>;
+    return <Container maxWidth="md"><Alert severity="warning">{t('product_not_found')}</Alert></Container>;
   }
 
   return (

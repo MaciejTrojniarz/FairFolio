@@ -1,13 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { combineEpics, createEpicMiddleware } from 'redux-observable';
-import counterReducer from './features/counter/counterSlice';
-import { counterEpics } from './features/counter/counterEpics';
 import productsReducer from './features/products/productsSlice';
 import { productsEpics } from './features/products/productsEpics';
 import salesReducer from './features/sales/salesSlice';
-import { recordSaleEpic, salesEpics as allSalesEpics } from './features/sales/salesEpics';
-import merchantReducer from './features/merchant/merchantSlice';
-import { fetchMerchantEpic } from './features/merchant/merchantEpics';
+import { salesEpics as allSalesEpics } from './features/sales/salesEpics';
+
 import eventsReducer from './features/events/eventsSlice'; // New import
 import { eventsEpics as allEventsEpics } from './features/events/eventsEpics';
 import costsReducer from './features/costs/costsSlice';
@@ -18,23 +15,21 @@ import categoriesReducer from './features/categories/categoriesSlice'; // NEW IM
 import { categoriesEpics as allCategoriesEpics } from './features/categories/categoriesEpics'; // NEW IMPORT
 
 export const rootEpic = combineEpics(
-  counterEpics,
   ...productsEpics,
   ...allSalesEpics,
-  fetchMerchantEpic,
   ...allEventsEpics,
   ...allCostsEpics, // Add all costs epics
   ...allCategoriesEpics, // NEW: Add all categories epics
 );
 
-const epicMiddleware = createEpicMiddleware();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const epicMiddleware = createEpicMiddleware<unknown, unknown, any>();
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
     products: productsReducer,
     sales: salesReducer,
-    merchant: merchantReducer,
+    
     events: eventsReducer,
     costs: costsReducer,
     ui: uiReducer, // Add ui reducer

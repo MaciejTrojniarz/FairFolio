@@ -7,13 +7,12 @@ interface GravatarAvatarProps {
   size?: number;
   defaultImage?: string;
   alt?: string;
-  sx?: object; // Allow custom sx prop
+  sx?: object;
 }
 
-// Function to generate Gravatar URL
 const getGravatarUrl = (email: string, size: number = 40, defaultImage: string = 'identicon') => {
   if (!email) {
-    return `https://www.gravatar.com/avatar/?s=${size}&d=${defaultImage}`; // Return default if no email
+    return `https://www.gravatar.com/avatar/?s=${size}&d=${defaultImage}`;
   }
   const hash = CryptoJS.MD5(email.trim().toLowerCase()).toString();
   return `https://www.gravatar.com/avatar/${hash}?s=${size}&d=${defaultImage}`;
@@ -32,7 +31,7 @@ const GravatarAvatar: React.FC<GravatarAvatarProps> = ({
     <Avatar
       src={gravatarUrl}
       alt={alt}
-      sx={{ width: size, height: size, ...sx }} // Apply size and custom sx
+      sx={{ width: size, height: size, ...sx }}
     />
   );
 };

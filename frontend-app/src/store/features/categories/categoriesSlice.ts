@@ -22,16 +22,16 @@ export const categoriesSlice = createSlice({
     fetchCategoriesCommand: (state) => {
       state.loading = true;
       state.error = null;
-    },
-    addCategoryCommand: (state, action: PayloadAction<string>) => {
+    }, // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    addCategoryCommand: (state, _action: PayloadAction<string>) => {
       state.loading = true;
       state.error = null;
-    },
-    updateCategoryCommand: (state, action: PayloadAction<Category>) => {
+    }, // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    updateCategoryCommand: (state, _action: PayloadAction<Category>) => {
       state.loading = true;
       state.error = null;
-    },
-    deleteCategoryCommand: (state, action: PayloadAction<string>) => {
+    }, // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    deleteCategoryCommand: (state, _action: PayloadAction<string>) => {
       state.loading = true;
       state.error = null;
     },

@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import type { RootState } from '../store';
-import { fetchSalesCommand } from '../store/features/sales/salesSlice';
-import { fetchEventsCommand } from '../store/features/events/eventsSlice';
-import { fetchCostsCommand } from '../store/features/costs/costsSlice';
+import type { RootState } from '../../store';
+import { fetchSalesCommand } from '../../store/features/sales/salesSlice';
+import { fetchEventsCommand } from '../../store/features/events/eventsSlice';
+import { fetchCostsCommand } from '../../store/features/costs/costsSlice';
 import { useNavigate } from 'react-router-dom';
 import {
   Container,
@@ -12,22 +12,22 @@ import {
   CircularProgress,
   Alert,
   List,
-  ListItem,
-  ListItemText,
   Paper,
   ListItemButton,
-  Accordion, AccordionSummary, AccordionDetails,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
   Avatar, Badge,
-  Button,
-  IconButton,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import AddIcon from '@mui/icons-material/Add';
 import LaunchIcon from '@mui/icons-material/Launch';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import { useI18n } from '../../contexts/useI18n';
+import type { DetailedSaleItem, SaleWithSaleItems } from '../../types';
 
 const SalesHistoryView: React.FC = () => {
   const dispatch = useDispatch();
+  const {t} = useI18n();
   const navigate = useNavigate();
   const { salesHistory, loading: salesLoading, error: salesError } = useSelector((state: RootState) => state.sales);
   const { events, loading: eventsLoading, error: eventsError } = useSelector((state: RootState) => state.events);
@@ -54,13 +54,13 @@ const SalesHistoryView: React.FC = () => {
     }
     acc[eventId].push(sale);
     return acc;
-  }, {} as Record<string, Sale[]>);
+  }, {} as Record<string, (SaleWithSaleItems)[]>);
 
   return (
     <Container maxWidth="md">
       <Box sx={{ my: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Sales History
+          {t('sales_history_title')}
         </Typography>
 
         {(salesLoading || eventsLoading || costsLoading) && <CircularProgress />}
@@ -68,18 +68,17 @@ const SalesHistoryView: React.FC = () => {
 
         <List>
           {Object.keys(groupedSales).length === 0 && !salesLoading && !eventsLoading && !costsLoading && (
-            <Typography variant="body1">No sales recorded yet.</Typography>
+            <Typography variant="body1">{t('no_sales_recorded_yet')}</Typography>
           )}
           {Object.keys(groupedSales).sort((a, b) => {
-            // Events are already sorted by fetch operation, so just handle 'no-event'
             const eventA = events.find(e => e.id === a);
             const eventB = events.find(e => e.id === b);
-            if (eventA && !eventB) return -1; // eventA comes before eventB
-            if (!eventA && eventB) return 1;  // eventB comes before eventA
-            return a.localeCompare(b); // Fallback for non-event groups or if both not found
+            if (eventA && !eventB) return -1;
+            if (!eventA && eventB) return 1;
+            return a.localeCompare(b);
           }).map((eventId) => {
             const event = events.find(e => e.id === eventId);
-            const eventDisplayName = event ? event.name : 'Sales without Event';
+            const eventDisplayName = event ? event.name : t('sales_without_event_group');
             const eventDetails = event ? ` (${new Date(event.start_date).toLocaleDateString()} - ${new Date(event.end_date).toLocaleDateString()}${event.city ? `, ${event.city}` : ''})` : '';
 
             const salesInGroup = groupedSales[eventId];
@@ -101,7 +100,7 @@ const SalesHistoryView: React.FC = () => {
                         )}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        Total Sales: ${totalSalesAmount.toFixed(2)} | Total Costs: ${totalCosts.toFixed(2)} | Net: ${netProfit.toFixed(2)}
+                        {t('total_sales_label')}: ${totalSalesAmount.toFixed(2)} | {t('total_costs_label')}: ${totalCosts.toFixed(2)} | {t('net_profit_label')}: ${netProfit.toFixed(2)}
                       </Typography>
                     </Box>
                     {event && eventId !== 'no-event' && (
@@ -126,9 +125,8 @@ const SalesHistoryView: React.FC = () => {
                               backgroundColor: 'rgba(0, 0, 0, 0.04)',
                             },
                           }}
-                          aria-label={`View details for ${eventDisplayName}`}
-                          title={`View details for ${eventDisplayName}`}
-                        >
+                          aria-label={t('view_details_for', { eventDisplayName: eventDisplayName })}
+                          title={t('view_details_for', { eventDisplayName: eventDisplayName })}>
                           <LaunchIcon fontSize="small" />
                         </Box>
                         <Box // Replaced Button with Box
@@ -151,9 +149,8 @@ const SalesHistoryView: React.FC = () => {
                               backgroundColor: 'rgba(0, 0, 0, 0.04)',
                             },
                           }}
-                          aria-label="Add Sale" // Accessibility
-                          title="Add Sale" // Tooltip
-                        >
+                          aria-label={t('add_sale_aria_label')}
+                          title={t('add_sale_tooltip')}>
                           <AddShoppingCartIcon fontSize="small" />
                         </Box>
                       </>
@@ -167,7 +164,7 @@ const SalesHistoryView: React.FC = () => {
                       <Paper key={sale.id} elevation={1} sx={{ mb: 1 }}>
                         <ListItemButton onClick={() => handleSaleClick(sale.id)}>
                           <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1, py: 1 }}>
-                            {sale.items.map((item) => (
+                            {sale.items.map((item: DetailedSaleItem) => (
                               <Badge key={item.id} badgeContent={item.quantity} color="primary">
                                 <Avatar
                                   src={item.product_image_url || 'https://via.placeholder.com/50?text=N/A'}

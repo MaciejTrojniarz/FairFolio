@@ -1,15 +1,13 @@
 import { supabase } from '../supabaseClient';
-import type { Sale, SaleItem, Product, DetailedSaleItem } from '../types';
+import type { Sale, SaleItem, Product, DetailedSaleItem, SaleWithSaleItems } from '../types';
 import { productService } from './productService';
 
 export const saleService = {
-  async addSale(sale: Omit<Sale, 'id' | 'timestamp'>, items: SaleItem[]): Promise<Sale & { items: DetailedSaleItem[] }> { // Changed return type
+  async addSale(sale: Omit<Sale, 'id' | 'timestamp' | 'user_id'>, items: Omit<SaleItem, 'sale_id'| 'id'>[]): Promise<SaleWithSaleItems> { // Changed return type
     const { data: { user } } = await supabase.auth.getUser(); // Get authenticated user
     if (!user) {
       throw new Error('User not authenticated for sale recording.');
     }
-
-    const saleWithUserId = { ...sale, timestamp: new Date().toISOString(), user_id: user.id }; // Add user_id
 
     const { data: saleData, error: saleError } = await supabase
       .from('sales')
@@ -52,7 +50,7 @@ export const saleService = {
     return { ...fetchedSale, items: fetchedItems }; // Return sale with items
   },
 
-  async fetchSales(): Promise<(Sale & { items: DetailedSaleItem[] })[]> {
+  async fetchSales(): Promise<(SaleWithSaleItems)[]> {
     const { data: salesData, error: salesError } = await supabase
       .from('sales')
       .select('*, items:sale_items(*)'); // Fetch sales and sale_items, but not products yet
@@ -61,7 +59,7 @@ export const saleService = {
     // Get all product IDs from fetched sale items
     const productIds = new Set<string>();
     salesData.forEach(sale => {
-      (sale.items || []).forEach((item: any) => {
+      (sale.items || []).forEach((item: SaleItem) => {
         productIds.add(item.product_id);
       });
     });
@@ -76,9 +74,9 @@ export const saleService = {
     const productMap = new Map<string, Product>();
     (productsData || []).forEach(p => productMap.set(p.id, p as Product));
 
-    const salesWithItems: (Sale & { items: DetailedSaleItem[] })[] = salesData.map((sale: any) => ({
+    const salesWithItems: (SaleWithSaleItems)[] = salesData.map((sale: SaleWithSaleItems) => ({
       ...sale,
-      items: (sale.items || []).map((item: any) => {
+      items: (sale.items || []).map((item: SaleItem) => {
         const product = productMap.get(item.product_id);
         return {
           id: item.id,
@@ -122,7 +120,7 @@ export const saleService = {
 
     // Get all product IDs from fetched sale items
     const productIds = new Set<string>();
-    (itemsData || []).forEach((item: any) => {
+    (itemsData || []).forEach((item: SaleItem) => {
       productIds.add(item.product_id);
     });
 
@@ -136,7 +134,7 @@ export const saleService = {
     const productMap = new Map<string, Product>();
     (productsData || []).forEach(p => productMap.set(p.id, p as Product));
 
-    const detailedItems: DetailedSaleItem[] = (itemsData || []).map((item: any) => {
+    const detailedItems: DetailedSaleItem[] = (itemsData || []).map((item: SaleItem) => {
       const product = productMap.get(item.product_id);
       return {
         id: item.id,
@@ -158,9 +156,9 @@ export const saleService = {
     updatedSaleData: Partial<Sale>,
     updatedSaleItems: DetailedSaleItem[],
     originalSaleItems: DetailedSaleItem[]
-  ): Promise<Sale & { items: DetailedSaleItem[] }> { // Changed return type
+  ): Promise<SaleWithSaleItems> { // Changed return type
     // Supabase implementation
-    const { data: saleData, error: saleError } = await supabase
+    const { error: saleError } = await supabase
       .from('sales')
       .update({
         total_amount: updatedSaleData.total_amount,

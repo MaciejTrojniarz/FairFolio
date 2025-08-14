@@ -1,11 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { Product, BasketItem, Sale, DetailedSaleItem } from '../../../types';
+import type { Product, BasketItem, Sale, DetailedSaleItem, SaleWithSaleItems } from '../../../types';
 
 interface SalesState {
   basket: BasketItem[];
   totalAmount: number;
-  salesHistory: (Sale & { items: DetailedSaleItem[] })[];
+  salesHistory: (SaleWithSaleItems)[];
   selectedSale: Sale | null;
   selectedSaleItems: DetailedSaleItem[];
   loading: boolean;
@@ -30,18 +30,18 @@ export const salesSlice = createSlice({
     fetchSalesCommand: (state) => {
       state.loading = true;
       state.error = null;
-    },
-    fetchSaleDetailsCommand: (state, action: PayloadAction<string>) => {
+    }, // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    fetchSaleDetailsCommand: (state, _action: PayloadAction<string>) => {
       state.loading = true;
       state.error = null;
       state.selectedSale = null;
       state.selectedSaleItems = [];
-    },
-    recordSaleCommand: (state, action: PayloadAction<{ eventId?: string; comment?: string }>) => {
+    }, // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    recordSaleCommand: (state, _action: PayloadAction<{ eventId?: string; comment?: string }>) => {
       state.loading = true;
       state.error = null;
-    },
-    updateSaleCommand: (state, action: PayloadAction<{ saleId: string; updatedSaleData: Partial<Sale>; updatedSaleItems: DetailedSaleItem[]; originalSaleItems: DetailedSaleItem[] }>) => {
+    }, // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    updateSaleCommand: (state, _action: PayloadAction<{ saleId: string; updatedSaleData: Partial<Sale>; updatedSaleItems: DetailedSaleItem[]; originalSaleItems: DetailedSaleItem[]; }>) => {
       state.loading = true;
       state.error = null;
     },
@@ -73,11 +73,11 @@ export const salesSlice = createSlice({
     },
 
     // Events (actions that update state based on side effect results)
-    salesFetchedEvent: (state, action: PayloadAction<(Sale & { items: DetailedSaleItem[] })[]>) => {
+    salesFetchedEvent: (state, action: PayloadAction<(SaleWithSaleItems)[]>) => {
       state.salesHistory = action.payload;
       state.loading = false;
     },
-    saleRecordedEvent: (state, action: PayloadAction<Sale & { items: DetailedSaleItem[] }>) => {
+    saleRecordedEvent: (state, action: PayloadAction<SaleWithSaleItems>) => {
       state.salesHistory.push(action.payload);
       state.basket = [];
       state.totalAmount = 0;

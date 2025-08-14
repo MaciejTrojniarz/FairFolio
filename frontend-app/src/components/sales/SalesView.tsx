@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom';
-import type { RootState } from '../store';
+import { useLocation } from 'react-router-dom';
+import type { RootState } from '../../store';
 import {
   fetchProductsCommand
-} from '../store/features/products/productsSlice';
-import { fetchEventsCommand } from '../store/features/events/eventsSlice';
+} from '../../store/features/products/productsSlice';
+import { fetchEventsCommand } from '../../store/features/events/eventsSlice';
 import {
   addToBasket,
   removeFromBasket,
   clearBasket,
   recordSaleCommand,
-} from '../store/features/sales/salesSlice';
-import type { Product, BasketItem, Event } from '../types';
+} from '../../store/features/sales/salesSlice';
+import type { Product, BasketItem } from '../../types';
 import {
   Container,
   Typography,
   Box,
   Button,
-  Grid,
+  GridLegacy as Grid,
   Card,
   CardContent,
   CardMedia,
@@ -40,11 +40,11 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'; // NEW IMPORT
-import EventSelector from './common/EventSelector'; // Corrected path
-import { showToast } from '../store/features/ui/uiSlice'; // NEW IMPORT
-import { useI18n } from '../contexts/I18nContext'; // NEW IMPORT
-import { generateSvgPlaceholder } from '../utils/imageHelpers'; // NEW IMPORT
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import EventSelector from '../events/EventSelector';
+import { showToast } from '../../store/features/ui/uiSlice';
+import { useI18n } from '../../contexts/useI18n';
+import { generateSvgPlaceholder } from '../../utils/imageHelpers';
 
 const SalesView: React.FC = () => {
   const dispatch = useDispatch();
@@ -52,13 +52,12 @@ const SalesView: React.FC = () => {
   const { products, loading: productsLoading, error: productsError } = useSelector((state: RootState) => state.products);
   const { loading: eventsLoading, error: eventsError } = useSelector((state: RootState) => state.events);
   const { basket, totalAmount, loading: salesLoading, error: salesError } = useSelector((state: RootState) => state.sales);
-  const { t } = useI18n(); // NEW: useI18n hook
+  const { t } = useI18n();
 
   const [selectedEventId, setSelectedEventId] = useState<string | undefined>(undefined);
   const [comment, setComment] = useState('');
-  const [expandedAccordion, setExpandedAccordion] = useState<string | false>(false); // Initialize to false
+  const [expandedAccordion, setExpandedAccordion] = useState<string | false>(false);
 
-  // Group products by category
   const categorizedProducts = products.reduce((acc, product) => {
     const categoryId = product.category_id || 'unknown';
     if (!acc[categoryId]) {
@@ -68,8 +67,8 @@ const SalesView: React.FC = () => {
     return acc;
   }, {} as Record<string, Product[]>);
 
-  const handleAccordionChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
-    setExpandedAccordion(isExpanded ? panel : false);
+  const handleAccordionChange = (categoryId: string) => (_event: React.SyntheticEvent, isExpanded: boolean) => {
+    setExpandedAccordion(isExpanded ? categoryId : false);
   };
 
   useEffect(() => {
@@ -77,17 +76,16 @@ const SalesView: React.FC = () => {
     dispatch(fetchEventsCommand());
   }, [dispatch]);
 
-  // Effect to set initial expanded state after products are loaded and categorized
   useEffect(() => {
     if (Object.keys(categorizedProducts).length === 1) {
       setExpandedAccordion(Object.keys(categorizedProducts)[0]);
     } else {
-      setExpandedAccordion(false); // Ensure all are collapsed if more than one category
+      setExpandedAccordion(false);
     }
-  }, [products]); // Depend on products to re-evaluate when they load/change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [products]);
 
   useEffect(() => {
-    // Check if eventId is passed via route state
     if (location.state && (location.state as { eventId?: string }).eventId) {
       setSelectedEventId((location.state as { eventId: string }).eventId);
     }
@@ -114,7 +112,7 @@ const SalesView: React.FC = () => {
 
   const handleRecordSale = () => {
     if (basket.length > 0) {
-      dispatch(recordSaleCommand({ eventId: selectedEventId, comment: comment })); // Pass selected event ID and comment
+      dispatch(recordSaleCommand({ eventId: selectedEventId, comment: comment }));
     }
   };
 
@@ -122,7 +120,7 @@ const SalesView: React.FC = () => {
     <Container maxWidth={false}>
       <Box sx={{ my: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Record Sale
+          {t('record_sale_title')}
         </Typography>
 
         {(productsLoading || salesLoading || eventsLoading) && <CircularProgress />}
@@ -134,7 +132,7 @@ const SalesView: React.FC = () => {
             onSelectEvent={(id) => setSelectedEventId(id)}
           />
           <TextField
-            label="Comment"
+            label={t('comment_label')}
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             fullWidth
@@ -145,11 +143,10 @@ const SalesView: React.FC = () => {
         </Paper>
 
         {/* Main content area - Products and Basket */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}> {/* Main flex container */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
 
-          {/* Product Cards Section */}
           <Box>
-            <Typography variant="h5" gutterBottom>Products</Typography>
+            <Typography variant="h5" gutterBottom>{t('products_section_title')}</Typography>
             {
               Object.keys(categorizedProducts).map((categoryId) => {
                 const categoryName = categoryId === 'unknown' ? t('unknown_category') : categorizedProducts[categoryId][0].category_name;
@@ -165,7 +162,7 @@ const SalesView: React.FC = () => {
                     <AccordionDetails>
                       <Grid container spacing={2} alignItems="stretch" sx={{ width: '100%' }}>
                         {categorizedProducts[categoryId].map((product) => (
-                          <Grid item xs={6} sm={4} md={3} key={product.id} sx={{ height: '100%', display: 'flex' }}>
+                          <Grid item xs={6} sm={4} md={3} key={product.id}>
                             <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', width: '100%', minHeight: 300, opacity: product.stock_quantity !== undefined && product.stock_quantity <= 0 ? 0.5 : 1 }}>
                               <CardActionArea onClick={() => handleAddToBasket(product)} disabled={product.stock_quantity !== undefined && product.stock_quantity <= 0}>
                                 <CardMedia
@@ -193,7 +190,7 @@ const SalesView: React.FC = () => {
                                   </Typography>
                                   {product.stock_quantity !== undefined && (
                                     <Typography variant="body2" color={product.stock_quantity <= 0 ? "error" : "text.secondary"}>
-                                      Stock: {product.stock_quantity}
+                                      {t('stock_label')}: {product.stock_quantity}
                                     </Typography>
                                   )}
                                 </CardContent>
@@ -209,13 +206,12 @@ const SalesView: React.FC = () => {
             }
           </Box>
 
-          {/* Basket Section */}
           <Box>
-            <Typography variant="h5" gutterBottom>Basket</Typography>
+            <Typography variant="h5" gutterBottom>{t('basket_section_title')}</Typography>
             <List sx={{ bgcolor: 'background.paper', borderRadius: 1, p: 1 }}>
               {basket.length === 0 ? (
                 <ListItem>
-                  <ListItemText primary="Basket is empty" />
+                  <ListItemText primary={t('basket_is_empty_message')} />
                 </ListItem>
               ) : (
                 basket.map((item: BasketItem) => (
@@ -237,7 +233,7 @@ const SalesView: React.FC = () => {
               )}
             </List>
             <Box sx={{ mt: 2, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'stretch', sm: 'center' }, gap: 1 }}>
-              <Typography variant="h6">Total: ${totalAmount.toFixed(2)}</Typography>
+              <Typography variant="h6">{t('total_label')}: ${totalAmount.toFixed(2)}</Typography>
               <Box sx={{ display: 'flex', gap: 1, width: { xs: '100%', sm: 'auto' } }}>
                 <Button
                   variant="outlined"
@@ -247,7 +243,7 @@ const SalesView: React.FC = () => {
                   disabled={basket.length === 0}
                   sx={{ flexGrow: 1 }}
                 >
-                  Clear
+                  {t('clear_button')}
                 </Button>
                 <Button
                   variant="contained"
@@ -257,13 +253,13 @@ const SalesView: React.FC = () => {
                   disabled={basket.length === 0 || salesLoading}
                   sx={{ flexGrow: 1 }}
                 >
-                  Record Sale
+                  {t('record_sale_button')}
                 </Button>
               </Box>
             </Box>
           </Box>
 
-        </Box> {/* End Main flex container */}
+        </Box>
       </Box>
     </Container>
   );

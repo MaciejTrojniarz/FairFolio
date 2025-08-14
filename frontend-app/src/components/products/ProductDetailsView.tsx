@@ -6,15 +6,15 @@ import {
   CardMedia,
 } from '@mui/material';
 import type { Product } from '../../types';
-import { useI18n } from '../../contexts/I18nContext'; // NEW IMPORT
-import { getInitials } from '../../utils/imageHelpers'; // NEW IMPORT
+import { useI18n } from '../../contexts/useI18n';
+import { generateSvgPlaceholder } from '../../utils/imageHelpers';
 
 interface ProductDetailsViewProps {
   product: Product;
 }
 
 const ProductDetailsView: React.FC<ProductDetailsViewProps> = ({ product }) => {
-  const { t } = useI18n(); // NEW: useI18n hook
+  const { t } = useI18n();
 
   return (
     <Paper elevation={3} sx={{ p: 3, mt: 3 }}>
@@ -35,22 +35,18 @@ const ProductDetailsView: React.FC<ProductDetailsViewProps> = ({ product }) => {
               }}
             />
           ) : (
-            <Box
+            <CardMedia
+              component="img"
+              image={generateSvgPlaceholder(product.name)}
+              alt={product.name}
               sx={{
                 width: '100%',
-                height: 400,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                bgcolor: '#e0e0e0',
+                height: 'auto',
+                maxHeight: 400,
+                objectFit: 'contain',
                 borderRadius: 1,
-                color: '#757575',
-                fontSize: 100,
-                fontWeight: 'bold',
               }}
-            >
-              {getInitials(product.name)}
-            </Box>
+            />
           )}
         </Box>
 

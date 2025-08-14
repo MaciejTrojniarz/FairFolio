@@ -1,6 +1,8 @@
 import { ofType } from 'redux-observable';
 import { from, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, withLatestFrom } from 'rxjs/operators'; // Added mergeMap
+import { StateObservable } from 'redux-observable';
+import { type PayloadAction } from '@reduxjs/toolkit';
 import { saleService } from '../../../services/saleService';
 import { showToast } from '../ui/uiSlice'; // New import
 import { fetchProductsCommand } from '../products/productsSlice'; // NEW IMPORT
@@ -15,19 +17,21 @@ import {
   salesErrorEvent,
 } from './salesSlice';
 import type { RootState } from '../../index';
-import type { Sale } from '../../../types';
+import type { SaleWithSaleItems } from '../../../types';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const fetchSalesEpic = (action$: any) =>
   action$.pipe(
     ofType(fetchSalesCommand.type),
     switchMap(() =>
       from(saleService.fetchSales()).pipe(
-        map((sales: Sale[]) => salesFetchedEvent(sales)),
+        map((sales: (SaleWithSaleItems)[]) => salesFetchedEvent(sales)),
         catchError((error) => of(salesErrorEvent(error.message)))
       )
     )
   );
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const fetchSaleDetailsEpic = (action$: any) =>
   action$.pipe(
     ofType(fetchSaleDetailsCommand.type),
@@ -39,7 +43,8 @@ export const fetchSaleDetailsEpic = (action$: any) =>
     )
   );
 
-export const recordSaleEpic = (action$: any, state$: any) =>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const recordSaleEpic = (action$: any, state$: StateObservable<RootState>) =>
   action$.pipe(
     ofType(recordSaleCommand.type),
     withLatestFrom(state$),
@@ -73,6 +78,7 @@ export const recordSaleEpic = (action$: any, state$: any) =>
     })
   );
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const updateSaleEpic = (action$: any) =>
   action$.pipe(
     ofType(updateSaleCommand.type),

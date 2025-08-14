@@ -1,5 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import CryptoJS from 'crypto-js';
+
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode';
+
+
 import type { RootState } from '../../store';
 import {
   Container,
@@ -8,30 +15,53 @@ import {
   Paper,
   Button,
   Avatar,
-  Switch,
-  FormControlLabel,
+  CircularProgress,
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../supabaseClient';
-import CryptoJS from 'crypto-js';
-import { useI18n } from '../../contexts/I18nContext';
-import { useThemeMode } from '../../contexts/ThemeContext';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
-
+import { useI18n } from '../../contexts/useI18n';
+import type { Profile as UserProfileType } from '../../types';
 
 const getGravatarUrl = (email: string, size: number = 120, defaultImage: string = 'identicon') => {
   const hash = CryptoJS.MD5(email.trim().toLowerCase()).toString();
   return `https://www.gravatar.com/avatar/${hash}?s=${size}&d=${defaultImage}`;
 };
 
-
 const Profile: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state: RootState) => state.auth);
   const { t } = useI18n();
-  const { mode, toggleTheme } = useThemeMode();
+  const [profile, setProfile] = useState<UserProfileType | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('id, name, language, theme')
+          .eq('id', user.id)
+          .single();
+
+        if (error) {
+          throw error;
+        }
+        setProfile(data);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [user]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -56,6 +86,31 @@ const Profile: React.FC = () => {
     );
   }
 
+  if (loading) {
+    return (
+      <Container maxWidth="md">
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <CircularProgress />
+        </Box>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container maxWidth="md">
+        <Box sx={{ my: 4 }}>
+          <Typography variant="h5" component="h1" color="error" gutterBottom>
+            {t('error_fetching_profile')}
+          </Typography>
+          <Typography variant="body1" color="error">
+            {error}
+          </Typography>
+        </Box>
+      </Container>
+    );
+  }
+
   const gravatarUrl = user?.email ? getGravatarUrl(user.email, 120) : undefined;
 
   return (
@@ -74,11 +129,29 @@ const Profile: React.FC = () => {
             />
           )}
           <Typography variant="h5" component="h2" gutterBottom>
+            {profile?.name}
+          </Typography>
+          <Typography variant="h5" component="h3" gutterBottom>
             {user.email}
           </Typography>
           <Typography variant="caption" color="text.secondary" sx={{ mb: 1 }}>
             {t('user_id')}: {user.id}
           </Typography>
+
+          { profile?.language && (
+            <Typography variant="body2" color="text.secondary">
+              {t('language')}: {profile.language}
+            </Typography>
+          )}
+          { profile?.theme && (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  {profile.theme === 'light' ? <LightModeIcon color={'primary'} /> : <DarkModeIcon color={'primary'}/>}
+                  <Typography variant="body2">
+                    {profile.theme === 'light' ? t('light_mode') : t('dark_mode')}
+                  </Typography>
+            </Box>
+          )
+          }
 
           {user.created_at && (
             <Typography variant="body2" color="text.secondary">
@@ -90,20 +163,14 @@ const Profile: React.FC = () => {
               {t('last_sign_in')}: {new Date(user.last_sign_in_at).toLocaleString()}
             </Typography>
           )}
-
-          {/* Theme Toggle */}
-          <Box sx={{ mt: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
-            {mode === 'light' ? <Brightness7Icon /> : <Brightness4Icon />}
-            <FormControlLabel
-              control={<Switch checked={mode === 'dark'} onChange={toggleTheme} />}
-              label={mode === 'light' ? t('light_mode') : t('dark_mode')}
-            />
-          </Box>
         </Paper>
 
         <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
           <Button variant="outlined" onClick={() => navigate('/')}>
             <ArrowBackIcon sx={{ mr: 1 }} /> {t('back_to_home')}
+          </Button>
+          <Button variant="contained" onClick={() => navigate('/profile/edit')} sx={{ mr: 1 }}>
+            {t('edit_profile')}
           </Button>
           <Button variant="contained" color="error" onClick={handleLogout}>
             {t('logout')}

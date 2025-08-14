@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import type { RootState } from '../store';
+import type { RootState } from '../../store';
 import {
   fetchProductsCommand,
-} from '../store/features/products/productsSlice';
+} from '../../store/features/products/productsSlice';
 import {
   fetchEventsCommand,
-} from '../store/features/events/eventsSlice';
+} from '../../store/features/events/eventsSlice';
 import {
   updateSaleCommand,
-} from '../store/features/sales/salesSlice';
-import type { Product, DetailedSaleItem, Sale } from '../types';
+} from '../../store/features/sales/salesSlice';
+import type { Product, DetailedSaleItem, Sale } from '../../types';
 import {
   Container,
   Typography,
   Box,
   Button,
-  Grid,
+  GridLegacy as Grid,
   Card,
   CardContent,
   CardMedia,
@@ -36,7 +36,8 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useNavigate } from 'react-router-dom';
-import EventSelector from './common/EventSelector';
+import { useI18n } from '../../contexts/useI18n';
+import EventSelector from '../events/EventSelector';
 
 interface SaleEditFormProps {
   sale: Sale;
@@ -44,6 +45,7 @@ interface SaleEditFormProps {
 }
 
 const SaleEditForm: React.FC<SaleEditFormProps> = ({ sale, saleItems }) => {
+  const { t } = useI18n();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -53,7 +55,7 @@ const SaleEditForm: React.FC<SaleEditFormProps> = ({ sale, saleItems }) => {
 
   const [currentBasket, setCurrentBasket] = useState<DetailedSaleItem[]>(saleItems);
   const [currentTotalAmount, setCurrentTotalAmount] = useState(sale.total_amount);
-  const [selectedEventId, setSelectedEventId] = useState<string | undefined>(sale.event_id);
+  const [selectedEventId, setSelectedEventId] = useState<string | undefined | null>(sale.event_id);
   const [comment, setComment] = useState(sale.comment || '');
 
   useEffect(() => {
@@ -62,7 +64,6 @@ const SaleEditForm: React.FC<SaleEditFormProps> = ({ sale, saleItems }) => {
   }, [dispatch]);
 
   useEffect(() => {
-    // Recalculate total amount whenever basket changes
     const newTotal = currentBasket.reduce((sum, item) => sum + item.price_at_sale * item.quantity, 0);
     setCurrentTotalAmount(newTotal);
   }, [currentBasket]);
@@ -78,8 +79,8 @@ const SaleEditForm: React.FC<SaleEditFormProps> = ({ sale, saleItems }) => {
         return [
           ...prevBasket,
           {
-            id: `temp-${Date.now()}-${Math.random()}`, // Temporary ID for new item
-            sale_id: sale.id, // Associate with current sale
+            id: `temp-${Date.now()}-${Math.random()}`,
+            sale_id: sale.id,
             product_id: product.id,
             quantity: 1,
             price_at_sale: product.price,
@@ -109,26 +110,26 @@ const SaleEditForm: React.FC<SaleEditFormProps> = ({ sale, saleItems }) => {
   };
 
   const handleUpdateSale = () => {
-    const eventIdToSend = selectedEventId === '' ? null : selectedEventId; // Convert empty string to null
+    const eventIdToSend = selectedEventId === '' ? null : selectedEventId;
 
     dispatch(updateSaleCommand({
       saleId: sale.id,
-      updatedSaleData: { total_amount: currentTotalAmount, event_id: eventIdToSend, comment: comment }, // Use eventIdToSend and comment
+      updatedSaleData: { total_amount: currentTotalAmount, event_id: eventIdToSend, comment: comment },
       updatedSaleItems: currentBasket,
-      originalSaleItems: saleItems, // Pass original items for comparison
+      originalSaleItems: saleItems,
     }));
-    navigate(`/sales/${sale.id}`); // Navigate back after update
+    navigate(`/sales/${sale.id}`);
   };
 
   const handleCancel = () => {
-    navigate(`/sales/${sale.id}`); // Navigate back without saving
+    navigate(`/sales/${sale.id}`);
   };
 
   return (
     <Container maxWidth={false}>
       <Box sx={{ my: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Edit Sale: {sale.id}
+          {t('edit_sale_title')}: {sale.id}
         </Typography>
 
         {(productsLoading || salesLoading || eventsLoading) && <CircularProgress />}
@@ -139,7 +140,7 @@ const SaleEditForm: React.FC<SaleEditFormProps> = ({ sale, saleItems }) => {
           onSelectEvent={(id) => setSelectedEventId(id)}
         />
         <TextField
-          label="Comment"
+          label={t('comment_label')}
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           fullWidth
@@ -149,9 +150,8 @@ const SaleEditForm: React.FC<SaleEditFormProps> = ({ sale, saleItems }) => {
         />
 
         <Grid container spacing={3}>
-          {/* Product Cards */}
           <Grid item xs={12} md={8}>
-            <Typography variant="h5" gutterBottom>Products</Typography>
+            <Typography variant="h5" gutterBottom>{t('products_section_title')}</Typography>
             <Grid container spacing={2}>
               {products.map((product) => (
                 <Grid item xs={6} sm={4} md={3} key={product.id}>
@@ -184,11 +184,11 @@ const SaleEditForm: React.FC<SaleEditFormProps> = ({ sale, saleItems }) => {
 
           {/* Basket */}
           <Grid item xs={12} md={4}>
-            <Typography variant="h5" gutterBottom>Current Basket</Typography>
+            <Typography variant="h5" gutterBottom>{t('current_basket_title')}</Typography>
             <List sx={{ bgcolor: 'background.paper', borderRadius: 1, p: 1 }}>
               {currentBasket.length === 0 ? (
                 <ListItem>
-                  <ListItemText primary="Basket is empty" />
+                  <ListItemText primary={t('basket_is_empty_message')} />
                 </ListItem>
               ) : (
                 currentBasket.map((item: DetailedSaleItem) => (
@@ -227,7 +227,7 @@ const SaleEditForm: React.FC<SaleEditFormProps> = ({ sale, saleItems }) => {
                   startIcon={<CancelIcon />}
                   sx={{ flexGrow: 1 }}
                 >
-                  Cancel
+                  {t('cancel_button')}
                 </Button>
                 <Button
                   variant="contained"
@@ -237,7 +237,7 @@ const SaleEditForm: React.FC<SaleEditFormProps> = ({ sale, saleItems }) => {
                   disabled={salesLoading}
                   sx={{ flexGrow: 1 }}
                 >
-                  Save Changes
+                  {t('save_changes_button')}
                 </Button>
               </Box>
             </Box>

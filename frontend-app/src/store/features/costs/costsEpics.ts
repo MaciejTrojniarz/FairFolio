@@ -9,6 +9,7 @@ import {
 } from './costsSlice';
 import type { Cost } from '../../../types';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const fetchCostsEpic = (action$: any) =>
   action$.pipe(
     ofType(fetchCostsCommand.type),

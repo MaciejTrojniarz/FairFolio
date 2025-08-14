@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, type ReactNode } from 'react';
+import { useDispatch } from 'react-redux';
+import { showToast } from '../store/features/ui/uiSlice';
 
 interface I18nContextType {
   t: (key: string, params?: Record<string, string>) => string;
@@ -6,7 +8,8 @@ interface I18nContextType {
   setLang: (lang: string) => void;
 }
 
-const I18nContext = createContext<I18nContextType | undefined>(undefined);
+// eslint-disable-next-line react-refresh/only-export-components
+export const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
 interface I18nProviderProps {
   children: ReactNode;
@@ -14,6 +17,7 @@ interface I18nProviderProps {
 }
 
 export const I18nProvider: React.FC<I18nProviderProps> = ({ children, initialLang = 'en' }) => {
+  const dispatch = useDispatch();
   const [lang, setLang] = useState(initialLang);
   const [translations, setTranslations] = useState<Record<string, string>>({});
 
@@ -26,22 +30,23 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children, initialLan
         }
         const data = await response.json();
         setTranslations(data);
-      } catch (error) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
         console.error('Error loading translations:', error);
-        // Fallback to English if selected language fails
+        dispatch(showToast({ message: `Error loading translations: ${error.message}`, severity: 'error' }));
         if (lang !== 'en') {
           const response = await fetch(`/src/locales/en.json`);
           const data = await response.json();
           setTranslations(data);
-          setLang('en'); // Set language to English on fallback
+          setLang('en');
         }
       }
     };
     fetchTranslations();
-  }, [lang]);
+  }, [lang, dispatch]);
 
   const t = (key: string, params?: Record<string, string>): string => {
-    let translation = translations[key] || key; // Fallback to key if translation not found
+    let translation = translations[key] || key;
     if (params) {
       for (const [paramKey, paramValue] of Object.entries(params)) {
         translation = translation.replace(`{${paramKey}}`, paramValue);
@@ -57,10 +62,4 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children, initialLan
   );
 };
 
-export const useI18n = () => {
-  const context = useContext(I18nContext);
-  if (context === undefined) {
-    throw new Error('useI18n must be used within an I18nProvider');
-  }
-  return context;
-};
+

@@ -21,16 +21,16 @@ export const eventsSlice = createSlice({
     fetchEventsCommand: (state) => {
       state.loading = true;
       state.error = null;
-    },
-    addEventCommand: (state, action: PayloadAction<Omit<Event, 'id'>>) => {
+    }, // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    addEventCommand: (state, _action: PayloadAction<Omit<Event, 'id'>>) => {
       state.loading = true;
       state.error = null;
-    },
-    updateEventCommand: (state, action: PayloadAction<Event>) => {
+    }, // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    updateEventCommand: (state, _action: PayloadAction<Event>) => {
       state.loading = true;
       state.error = null;
-    },
-    deleteEventCommand: (state, action: PayloadAction<string>) => {
+    }, // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    deleteEventCommand: (state, _action: PayloadAction<string>) => {
       state.loading = true;
       state.error = null;
     },

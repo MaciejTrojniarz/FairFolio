@@ -5,9 +5,12 @@ import type { RootState } from '../../store';
 import { fetchEventsCommand } from '../../store/features/events/eventsSlice';
 import type { Event } from '../../types';
 import { Container, CircularProgress, Alert } from '@mui/material';
+import { showToast } from '../../store/features/ui/uiSlice';
+import { useI18n } from '../../contexts/useI18n';
 import EventForm from './EventForm';
 
 const EventFormPage: React.FC = () => {
+  const { t } = useI18n();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -16,7 +19,6 @@ const EventFormPage: React.FC = () => {
   const [eventToEdit, setEventToEdit] = useState<Event | undefined>(undefined);
 
   useEffect(() => {
-    // Ensure events are loaded to find the one to edit
     if (events.length === 0 && !loading && !error) {
       dispatch(fetchEventsCommand());
     }
@@ -28,21 +30,20 @@ const EventFormPage: React.FC = () => {
       if (foundEvent) {
         setEventToEdit(foundEvent);
       } else if (!loading) {
-        // If event not found and not loading, navigate back or show error
         console.error(`Event with ID ${id} not found.`);
-        navigate('/events'); // Navigate back to list if not found
+        dispatch(showToast({ message: t('event_not_found_message'), severity: 'error' }));
+        navigate('/events');
       }
     } else if (!id) {
-      // For new event creation, ensure no event is set for editing
       setEventToEdit(undefined);
     }
-  }, [id, events, loading, navigate]);
+  }, [id, events, loading, navigate, dispatch, t]);
 
   const handleClose = () => {
     if (id) {
-      navigate(`/events/${id}`); // Navigate to event details after edit
+      navigate(`/events/${id}`);
     } else {
-      navigate('/events'); // Navigate to event list after add
+      navigate('/events');
     }
   };
 
@@ -55,8 +56,7 @@ const EventFormPage: React.FC = () => {
   }
 
   if (id && !eventToEdit && !loading) {
-    // This case handles when an event ID is in the URL but the event isn't found after loading
-    return <Container maxWidth="md"><Alert severity="warning">Event not found.</Alert></Container>;
+    return <Container maxWidth="md"><Alert severity="warning">{t('event_not_found_after_load')}</Alert></Container>;
   }
 
   return (
