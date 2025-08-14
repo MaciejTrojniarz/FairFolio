@@ -71,7 +71,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
       if (newlyAddedCategory && newlyAddedCategory.id !== selectedCategoryId) {
         setSelectedCategoryId(newlyAddedCategory.id);
       }
-    }
+    } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categories, categoriesLoading]);
 
   useEffect(() => {

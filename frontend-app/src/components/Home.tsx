@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../store';
 import { fetchEventsCommand } from '../store/features/events/eventsSlice';
 import { Link } from 'react-router-dom';
-import { Box, Typography, IconButton, Container, List, ListItem, ListItemText, Paper, GridLegacy as Grid } from '@mui/material';
+import { Box, Typography, IconButton, Container, List, ListItem, ListItemText, Paper } from '@mui/material';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import HistoryIcon from '@mui/icons-material/History';
