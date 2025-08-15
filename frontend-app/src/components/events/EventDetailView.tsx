@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store';
@@ -35,14 +35,23 @@ const EventDetailView: React.FC = () => {
 
   const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
 
+  const eventsRequestedRef = useRef(false);
+  const salesRequestedRef = useRef(false);
+
   useEffect(() => {
-    if (events.length === 0 && !eventsLoading && !eventsError) {
+    if (!eventsRequestedRef.current && events.length === 0 && !eventsLoading && !eventsError) {
+      eventsRequestedRef.current = true;
       dispatch(fetchEventsCommand());
     }
-    if (salesHistory.length === 0 && !salesLoading && !salesError) {
+  }, [events.length, eventsLoading, eventsError, dispatch]);
+
+  useEffect(() => {
+    // Only fetch sales if we actually have an event to show
+    if (event && !salesRequestedRef.current && salesHistory.length === 0 && !salesLoading && !salesError) {
+      salesRequestedRef.current = true;
       dispatch(fetchSalesCommand());
     }
-  }, [events, eventsLoading, eventsError, salesHistory, salesLoading, salesError, dispatch]);
+  }, [event, salesHistory.length, salesLoading, salesError, dispatch]);
 
   const handleDeleteClick = () => {
     setOpenConfirmDelete(true);
@@ -68,7 +77,8 @@ const EventDetailView: React.FC = () => {
     }
   };
 
-  if (eventsLoading || salesLoading) {
+  const isLoading = eventsLoading || (event && salesLoading);
+  if (isLoading) {
     return (
       <Container maxWidth="md">
         <Box sx={{ my: 4, display: 'flex', justifyContent: 'center' }}>
@@ -95,7 +105,7 @@ const EventDetailView: React.FC = () => {
     return (
       <Container maxWidth="md">
         <Box sx={{ my: 4 }}>
-          <Alert severity="warning">Event not found.</Alert>
+          <Alert severity="warning">{t('event_not_found_after_load')}</Alert>
           <Button variant="contained" onClick={() => navigate('/events')} sx={{ mt: 2 }}>
             <ArrowBackIcon sx={{ mr: 1 }} /> {t('back_to_events')}
           </Button>
