@@ -117,7 +117,7 @@ const SalesView: React.FC = () => {
   };
 
   return (
-    <Container maxWidth={false}>
+    <Container maxWidth={false} data-testid="sales-view">
       <Box sx={{ my: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
           {t('record_sale_title')}
@@ -146,7 +146,7 @@ const SalesView: React.FC = () => {
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
 
           <Box>
-            <Typography variant="h5" gutterBottom>{t('products_section_title')}</Typography>
+            <Typography variant="h5" gutterBottom data-testid="products-section-title">{t('products_section_title')}</Typography>
             {
               Object.keys(categorizedProducts).map((categoryId) => {
                 const categoryName = categoryId === 'unknown' ? t('unknown_category') : categorizedProducts[categoryId][0].category_name;
@@ -207,7 +207,7 @@ const SalesView: React.FC = () => {
           </Box>
 
           <Box>
-            <Typography variant="h5" gutterBottom>{t('basket_section_title')}</Typography>
+            <Typography variant="h5" gutterBottom data-testid="basket-section-title">{t('basket_section_title')}</Typography>
             <List sx={{ bgcolor: 'background.paper', borderRadius: 1, p: 1 }}>
               {basket.length === 0 ? (
                 <ListItem>
@@ -242,6 +242,7 @@ const SalesView: React.FC = () => {
                   startIcon={<ClearAllIcon />}
                   disabled={basket.length === 0}
                   sx={{ flexGrow: 1 }}
+                  data-testid="basket-clear"
                 >
                   {t('clear_button')}
                 </Button>
@@ -252,6 +253,7 @@ const SalesView: React.FC = () => {
                   startIcon={<ShoppingCartIcon />}
                   disabled={basket.length === 0 || salesLoading}
                   sx={{ flexGrow: 1 }}
+                  data-testid="record-sale"
                 >
                   {t('record_sale_button')}
                 </Button>

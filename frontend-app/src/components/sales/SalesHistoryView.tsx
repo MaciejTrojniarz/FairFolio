@@ -59,7 +59,7 @@ const SalesHistoryView: React.FC = () => {
   }, {} as Record<string, (SaleWithSaleItems)[]>);
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="md" data-testid="sales-history">
       <Box sx={{ my: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
           {t('sales_history_title')}

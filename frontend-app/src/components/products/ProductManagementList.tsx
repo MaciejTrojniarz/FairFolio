@@ -21,14 +21,14 @@ const ProductManagementList: React.FC = () => {
   };
 
   return (
-    <Container maxWidth={false}>
+    <Container maxWidth={false} data-testid="product-management">
       <Box sx={{ my: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
           {t('product_management_title')}
         </Typography>
 
         <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
-          <Button variant="contained" onClick={handleAddNewProduct}>
+          <Button variant="contained" onClick={handleAddNewProduct} data-testid="add-new-product">
             {t('add_new_product_button')}
           </Button>
           <Button

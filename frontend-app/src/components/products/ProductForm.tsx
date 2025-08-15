@@ -165,7 +165,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onClose }) => {
   };
 
   return (
-    <Paper elevation={3} sx={{ p: 3, mt: 3 }}>
+    <Paper elevation={3} sx={{ p: 3, mt: 3 }} data-testid="product-form">
       <Typography variant="h6" gutterBottom>
         {product ? t('edit_product_title') : t('add_new_product_title')}
       </Typography>

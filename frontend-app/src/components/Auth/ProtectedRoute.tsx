@@ -9,12 +9,13 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { user, isLoading } = useSelector((state: RootState) => state.auth);
+  const bypassAuth = import.meta.env.VITE_E2E_BYPASS_AUTH === 'true';
 
   if (isLoading) {
     return <div>Loading authentication...</div>;
   }
 
-  if (!user) {
+  if (!user && !bypassAuth) {
     return <Navigate to="/login" replace />;
   }
 

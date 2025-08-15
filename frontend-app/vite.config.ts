@@ -7,6 +7,9 @@ export default defineConfig({
   optimizeDeps: {
     include: ['@reduxjs/toolkit'],
   },
+  server: {
+    port: 4173,
+  },
   test: {
     globals: true,
     environment: 'jsdom',

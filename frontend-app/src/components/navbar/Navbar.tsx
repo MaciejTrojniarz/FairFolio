@@ -28,23 +28,24 @@ const Navbar: React.FC = () => {
             src="/fair_merchant_logo.png" // Updated path to the new image
             alt={t('app_name')} // Alt text for accessibility
             sx={{ height: 40, mr: 1 }} // Adjust height and margin as needed
+            data-testid="navbar-logo"
           />
         </RouterLink>
         <Box sx={{ flexGrow: 1, ml: 2 }}>
           <CustomBreadcrumbs />
         </Box>
         <RouterLink to="/products">
-          <IconButton color="primary" aria-label={t('product_management')}>
+          <IconButton color="primary" aria-label={t('product_management')} data-testid="navbar-products">
             <InventoryIcon />
           </IconButton>
         </RouterLink>
         <RouterLink to="/sales">
-          <IconButton color="primary" aria-label={t('sales_history')}>
+          <IconButton color="primary" aria-label={t('sales_history')} data-testid="navbar-sales">
             <HistoryIcon />
           </IconButton>
         </RouterLink>
         <RouterLink to="/events">
-          <IconButton color="primary" aria-label={t('event_management')}>
+          <IconButton color="primary" aria-label={t('event_management')} data-testid="navbar-events">
             <EventIcon />
           </IconButton>
         </RouterLink>

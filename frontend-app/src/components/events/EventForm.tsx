@@ -88,7 +88,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
   };
 
   return (
-    <Paper elevation={3} sx={{ p: 3, mt: 3 }}>
+    <Paper elevation={3} sx={{ p: 3, mt: 3 }} data-testid="event-form">
       <Typography variant="h6" gutterBottom>
         {event ? t('edit_event_form_title') : t('add_new_event_form_title')}
       </Typography>
@@ -99,6 +99,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
           onChange={(e) => setName(e.target.value)}
           fullWidth
           required
+          inputProps={{ 'data-testid': 'event-name' }}
         />
         <TextField
           label={t('event_description')}
@@ -107,12 +108,14 @@ const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
           fullWidth
           multiline
           rows={2}
+          inputProps={{ 'data-testid': 'event-description' }}
         />
         <TextField
           label={t('event_link')}
           value={link}
           onChange={(e) => setLink(e.target.value)}
           fullWidth
+          inputProps={{ 'data-testid': 'event-link' }}
         />
         <TextField
           label={t('event_start_date')}
@@ -124,6 +127,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
           InputLabelProps={{
             shrink: true,
           }}
+          inputProps={{ 'data-testid': 'event-start-date' }}
           error={!!startDateError} // Apply error state
           helperText={startDateError} // Display error message
         />
@@ -137,6 +141,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
           InputLabelProps={{
             shrink: true,
           }}
+          inputProps={{ 'data-testid': 'event-end-date' }}
           error={!!endDateError} // Apply error state
           helperText={endDateError} // Display error message
         />
@@ -146,6 +151,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
           onChange={(e) => setVenue(e.target.value)}
           fullWidth
           required
+          inputProps={{ 'data-testid': 'event-venue' }}
         />
         <TextField
           label={t('event_city')}
@@ -153,8 +159,9 @@ const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
           onChange={(e) => setCity(e.target.value)}
           fullWidth
           required
+          inputProps={{ 'data-testid': 'event-city' }}
         />
-        <Button type="submit" variant="contained" color="primary">
+        <Button type="submit" variant="contained" color="primary" data-testid="event-submit">
           {event ? t('update_event_button') : t('add_event_button')}
         </Button>
         <Button type="button" variant="outlined" onClick={onClose}>

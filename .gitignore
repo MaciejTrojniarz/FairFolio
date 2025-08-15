@@ -1,28 +1,52 @@
-node_modules
-.env
+# Node
+node_modules/
 
 # Logs
-logs
-*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-lerna-debug.log*
 
-*node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# Editor
+.vscode/
+.idea/
+*.swp
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+
+# Env files
 .env
+.env.*
+
+# OS
+Thumbs.db
+
+# Root build artifacts (if any)
+coverage/
+
+# Supabase local
+.supabase/
+
+# Playwright caches
+.playwright/
+
+# Frontend app
+/frontend-app/node_modules/
+/frontend-app/dist/
+/frontend-app/.vite/
+/frontend-app/.turbo/
+/frontend-app/coverage/
+/frontend-app/.output/
+/frontend-app/.cache/
+/frontend-app/playwright-report/
+/frontend-app/test-results/
+/frontend-app/e2e/**-snapshots/
+
+# Cypress
+/frontend-app/.cache/Cypress/
+/frontend-app/cypress/screenshots/
+/frontend-app/cypress/videos/
+
+# Lockfiles (keep if you prefer committing)
+# package-lock.json
+# pnpm-lock.yaml
+# yarn.lock

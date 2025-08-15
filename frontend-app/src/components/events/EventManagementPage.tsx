@@ -19,14 +19,14 @@ const EventManagementPage: React.FC = () => {
   
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" data-testid="event-management">
       <Box sx={{ my: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
           {t('event_management_title')}
         </Typography>
 
         <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
-          <Button variant="contained" onClick={handleAddNewEvent}>
+          <Button variant="contained" onClick={handleAddNewEvent} data-testid="add-new-event">
             {t('add_new_event_button')}
           </Button>
           <Button

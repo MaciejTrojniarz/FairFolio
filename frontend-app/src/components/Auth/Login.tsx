@@ -76,8 +76,8 @@ const Login: React.FC = () => {
 
   return (
     <div className="login-container">
-      <h2>{isRegistering ? t('register') : t('login')}</h2>
-      <form onSubmit={isRegistering ? handleRegister : handleLogin}>
+      <h2 data-testid="auth-title">{isRegistering ? t('register') : t('login')}</h2>
+      <form onSubmit={isRegistering ? handleRegister : handleLogin} data-testid="auth-form">
         {error && <p className="error-message">{error}</p>}
         <div>
           <label htmlFor="email">{t('email')}:</label>
@@ -87,6 +87,7 @@ const Login: React.FC = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            data-testid="auth-email"
           />
         </div>
         <div>
@@ -97,6 +98,7 @@ const Login: React.FC = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            data-testid="auth-password"
           />
         </div>
         {isRegistering && (
@@ -121,13 +123,14 @@ const Login: React.FC = () => {
             </div>
           </>
         )}
-        <button type="submit" disabled={loading}>
+        <button type="submit" disabled={loading} data-testid="auth-submit">
           {loading ? (isRegistering ? t('registering') : t('logging_in')) : (isRegistering ? t('register') : t('login'))}
         </button>
       </form>
       <button
         onClick={() => setIsRegistering(!isRegistering)}
         style={{ marginTop: '10px', background: 'none', border: 'none', color: 'blue', cursor: 'pointer' }}
+        data-testid="toggle-register"
       >
         {isRegistering ? t('already_have_account') : t('dont_have_account')}
       </button>

@@ -9,7 +9,7 @@ import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import HistoryIcon from '@mui/icons-material/History';
 import EventIcon from '@mui/icons-material/Event';
 import { useI18n } from '../contexts/useI18n';
-import cartLogo from '../../public/fair_merchant_logo2.png'
+import cartLogo from '/fair_merchant_logo2.png?url'
 
 const Home: React.FC = () => {
   const { t } = useI18n();
