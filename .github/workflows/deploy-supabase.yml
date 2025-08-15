@@ -58,6 +58,10 @@ jobs:
         working-directory: frontend-app
         run: npm ci
 
+      - name: Type-check (no emit)
+        working-directory: frontend-app
+        run: npx tsc -p tsconfig.app.json --noEmit
+
       - name: Build
         working-directory: frontend-app
         run: npm run build
