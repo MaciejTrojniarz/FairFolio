@@ -7,7 +7,7 @@ import EventIcon from '@mui/icons-material/Event';
 import { useI18n } from '../../contexts/useI18n';
 import { useTheme } from '@mui/material/styles';
 import CustomBreadcrumbs from './CustomBreadcrumbs';
-import UserMenu from '../auth/UserMenu.tsx';
+import UserMenu from '../auth/UserMenu';
 
 const Navbar: React.FC = () => {
   const { t } = useI18n();
