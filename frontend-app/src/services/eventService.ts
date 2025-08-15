@@ -36,20 +36,32 @@ export const eventService = {
   },
 
   async updateEvent(event: Event): Promise<Event> {
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError) throw userError;
+    const userId = userData.user?.id;
+    if (!userId) throw new Error('User not authenticated');
+
     const { data, error } = await supabase
       .from('events')
       .update(event)
       .eq('id', event.id)
+      .eq('creator_id', userId)
       .select();
     if (error) throw error;
     return data[0] as Event;
   },
 
   async deleteEvent(id: string): Promise<void> {
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError) throw userError;
+    const userId = userData.user?.id;
+    if (!userId) throw new Error('User not authenticated');
+
     const { error } = await supabase
       .from('events')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
+      .eq('creator_id', userId);
     if (error) throw error;
   },
 };
