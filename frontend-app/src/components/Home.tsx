@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../store';
 import { fetchEventsCommand } from '../store/features/events/eventsSlice';
 import { Link } from 'react-router-dom';
-import { Box, Typography, IconButton, Container, List, ListItem, ListItemText, Paper } from '@mui/material';
+import { Box, Typography, IconButton, Container, List, ListItem, ListItemText, Paper, Button } from '@mui/material';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import HistoryIcon from '@mui/icons-material/History';
@@ -15,6 +15,7 @@ const Home: React.FC = () => {
   const { t } = useI18n();
   const dispatch = useDispatch();
   const { events, loading, error } = useSelector((state: RootState) => state.events);
+  const isAuthenticated = useSelector((state: RootState) => Boolean(state.auth.user));
 
   useEffect(() => {
     if (events.length === 0) {
@@ -38,32 +39,43 @@ const Home: React.FC = () => {
             <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
               {t('welcome_message')}
             </Typography>
-            <Box sx={{ display: 'flex', gap: 4, mt: 2, flexWrap: 'wrap', justifyContent: 'center' }}>
-              <Link to="/products" style={{ textDecoration: 'none', textAlign: 'center' }}>
-                <IconButton color="primary" aria-label={t('product_management')} size="large">
-                  <InventoryIcon sx={{ fontSize: 80 }} />
-                </IconButton>
-                <Typography variant="subtitle1" color="text.primary">{t('products')}</Typography>
-              </Link>
-              <Link to="/sales/record" style={{ textDecoration: 'none', textAlign: 'center' }}>
-                <IconButton color="primary" aria-label={t('record_sale')} size="large">
-                  <PointOfSaleIcon sx={{ fontSize: 80 }} />
-                </IconButton>
-                <Typography variant="subtitle1" color="text.primary">{t('record_sale')}</Typography>
-              </Link>
-              <Link to="/sales" style={{ textDecoration: 'none', textAlign: 'center' }}>
-                <IconButton color="primary" aria-label={t('sales_history')} size="large">
-                  <HistoryIcon sx={{ fontSize: 80 }} />
-                </IconButton>
-                <Typography variant="subtitle1" color="text.primary">{t('sales_history')}</Typography>
-              </Link>
-              <Link to="/events" style={{ textDecoration: 'none', textAlign: 'center' }}>
-                <IconButton color="primary" aria-label={t('event_management')} size="large">
-                  <EventIcon sx={{ fontSize: 80 }} />
-                </IconButton>
-                <Typography variant="subtitle1" color="text.primary">{t('event_management')}</Typography>
-              </Link>
-            </Box>
+            {isAuthenticated ? (
+              <Box sx={{ display: 'flex', gap: 4, mt: 2, flexWrap: 'wrap', justifyContent: 'center' }}>
+                <Link to="/products" style={{ textDecoration: 'none', textAlign: 'center' }}>
+                  <IconButton color="primary" aria-label={t('product_management')} size="large">
+                    <InventoryIcon sx={{ fontSize: 80 }} />
+                  </IconButton>
+                  <Typography variant="subtitle1" color="text.primary">{t('products')}</Typography>
+                </Link>
+                <Link to="/sales/record" style={{ textDecoration: 'none', textAlign: 'center' }}>
+                  <IconButton color="primary" aria-label={t('record_sale')} size="large">
+                    <PointOfSaleIcon sx={{ fontSize: 80 }} />
+                  </IconButton>
+                  <Typography variant="subtitle1" color="text.primary">{t('record_sale')}</Typography>
+                </Link>
+                <Link to="/sales" style={{ textDecoration: 'none', textAlign: 'center' }}>
+                  <IconButton color="primary" aria-label={t('sales_history')} size="large">
+                    <HistoryIcon sx={{ fontSize: 80 }} />
+                  </IconButton>
+                  <Typography variant="subtitle1" color="text.primary">{t('sales_history')}</Typography>
+                </Link>
+                <Link to="/events" style={{ textDecoration: 'none', textAlign: 'center' }}>
+                  <IconButton color="primary" aria-label={t('event_management')} size="large">
+                    <EventIcon sx={{ fontSize: 80 }} />
+                  </IconButton>
+                  <Typography variant="subtitle1" color="text.primary">{t('event_management')}</Typography>
+                </Link>
+              </Box>
+            ) : (
+              <Box sx={{ display: 'flex', gap: 2, mt: 2, justifyContent: 'center' }}>
+                <Button component={Link} to="/login" variant="contained" color="primary">
+                  {t('login')}
+                </Button>
+                <Button component={Link} to="/login" variant="outlined" color="primary">
+                  {t('register')}
+                </Button>
+              </Box>
+            )}
             <Box sx={{ width: '100%', maxWidth: 600, mt: 4 }}>
               <Typography variant="h5" component="h2" gutterBottom textAlign="center">
                 {t('upcoming_events')}
