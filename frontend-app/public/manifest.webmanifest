@@ -1,0 +1,19 @@
+{
+  "name": "FairMerchant",
+  "short_name": "FairMerchant",
+  "description": "Offline-capable sales, inventory and event tracking for convention merchants.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#121212",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/fair_merchant_logo2.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
