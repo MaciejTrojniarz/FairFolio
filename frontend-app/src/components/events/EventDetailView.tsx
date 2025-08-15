@@ -21,6 +21,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useI18n } from '../../contexts/useI18n';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import { arrayToCsv, downloadCsv } from '../../utils/csv';
 
 const EventDetailView: React.FC = () => {
   const { t } = useI18n();
@@ -104,6 +105,42 @@ const EventDetailView: React.FC = () => {
   }
 
   const salesForThisEvent = salesHistory.filter(sale => sale.event_id === id);
+  const handleExportCsv = () => {
+    const headers = ['sale_id','timestamp','event_id','event_name','item_product_id','item_product_name','item_quantity','item_price_at_sale','sale_total_amount','sale_comment'];
+    const rows: (string | number)[][] = [];
+    salesForThisEvent.forEach((sale) => {
+      if (!event) return;
+      if (!sale.items || sale.items.length === 0) {
+        rows.push([
+          sale.id,
+          sale.timestamp,
+          sale.event_id || '',
+          event.name,
+          '', '', '', '',
+          sale.total_amount,
+          sale.comment || '',
+        ]);
+      } else {
+        sale.items.forEach((item) => {
+          rows.push([
+            sale.id,
+            sale.timestamp,
+            sale.event_id || '',
+            event.name,
+            item.product_id,
+            item.product_name,
+            item.quantity,
+            item.price_at_sale,
+            sale.total_amount,
+            sale.comment || '',
+          ]);
+        });
+      }
+    });
+    const csv = arrayToCsv(headers, rows);
+    const filename = `event_${event?.name?.replace(/\s+/g,'_') || 'unknown'}_${new Date().toISOString().slice(0,10)}.csv`;
+    downloadCsv(filename, csv);
+  };
   const handleAddSaleToEvent = () => {
     navigate('/sales/record', { state: { eventId: id } });
   };
@@ -116,6 +153,9 @@ const EventDetailView: React.FC = () => {
             <ArrowBackIcon sx={{ mr: 1 }} /> {t('back_to_events')}
           </Button>
           <Box>
+            <Button variant="outlined" onClick={handleExportCsv} sx={{ mr: 1 }}>
+              {t('export_csv_button')}
+            </Button>
             <Button variant="contained" onClick={() => navigate(`/events/${event.id}/edit`)} sx={{ mr: 1 }}>
               <EditIcon sx={{ mr: 1 }} /> {t('edit_event')}
             </Button>

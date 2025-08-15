@@ -67,6 +67,7 @@
   "edit_sale_title": "Edit Sale",
   "email": "Email",
   "end_date": "End Date",
+  "export_csv_button": "Export CSV",
   "end_date_before_start_date_error": "End date cannot be before start date.",
   "event": "Event",
   "event_city": "City",

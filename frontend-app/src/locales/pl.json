@@ -64,6 +64,7 @@
   "edit_sale_title": "Edytuj Sprzedaż",
   "email": "Email",
   "end_date": "Data Końcowa",
+  "export_csv_button": "Eksportuj CSV",
   "end_date_before_start_date_error": "Data końcowa nie może być wcześniejsza niż data początkowa.",
   "event": "Wydarzenie",
   "event_city": "Miasto",

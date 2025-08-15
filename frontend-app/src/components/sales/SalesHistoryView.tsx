@@ -18,12 +18,14 @@ import {
   AccordionSummary,
   AccordionDetails,
   Avatar, Badge,
+  Button,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LaunchIcon from '@mui/icons-material/Launch';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useI18n } from '../../contexts/useI18n';
 import type { DetailedSaleItem, SaleWithSaleItems } from '../../types';
+import { arrayToCsv, downloadCsv } from '../../utils/csv';
 
 const SalesHistoryView: React.FC = () => {
   const dispatch = useDispatch();
@@ -62,6 +64,55 @@ const SalesHistoryView: React.FC = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           {t('sales_history_title')}
         </Typography>
+
+        <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              // Flat export of all sales with items exploded into rows
+              const headers = [
+                'sale_id', 'timestamp', 'event_id', 'event_name', 'item_product_id', 'item_product_name', 'item_quantity', 'item_price_at_sale', 'sale_total_amount', 'sale_comment'
+              ];
+              const rows: (string | number)[][] = [];
+              Object.values(groupedSales).forEach((sales) => {
+                sales.forEach((sale) => {
+                  const event = events.find(e => e.id === sale.event_id);
+                  if (!sale.items || sale.items.length === 0) {
+                    rows.push([
+                      sale.id,
+                      sale.timestamp,
+                      sale.event_id || '',
+                      event?.name || '',
+                      '', '', '', '',
+                      sale.total_amount,
+                      sale.comment || '',
+                    ]);
+                  } else {
+                    sale.items.forEach((item) => {
+                      rows.push([
+                        sale.id,
+                        sale.timestamp,
+                        sale.event_id || '',
+                        event?.name || '',
+                        item.product_id,
+                        item.product_name,
+                        item.quantity,
+                        item.price_at_sale,
+                        sale.total_amount,
+                        sale.comment || '',
+                      ]);
+                    });
+                  }
+                });
+              });
+              const csv = arrayToCsv(headers, rows);
+              const filename = `sales_${new Date().toISOString().slice(0,10)}.csv`;
+              downloadCsv(filename, csv);
+            }}
+          >
+            {t('export_csv_button')}
+          </Button>
+        </Box>
 
         {(salesLoading || eventsLoading || costsLoading) && <CircularProgress />}
         {(salesError || eventsError || costsError) && <Alert severity="error">Error: {salesError || eventsError || costsError}</Alert>}
