@@ -18,10 +18,10 @@ const Home: React.FC = () => {
   const isAuthenticated = useSelector((state: RootState) => Boolean(state.auth.user));
 
   useEffect(() => {
-    if (events.length === 0) {
+    if (isAuthenticated && events.length === 0) {
       dispatch(fetchEventsCommand());
     }
-  }, [dispatch, events.length]);
+  }, [dispatch, isAuthenticated, events.length]);
 
   const upcomingEvents = events.filter(event => new Date(event.end_date) >= new Date());
 
@@ -76,35 +76,37 @@ const Home: React.FC = () => {
                 </Button>
               </Box>
             )}
-            <Box sx={{ width: '100%', maxWidth: 600, mt: 4 }}>
-              <Typography variant="h5" component="h2" gutterBottom textAlign="center">
-                {t('upcoming_events')}
-              </Typography>
-              {loading ? (
-                <Typography textAlign="center">{t('loading_events')}</Typography>
-              ) : error ? (
-                <Typography color="error" textAlign="center">Error: {error}</Typography>
-              ) : upcomingEvents.length === 0 ? (
-                <Typography textAlign="center">{t('no_upcoming_events')}</Typography>
-              ) : (
-                <List>
-                  {upcomingEvents.map((event) => (
-                    <Paper key={event.id} elevation={1} sx={{ mb: 1 }}>
-                      <ListItem component={Link} to={`/events/${event.id}`} sx={{ textDecoration: 'none', color: 'inherit' }}>
-                        <ListItemText
-                          primary={event.name}
-                          secondary={`
-                            ${event.venue ? `${event.venue}, ` : ''}
-                            ${event.city ? `${event.city} - ` : ''}
-                            ${new Date(event.start_date).toLocaleDateString()} - ${new Date(event.end_date).toLocaleDateString()}
-                          `}
-                        />
-                      </ListItem>
-                    </Paper>
-                  ))}
-                </List>
-              )}
-            </Box>
+            {isAuthenticated && (
+              <Box sx={{ width: '100%', maxWidth: 600, mt: 4 }}>
+                <Typography variant="h5" component="h2" gutterBottom textAlign="center">
+                  {t('upcoming_events')}
+                </Typography>
+                {loading ? (
+                  <Typography textAlign="center">{t('loading_events')}</Typography>
+                ) : error ? (
+                  <Typography color="error" textAlign="center">Error: {error}</Typography>
+                ) : upcomingEvents.length === 0 ? (
+                  <Typography textAlign="center">{t('no_upcoming_events')}</Typography>
+                ) : (
+                  <List>
+                    {upcomingEvents.map((event) => (
+                      <Paper key={event.id} elevation={1} sx={{ mb: 1 }}>
+                        <ListItem component={Link} to={`/events/${event.id}`} sx={{ textDecoration: 'none', color: 'inherit' }}>
+                          <ListItemText
+                            primary={event.name}
+                            secondary={`
+                              ${event.venue ? `${event.venue}, ` : ''}
+                              ${event.city ? `${event.city} - ` : ''}
+                              ${new Date(event.start_date).toLocaleDateString()} - ${new Date(event.end_date).toLocaleDateString()}
+                            `}
+                          />
+                        </ListItem>
+                      </Paper>
+                    ))}
+                  </List>
+                )}
+              </Box>
+            )}
           </Box>
     </Container>
   );
