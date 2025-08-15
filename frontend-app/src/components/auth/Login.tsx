@@ -7,6 +7,7 @@ import LanguageSwitcher from '../common/LanguageSwitcher';
 import ThemeSwitcher from '../common/ThemeSwitcher';
 import { useThemeMode } from '../../contexts/useThemeMode';
 import { showToast } from '../../store/features/ui/uiSlice';
+import { Container, Paper, Box, Typography, TextField, Button, Alert } from '@mui/material';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -75,66 +76,93 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="login-container">
-      <h2 data-testid="auth-title">{isRegistering ? t('register') : t('login')}</h2>
-      <form onSubmit={isRegistering ? handleRegister : handleLogin} data-testid="auth-form">
-        {error && <p className="error-message">{error}</p>}
-        <div>
-          <label htmlFor="email">{t('email')}:</label>
-          <input
+    <Container maxWidth="sm" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 64px)' }}>
+      <Paper elevation={3} sx={{ p: 4, width: '100%' }}>
+        <Typography variant="h5" component="h2" align="center" gutterBottom data-testid="auth-title">
+          {isRegistering ? t('register') : t('login')}
+        </Typography>
+
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+
+        <Box component="form" onSubmit={isRegistering ? handleRegister : handleLogin} data-testid="auth-form">
+          <TextField
             type="email"
             id="email"
+            label={t('email')}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            fullWidth
+            margin="normal"
             data-testid="auth-email"
           />
-        </div>
-        <div>
-          <label htmlFor="password">{t('password')}:</label>
-          <input
+
+          <TextField
             type="password"
             id="password"
+            label={t('password')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            fullWidth
+            margin="normal"
             data-testid="auth-password"
           />
-        </div>
-        {isRegistering && (
-          <>
-            <div>
-              <label htmlFor="name">{t('name')}:</label>
-              <input
+
+          {isRegistering && (
+            <>
+              <TextField
                 type="text"
                 id="name"
+                label={t('name')}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
+                fullWidth
+                margin="normal"
               />
-            </div>
-            <div style={{ marginTop: '15px' }}>
-              <label>{t('language')}:</label>
-              <LanguageSwitcher onLanguageChange={setSelectedLanguage} />
-            </div>
-            <div style={{ marginTop: '15px' }}>
-              <label>{t('theme')}:</label>
-              <ThemeSwitcher onThemeChange={setSelectedTheme} />
-            </div>
-          </>
-        )}
-        <button type="submit" disabled={loading} data-testid="auth-submit">
-          {loading ? (isRegistering ? t('registering') : t('logging_in')) : (isRegistering ? t('register') : t('login'))}
-        </button>
-      </form>
-      <button
-        onClick={() => setIsRegistering(!isRegistering)}
-        style={{ marginTop: '10px', background: 'none', border: 'none', color: 'blue', cursor: 'pointer' }}
-        data-testid="toggle-register"
-      >
-        {isRegistering ? t('already_have_account') : t('dont_have_account')}
-      </button>
-    </div>
+
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="subtitle2" sx={{ mb: 1 }}>{t('language')}</Typography>
+                <LanguageSwitcher onLanguageChange={setSelectedLanguage} />
+              </Box>
+
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="subtitle2" sx={{ mb: 1 }}>{t('theme')}</Typography>
+                <ThemeSwitcher onThemeChange={setSelectedTheme} />
+              </Box>
+            </>
+          )}
+
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            disabled={loading}
+            sx={{ mt: 3 }}
+            data-testid="auth-submit"
+          >
+            {loading ? (isRegistering ? t('registering') : t('logging_in')) : (isRegistering ? t('register') : t('login'))}
+          </Button>
+        </Box>
+
+        <Button
+          onClick={() => setIsRegistering(!isRegistering)}
+          variant="text"
+          color="primary"
+          fullWidth
+          sx={{ mt: 2 }}
+          data-testid="toggle-register"
+        >
+          {isRegistering ? t('already_have_account') : t('dont_have_account')}
+        </Button>
+      </Paper>
+    </Container>
   );
 };
 
