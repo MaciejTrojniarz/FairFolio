@@ -29,16 +29,18 @@ jobs:
           version: latest
 
       - name: Link Supabase project
-        run: supabase link --project-ref "$SUPABASE_PROJECT_REF"
+        run: supabase link --project-ref "$SUPABASE_PROJECT_REF" --password "$SUPABASE_DB_PASSWORD"
         working-directory: .
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
 
       - name: Push database migrations to remote
         run: supabase db push --include-all
         working-directory: .
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
 
   verify-frontend:
     name: Build frontend (sanity)
