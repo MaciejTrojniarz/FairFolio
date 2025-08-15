@@ -24,7 +24,7 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children, initialLan
   useEffect(() => {
     const fetchTranslations = async () => {
       try {
-        const response = await fetch(`/src/locales/${lang}.json`);
+        const response = await fetch(`/locales/${lang}.json`);
         if (!response.ok) {
           throw new Error(`Could not load translations for ${lang}`);
         }
@@ -35,7 +35,7 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children, initialLan
         console.error('Error loading translations:', error);
         dispatch(showToast({ message: `Error loading translations: ${error.message}`, severity: 'error' }));
         if (lang !== 'en') {
-          const response = await fetch(`/src/locales/en.json`);
+          const response = await fetch(`/locales/en.json`);
           const data = await response.json();
           setTranslations(data);
           setLang('en');
