@@ -70,7 +70,9 @@ const ProductList: React.FC<ProductListProps> = ({ onEdit }) => {
       {loading && <CircularProgress />}
       {error && <Alert severity="error">Error: {error}</Alert>}
 
-      {
+      {products.length === 0 ? (
+        <Typography variant="body1" color="text.secondary">{t('no_products')}</Typography>
+      ) : (
         Object.keys(categorizedProducts).map((categoryId) => {
           const categoryName = categoryId === 'unknown' ? t('unknown_category') : categorizedProducts[categoryId][0].category_name;
           return (
@@ -129,7 +131,7 @@ const ProductList: React.FC<ProductListProps> = ({ onEdit }) => {
             </Accordion>
           );
         })
-      }
+      )}
     </Box>
   );
 };

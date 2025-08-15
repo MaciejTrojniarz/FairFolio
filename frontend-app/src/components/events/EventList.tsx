@@ -38,18 +38,22 @@ const EventList: React.FC = () => {
       {loading && <CircularProgress />}
       {error && <Alert severity="error">Error: {error}</Alert>}
 
-      <List>
-        {events.map((event) => (
-          <ListItem key={event.id} divider>
-            <ListItemButton onClick={() => handleViewDetails(event.id)}>
-              <ListItemText
-                primary={event.name}
-                secondary={`${t('venue')}: ${event.venue}, ${event.city} | ${new Date(event.start_date).toLocaleDateString()} - ${new Date(event.end_date).toLocaleDateString()}`}
-              />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
+      {events.length === 0 ? (
+        <Typography variant="body1" color="text.secondary">{t('no_events')}</Typography>
+      ) : (
+        <List>
+          {events.map((event) => (
+            <ListItem key={event.id} divider>
+              <ListItemButton onClick={() => handleViewDetails(event.id)}>
+                <ListItemText
+                  primary={event.name}
+                  secondary={`${t('venue')}: ${event.venue}, ${event.city} | ${new Date(event.start_date).toLocaleDateString()} - ${new Date(event.end_date).toLocaleDateString()}`}
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      )}
     </Box>
   );
 };
