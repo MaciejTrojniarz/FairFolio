@@ -15,10 +15,10 @@ import Navbar from './components/navbar/Navbar';
 import { Box } from '@mui/material';
 import ToastNotification from './components/ToastNotification';
 
-import Login from './components/auth/Login';
-import Profile from './components/auth/Profile';
-import ProfileEditPage from './components/auth/ProfileEditPage';
-import ProtectedRoute from './components/auth/ProtectedRoute';
+import Login from './components/auth/Login.tsx';
+import Profile from './components/auth/Profile.tsx';
+import ProfileEditPage from './components/auth/ProfileEditPage.tsx';
+import ProtectedRoute from './components/auth/ProtectedRoute.tsx';
 
 import { I18nProvider } from './contexts/I18nContext';
 import { AppThemeProvider } from './contexts/ThemeContext';
