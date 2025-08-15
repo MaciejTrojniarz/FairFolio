@@ -5,7 +5,7 @@ import GravatarAvatar from '../GravatarAvatar'
 // Mock crypto-js
 vi.mock('crypto-js', () => ({
   default: {
-    MD5: vi.fn((str: string) => ({
+    MD5: vi.fn((_str: string) => ({
       toString: () => 'mocked-hash',
     })),
   },

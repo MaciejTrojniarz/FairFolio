@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { Navbar } from './page-objects/Navbar';
-import { AuthPage } from './page-objects/AuthPage';
+// import { AuthPage } from './page-objects/AuthPage';
 
 // Base smoke tests that do not require authentication
 

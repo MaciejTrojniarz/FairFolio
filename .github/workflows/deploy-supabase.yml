@@ -13,6 +13,7 @@ jobs:
   deploy-db:
     name: Apply database migrations
     runs-on: ubuntu-latest
+    needs: [ verify-frontend ]
     permissions:
       contents: read
     env:
