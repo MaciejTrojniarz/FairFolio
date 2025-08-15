@@ -3,18 +3,33 @@ import type { Event } from '../types';
 
 export const eventService = {
   async fetchEvents(): Promise<Event[]> {
+    // Ensure we only return events owned by the current user
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError) throw userError;
+    const userId = userData.user?.id;
+    if (!userId) {
+      return [];
+    }
+
     const { data, error } = await supabase
       .from('events')
       .select('*')
-      .order('start_date', { ascending: false }); // Sort by start_date descending
+      .eq('creator_id', userId)
+      .order('start_date', { ascending: false });
     if (error) throw error;
     return data as Event[];
   },
 
   async addEvent(event: Omit<Event, 'id'>): Promise<Event> {
+    // Attach creator_id on insert to enforce ownership
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError) throw userError;
+    const userId = userData.user?.id;
+    if (!userId) throw new Error('User not authenticated');
+
     const { data, error } = await supabase
       .from('events')
-      .insert([event])
+      .insert([{ ...event, creator_id: userId }])
       .select();
     if (error) throw error;
     return data[0] as Event;

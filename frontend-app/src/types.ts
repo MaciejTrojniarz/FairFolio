@@ -49,6 +49,7 @@ export interface DetailedSaleItem extends SaleItem {
 
 export interface Event {
   id: string;
+  creator_id?: string;
   name: string;
   description?: string;
   link?: string;
