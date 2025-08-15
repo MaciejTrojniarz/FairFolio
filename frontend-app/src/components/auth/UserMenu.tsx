@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IconButton, Menu, MenuItem, Button, Box } from '@mui/material';
+import { IconButton, Menu, MenuItem, Button, Box, Dialog, DialogTitle, DialogContent, DialogActions, Typography } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
@@ -15,6 +15,7 @@ const UserMenu: React.FC = () => {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const [infoOpen, setInfoOpen] = useState(false);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -22,6 +23,14 @@ const UserMenu: React.FC = () => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleOpenInfo = () => {
+    setInfoOpen(true);
+  };
+
+  const handleCloseInfo = () => {
+    setInfoOpen(false);
   };
 
   const handleLogout = async () => {
@@ -69,6 +78,9 @@ const UserMenu: React.FC = () => {
             open={open}
             onClose={handleClose}
           >
+            <MenuItem onClick={handleOpenInfo}>
+              {t('app_name')} — v{import.meta.env.VITE_APP_VERSION}
+            </MenuItem>
             <MenuItem onClick={handleProfile}>
               <SettingsIcon sx={{ mr: 1 }} /> {t('profile')}
             </MenuItem>
@@ -76,6 +88,16 @@ const UserMenu: React.FC = () => {
               {t('logout')}
             </MenuItem>
           </Menu>
+
+          <Dialog open={infoOpen} onClose={handleCloseInfo} aria-labelledby="app-info-title">
+            <DialogTitle id="app-info-title">{t('app_name')}</DialogTitle>
+            <DialogContent dividers>
+              <Typography variant="body2">Version: v{import.meta.env.VITE_APP_VERSION}</Typography>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseInfo}>{t('close') || 'Close'}</Button>
+            </DialogActions>
+          </Dialog>
         </>
       ) : (
         <Button color="inherit" onClick={handleLogin}>
