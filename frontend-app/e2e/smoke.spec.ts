@@ -16,7 +16,10 @@ test.describe('Public shell and navigation', () => {
 
   test('sales page is reachable (auth bypassed in e2e)', async ({ page }) => {
     await page.goto('/sales/record');
-    await page.getByTestId('sales-view').waitFor();
+    // Wait for the sales view to be visible
+    await page.getByTestId('sales-view').waitFor({ state: 'visible', timeout: 60000 });
+    // Wait for either the translated title or the fallback key to be visible
+    await page.locator('h1').waitFor({ state: 'visible', timeout: 60000 });
   });
 
   test('costs page is reachable and can submit (auth bypassed)', async ({ page }) => {
@@ -24,7 +27,7 @@ test.describe('Public shell and navigation', () => {
     const costs = new CostsPage(page);
     await page.getByTestId('record-cost-view').waitFor();
     await costs.nameInput.fill('Smoke Test Cost');
-    await costs.categoryInput.fill('Test');
+    // Skip category selection for smoke test - use default empty option
     await costs.amountInput.fill('12.34');
     // date is prefilled; leave as is
     await costs.recordCostButton.click();

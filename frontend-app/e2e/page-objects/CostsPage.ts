@@ -12,7 +12,7 @@ export class CostsPage {
     this.page = page;
     this.recordCostButton = page.getByTestId('record-cost');
     this.nameInput = page.getByTestId('cost-name');
-    this.categoryInput = page.getByTestId('cost-category');
+    this.categoryInput = page.getByTestId('cost-category-select');
     this.amountInput = page.getByLabel('Amount');
     this.dateInput = page.getByTestId('cost-date');
   }

@@ -26,6 +26,7 @@ export default defineConfig({
     timeout: 120_000,
     env: {
       VITE_E2E_BYPASS_AUTH: 'true',
+      NODE_ENV: 'test',
     },
   },
 });
