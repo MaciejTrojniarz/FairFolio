@@ -27,7 +27,7 @@ supabase.from = vi.fn().mockImplementation((_table: string) => ({
   order: mockOrder,
 }));
 
-(supabase.auth.getUser as any) = vi.fn();
+supabase.auth.getUser = vi.fn();
 
 describe('Cost Service', () => {
   beforeEach(() => {
