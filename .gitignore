@@ -39,7 +39,7 @@ coverage/
 /frontend-app/.cache/
 /frontend-app/playwright-report/
 /frontend-app/test-results/
-/frontend-app/e2e/**-snapshots/
+
 
 # Cypress
 /frontend-app/.cache/Cypress/
