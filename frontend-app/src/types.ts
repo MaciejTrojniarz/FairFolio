@@ -69,8 +69,9 @@ export interface BasketItem extends Product {
 export interface Cost {
   id: string;
   user_id: string;
-  event_id?: string;
-  description: string;
+  event_id?: string | null;
+  name: string; // Short label for the expense
+  category?: string | null; // e.g., Booth, Travel, Lodging
   amount: number;
   date: string; // ISO date string
 }
