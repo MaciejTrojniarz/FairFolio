@@ -21,14 +21,12 @@ const mockSelect = vi.fn();
 const mockInsert = vi.fn();
 const mockOrder = vi.fn();
 
-// @ts-expect-error partial mock wiring
 supabase.from = vi.fn().mockImplementation((_table: string) => ({
   select: mockSelect,
   insert: mockInsert,
   order: mockOrder,
 }));
 
-// @ts-expect-error partial mock wiring
 supabase.auth.getUser = vi.fn();
 
 describe('Cost Service', () => {
@@ -46,7 +44,6 @@ describe('Cost Service', () => {
   });
 
   it('addCost throws when not authenticated', async () => {
-    // @ts-expect-error partial
     supabase.auth.getUser.mockResolvedValueOnce({ data: { user: null } });
     await expect(costService.addCost({
       event_id: null,
@@ -58,7 +55,6 @@ describe('Cost Service', () => {
   });
 
   it('addCost inserts correctly when authenticated', async () => {
-    // @ts-expect-error partial
     supabase.auth.getUser.mockResolvedValueOnce({ data: { user: { id: 'u1' } } });
     mockInsert.mockReturnValueOnce({ select: () => ({ single: () => Promise.resolve({ data: { id: 'c1' }, error: null }) }) });
 
