@@ -23,8 +23,7 @@ import { useThemeMode } from '../../contexts/useThemeMode';
 const ProfileEditPage: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { t } = useI18n();
-  const { setLang } = useI18n();
+  const { t, setLang } = useI18n();
   const { setMode } = useThemeMode();
 
   const user = useSelector((state: RootState) => state.auth.user);
