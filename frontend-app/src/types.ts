@@ -71,9 +71,16 @@ export interface Cost {
   user_id: string;
   event_id?: string | null;
   name: string; // Short label for the expense
-  category?: string | null; // e.g., Booth, Travel, Lodging
+  category?: string | null; // Deprecated: kept for back-compat export/display
+  cost_category_id?: string | null; // FK to cost_categories
   amount: number;
   date: string; // ISO date string
+}
+
+export interface CostCategory {
+  id: string;
+  user_id: string;
+  name: string;
 }
 
 export interface Profile {

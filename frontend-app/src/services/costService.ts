@@ -26,6 +26,7 @@ export const costService = {
           category: cost.category ?? null,
           amount: cost.amount,
           date: cost.date,
+          cost_category_id: (cost as any).cost_category_id ?? null,
         },
       ])
       .select()

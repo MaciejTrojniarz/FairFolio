@@ -27,8 +27,8 @@ import AuthInitializer from './components/AuthInitializer';
 
 const App = () => {
   return (
-    <AppThemeProvider>
-      <I18nProvider>
+    <I18nProvider>
+      <AppThemeProvider>
         <AuthInitializer>
           <BrowserRouter>
             <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh'}}>
@@ -61,8 +61,8 @@ const App = () => {
             <ToastNotification />
           </BrowserRouter>
         </AuthInitializer>
-      </I18nProvider>
-    </AppThemeProvider>
+      </AppThemeProvider>
+    </I18nProvider>
   );
 }
 
