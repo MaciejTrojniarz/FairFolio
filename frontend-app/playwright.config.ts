@@ -18,15 +18,6 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    {
-      name: 'chromium-linux',
-      use: { 
-        ...devices['Desktop Chrome'],
-        // Force Linux-like rendering
-        viewport: { width: 1280, height: 720 },
-        deviceScaleFactor: 1,
-      },
-    },
   ],
   webServer: {
     command: process.env.PLAYWRIGHT_SERVER_CMD || 'npm run dev -- --port 4173 --strictPort',
