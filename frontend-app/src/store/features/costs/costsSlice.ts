@@ -42,12 +42,10 @@ export const costsSlice = createSlice({
   },
 });
 
-export const {
-  fetchCostsCommand,
-  recordCostCommand,
-  costsFetchedEvent,
-  costRecordedEvent,
-  costsErrorEvent,
-} = costsSlice.actions;
+export const fetchCostsCommand = costsSlice.actions.fetchCostsCommand;
+export const recordCostCommand = costsSlice.actions.recordCostCommand;
+export const costsFetchedEvent = costsSlice.actions.costsFetchedEvent;
+export const costRecordedEvent = costsSlice.actions.costRecordedEvent;
+export const costsErrorEvent = costsSlice.actions.costsErrorEvent;
 
 export default costsSlice.reducer;
