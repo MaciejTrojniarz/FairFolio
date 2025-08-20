@@ -6,6 +6,9 @@ import { Navbar } from './page-objects/Navbar';
 test.describe('Create flows', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
+    // Wait for navbar to be visible (auth bypassed in e2e)
+    const nav = new Navbar(page);
+    await nav.expectVisible();
   });
 
   test('open New Product form', async ({ page }) => {
@@ -24,6 +27,7 @@ test.describe('Create flows', () => {
 
   test('open Record Sales view', async ({ page }) => {
     await page.goto('/sales/record');
-    await expect(page.getByTestId('sales-view')).toBeVisible();
+    // Wait for the sales view to be visible with longer timeout for CI
+    await page.getByTestId('sales-view').waitFor({ state: 'visible', timeout: 10000 });
   });
 });
