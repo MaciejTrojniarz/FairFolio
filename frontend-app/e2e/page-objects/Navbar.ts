@@ -16,13 +16,27 @@ export class Navbar {
   }
 
   async expectVisible() {
-    await expect(this.logo).toBeVisible();
-    await expect(this.products).toBeVisible();
-    await expect(this.sales).toBeVisible();
-    await expect(this.events).toBeVisible();
+    // Wait for the logo first as it's always visible
+    await expect(this.logo).toBeVisible({ timeout: 10000 });
+    
+    // Wait for authenticated navbar elements with longer timeout for CI
+    await expect(this.products).toBeVisible({ timeout: 15000 });
+    await expect(this.sales).toBeVisible({ timeout: 15000 });
+    await expect(this.events).toBeVisible({ timeout: 15000 });
   }
 
-  async gotoProducts() { await this.products.click(); }
-  async gotoSales() { await this.sales.click(); }
-  async gotoEvents() { await this.events.click(); }
+  async gotoProducts() { 
+    await this.products.waitFor({ state: 'visible', timeout: 15000 });
+    await this.products.click(); 
+  }
+  
+  async gotoSales() { 
+    await this.sales.waitFor({ state: 'visible', timeout: 15000 });
+    await this.sales.click(); 
+  }
+  
+  async gotoEvents() { 
+    await this.events.waitFor({ state: 'visible', timeout: 15000 });
+    await this.events.click(); 
+  }
 }

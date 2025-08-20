@@ -27,7 +27,9 @@ test.describe('Create flows', () => {
 
   test('open Record Sales view', async ({ page }) => {
     await page.goto('/sales/record');
+    // Wait for page to be fully loaded
+    await page.waitForLoadState('networkidle', { timeout: 10000 });
     // Wait for the sales view to be visible with longer timeout for CI
-    await page.getByTestId('sales-view').waitFor({ state: 'visible', timeout: 10000 });
+    await page.getByTestId('sales-view').waitFor({ state: 'visible', timeout: 15000 });
   });
 });
