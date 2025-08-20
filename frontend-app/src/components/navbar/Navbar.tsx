@@ -4,6 +4,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import HistoryIcon from '@mui/icons-material/History';
 import EventIcon from '@mui/icons-material/Event';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import { useI18n } from '../../contexts/useI18n';
 import { useTheme } from '@mui/material/styles';
 import CustomBreadcrumbs from './CustomBreadcrumbs';
@@ -49,6 +50,11 @@ const Navbar: React.FC = () => {
             <RouterLink to="/sales">
               <IconButton color="primary" aria-label={t('sales_history')} data-testid="navbar-sales">
                 <HistoryIcon />
+              </IconButton>
+            </RouterLink>
+            <RouterLink to="/costs/record">
+              <IconButton color="primary" aria-label={t('record_cost')} data-testid="navbar-costs">
+                <AttachMoneyIcon />
               </IconButton>
             </RouterLink>
             <RouterLink to="/events">
