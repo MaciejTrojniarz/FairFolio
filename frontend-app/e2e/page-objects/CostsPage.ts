@@ -11,9 +11,9 @@ export class CostsPage {
   constructor(page: Page) {
     this.page = page;
     this.recordCostButton = page.getByTestId('record-cost');
-    this.nameInput = page.getByLabel('Cost Name');
-    this.categoryInput = page.getByLabel('Cost Category');
+    this.nameInput = page.getByTestId('cost-name');
+    this.categoryInput = page.getByTestId('cost-category');
     this.amountInput = page.getByLabel('Amount');
-    this.dateInput = page.getByLabel('Date');
+    this.dateInput = page.getByTestId('cost-date');
   }
 }

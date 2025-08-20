@@ -56,6 +56,7 @@ const RecordCostView: React.FC = () => {
             onChange={(e) => setName(e.target.value)}
             fullWidth
             sx={{ mt: 2 }}
+            inputProps={{ 'data-testid': 'cost-name' }}
           />
           <TextField
             label={t('cost_category_label')}
@@ -63,6 +64,7 @@ const RecordCostView: React.FC = () => {
             onChange={(e) => setCategory(e.target.value)}
             fullWidth
             sx={{ mt: 2 }}
+            inputProps={{ 'data-testid': 'cost-category' }}
           />
           <TextField
             label={t('amount_label')}
@@ -81,6 +83,7 @@ const RecordCostView: React.FC = () => {
             fullWidth
             sx={{ mt: 2 }}
             InputLabelProps={{ shrink: true }}
+            inputProps={{ 'data-testid': 'cost-date' }}
           />
           <Button
             variant="contained"

@@ -15,6 +15,8 @@ const Navbar: React.FC = () => {
   const { t } = useI18n();
   const theme = useTheme();
   const isAuthenticated = useSelector((state: RootState) => Boolean(state.auth.user));
+  const bypassAuth = import.meta.env.VITE_E2E_BYPASS_AUTH === 'true';
+  const showAuthedNav = isAuthenticated || bypassAuth;
 
   return (
     <AppBar
@@ -37,7 +39,7 @@ const Navbar: React.FC = () => {
         <Box sx={{ flexGrow: 1, ml: 2 }}>
           <CustomBreadcrumbs />
         </Box>
-        {isAuthenticated ? (
+        {showAuthedNav ? (
           <>
             <RouterLink to="/products">
               <IconButton color="primary" aria-label={t('product_management')} data-testid="navbar-products">
@@ -55,7 +57,7 @@ const Navbar: React.FC = () => {
               </IconButton>
             </RouterLink>
             {/* User Icon and Menu */}
-            <UserMenu />
+            {isAuthenticated && <UserMenu />}
           </>
         ) : (
           <Box sx={{ display: 'flex', gap: 1 }}>
