@@ -6,6 +6,11 @@ import { CostsPage } from './page-objects/CostsPage';
 // Base smoke tests that do not require authentication
 
 test.describe('Public shell and navigation', () => {
+  test.use({ 
+    // Use Linux-compatible settings for CI
+    viewport: { width: 1280, height: 720 },
+    deviceScaleFactor: 1,
+  });
   test('loads home and shows navbar', async ({ page }) => {
     await page.goto('/');
     const navbar = new Navbar(page);
