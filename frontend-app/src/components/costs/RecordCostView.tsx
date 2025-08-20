@@ -6,7 +6,6 @@ import EventSelector from '../events/EventSelector';
 import { recordCostCommand } from '../../store/features/costs/costsSlice';
 import { useI18n } from '../../contexts/useI18n';
 import { addCostCategoryCommand, fetchCostCategoriesCommand } from '../../store/features/costCategories/costCategoriesSlice';
-import type { CostCategory } from '../../types';
 
 const RecordCostView: React.FC = () => {
   const dispatch = useDispatch();

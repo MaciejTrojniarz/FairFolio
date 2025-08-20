@@ -27,7 +27,7 @@ supabase.from = vi.fn().mockImplementation((_table: string) => ({
   order: mockOrder,
 }));
 
-supabase.auth.getUser = vi.fn();
+(supabase.auth.getUser as any) = vi.fn();
 
 describe('Cost Service', () => {
   beforeEach(() => {
@@ -44,7 +44,7 @@ describe('Cost Service', () => {
   });
 
   it('addCost throws when not authenticated', async () => {
-    supabase.auth.getUser.mockResolvedValueOnce({ data: { user: null } });
+    (supabase.auth.getUser as any).mockResolvedValueOnce({ data: { user: null } });
     await expect(costService.addCost({
       event_id: null,
       name: 'Booth',
@@ -55,7 +55,7 @@ describe('Cost Service', () => {
   });
 
   it('addCost inserts correctly when authenticated', async () => {
-    supabase.auth.getUser.mockResolvedValueOnce({ data: { user: { id: 'u1' } } });
+    (supabase.auth.getUser as any).mockResolvedValueOnce({ data: { user: { id: 'u1' } } });
     mockInsert.mockReturnValueOnce({ select: () => ({ single: () => Promise.resolve({ data: { id: 'c1' }, error: null }) }) });
 
     const cost = await costService.addCost({

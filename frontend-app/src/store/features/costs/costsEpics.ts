@@ -30,7 +30,7 @@ export const recordCostEpic = (action$: any) =>
     ofType(recordCostCommand.type),
     switchMap((action: ReturnType<typeof recordCostCommand>) => {
       const { eventId, name, costCategoryId, amount, date } = action.payload as unknown as { eventId?: string; name: string; costCategoryId?: string; amount: number; date: string };
-      return from(costService.addCost({ event_id: eventId ?? null, name, amount, date, cost_category_id: costCategoryId ?? null } as any)).pipe(
+      return from(costService.addCost({ event_id: eventId ?? null, name, amount, date, cost_category_id: costCategoryId ?? null } as Omit<Cost, 'id' | 'user_id'>)).pipe(
         mergeMap((cost) => of(
           costRecordedEvent(cost),
           showToast({ message: 'Cost recorded successfully!', severity: 'success' })

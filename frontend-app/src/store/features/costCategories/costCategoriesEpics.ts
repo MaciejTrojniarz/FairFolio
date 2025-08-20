@@ -20,12 +20,12 @@ export const fetchCostCategoriesEpic = (action$: any) =>
 export const addCostCategoryEpic = (action$: any) =>
   action$.pipe(
     ofType(addCostCategoryCommand.type),
-    switchMap((action: ReturnType<typeof addCostCategoryCommand>) =>
-      from(costCategoryService.addCostCategory(action.payload)).pipe(
+    switchMap((action: ReturnType<typeof addCostCategoryCommand>) => {
+      return from(costCategoryService.addCostCategory(action.payload)).pipe(
         map((cat) => costCategoryAddedEvent(cat)),
         catchError((error) => of(costCategoriesErrorEvent(error.message)))
-      )
-    )
+      );
+    })
   );
 
 export const costCategoriesEpics = [fetchCostCategoriesEpic, addCostCategoryEpic];

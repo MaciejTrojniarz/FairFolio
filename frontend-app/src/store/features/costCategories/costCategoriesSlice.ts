@@ -22,6 +22,7 @@ export const costCategoriesSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     addCostCategoryCommand: (state, _action: PayloadAction<string>) => {
       state.loading = true;
       state.error = null;
