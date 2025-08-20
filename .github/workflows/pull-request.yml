@@ -5,6 +5,10 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  pull-requests: write
+  contents: read
+
 concurrency:
   group: pr-${{ github.ref }}
   cancel-in-progress: true
@@ -95,9 +99,9 @@ jobs:
         working-directory: frontend-app
     env:
       NODE_ENV: integration
-      # Map secrets to Vite env vars (configure these in repo settings)
-      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      # Map secrets to E2E env vars (configure these in repo settings)
+      VITE_SUPABASE_URL: ${{ secrets.E2E_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.E2E_SUPABASE_ANON_KEY }}
       # Bypass auth for tests per config
       VITE_E2E_BYPASS_AUTH: 'true'
     steps:

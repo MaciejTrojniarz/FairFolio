@@ -8,6 +8,7 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import HistoryIcon from '@mui/icons-material/History';
 import EventIcon from '@mui/icons-material/Event';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import { useI18n } from '../contexts/useI18n';
 import cartLogo from '/fair_merchant_logo2.png?url'
 
@@ -64,6 +65,12 @@ const Home: React.FC = () => {
                     <EventIcon sx={{ fontSize: 80 }} />
                   </IconButton>
                   <Typography variant="subtitle1" color="text.primary">{t('event_management')}</Typography>
+                </Link>
+                <Link to="/costs/record" style={{ textDecoration: 'none', textAlign: 'center' }}>
+                  <IconButton color="primary" aria-label={t('record_cost')} size="large">
+                    <AttachMoneyIcon sx={{ fontSize: 80 }} />
+                  </IconButton>
+                  <Typography variant="subtitle1" color="text.primary">{t('record_cost')}</Typography>
                 </Link>
               </Box>
             ) : (

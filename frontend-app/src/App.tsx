@@ -6,6 +6,7 @@ import ProductFormPage from './components/products/ProductFormPage';
 import Home from './components/Home';
 import SalesView from './components/sales/SalesView';
 import SalesHistoryView from './components/sales/SalesHistoryView';
+import RecordCostView from './components/costs/RecordCostView';
 import SaleDetailView from './components/sales/SaleDetailView';
 import SaleEditPage from './components/sales/SaleEditPage';
 import EventManagementPage from './components/events/EventManagementPage';
@@ -26,8 +27,8 @@ import AuthInitializer from './components/AuthInitializer';
 
 const App = () => {
   return (
-    <AppThemeProvider>
-      <I18nProvider>
+    <I18nProvider>
+      <AppThemeProvider>
         <AuthInitializer>
           <BrowserRouter>
             <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh'}}>
@@ -45,6 +46,7 @@ const App = () => {
                     <Route path="/products/new" element={<ProductFormPage />} />
                     <Route path="/products/:id/edit" element={<ProductFormPage />} />
                     <Route path="/sales/record" element={<SalesView />} />
+                    <Route path="/costs/record" element={<RecordCostView />} />
                     <Route path="/sales" element={<SalesHistoryView />} />
                     <Route path="/sales/:id" element={<SaleDetailView />} />
                     <Route path="/sales/:id/edit" element={<SaleEditPage />} />
@@ -59,8 +61,8 @@ const App = () => {
             <ToastNotification />
           </BrowserRouter>
         </AuthInitializer>
-      </I18nProvider>
-    </AppThemeProvider>
+      </AppThemeProvider>
+    </I18nProvider>
   );
 }
 

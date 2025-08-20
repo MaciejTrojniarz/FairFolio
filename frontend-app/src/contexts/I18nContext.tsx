@@ -30,15 +30,25 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children, initialLan
         }
         const data = await response.json();
         setTranslations(data);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Error loading translations:', error);
-        dispatch(showToast({ message: `Error loading translations: ${error.message}`, severity: 'error' }));
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        dispatch(showToast({ message: `Error loading translations: ${errorMessage}`, severity: 'error' }));
         if (lang !== 'en') {
-          const response = await fetch(`/locales/en.json`);
-          const data = await response.json();
-          setTranslations(data);
-          setLang('en');
+          try {
+            const response = await fetch(`/locales/en.json`);
+            if (!response.ok) {
+              throw new Error('Could not load fallback English translations');
+            }
+            const data = await response.json();
+            setTranslations(data);
+            setLang('en');
+          } catch (fallbackError: unknown) {
+            console.error('Error loading fallback translations:', fallbackError);
+            dispatch(showToast({ message: 'Failed to load any translations', severity: 'error' }));
+            // Set empty translations as last resort
+            setTranslations({});
+          }
         }
       }
     };
@@ -49,7 +59,9 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children, initialLan
     let translation = translations[key] || key;
     if (params) {
       for (const [paramKey, paramValue] of Object.entries(params)) {
-        translation = translation.replace(`{${paramKey}}`, paramValue);
+        // Use global flag to replace all occurrences
+        const regex = new RegExp(`\\{${paramKey}\\}`, 'g');
+        translation = translation.replace(regex, paramValue);
       }
     }
     return translation;

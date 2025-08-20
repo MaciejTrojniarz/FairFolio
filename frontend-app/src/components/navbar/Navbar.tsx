@@ -4,6 +4,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import HistoryIcon from '@mui/icons-material/History';
 import EventIcon from '@mui/icons-material/Event';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import { useI18n } from '../../contexts/useI18n';
 import { useTheme } from '@mui/material/styles';
 import CustomBreadcrumbs from './CustomBreadcrumbs';
@@ -15,6 +16,8 @@ const Navbar: React.FC = () => {
   const { t } = useI18n();
   const theme = useTheme();
   const isAuthenticated = useSelector((state: RootState) => Boolean(state.auth.user));
+  const bypassAuth = import.meta.env.VITE_E2E_BYPASS_AUTH === 'true';
+  const showAuthedNav = isAuthenticated || bypassAuth;
 
   return (
     <AppBar
@@ -37,7 +40,7 @@ const Navbar: React.FC = () => {
         <Box sx={{ flexGrow: 1, ml: 2 }}>
           <CustomBreadcrumbs />
         </Box>
-        {isAuthenticated ? (
+        {showAuthedNav ? (
           <>
             <RouterLink to="/products">
               <IconButton color="primary" aria-label={t('product_management')} data-testid="navbar-products">
@@ -49,13 +52,18 @@ const Navbar: React.FC = () => {
                 <HistoryIcon />
               </IconButton>
             </RouterLink>
+            <RouterLink to="/costs/record">
+              <IconButton color="primary" aria-label={t('record_cost')} data-testid="navbar-costs">
+                <AttachMoneyIcon />
+              </IconButton>
+            </RouterLink>
             <RouterLink to="/events">
               <IconButton color="primary" aria-label={t('event_management')} data-testid="navbar-events">
                 <EventIcon />
               </IconButton>
             </RouterLink>
             {/* User Icon and Menu */}
-            <UserMenu />
+            {isAuthenticated && <UserMenu />}
           </>
         ) : (
           <Box sx={{ display: 'flex', gap: 1 }}>

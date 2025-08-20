@@ -25,7 +25,8 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
     env: {
-      VITE_E2E_BYPASS_AUTH: 'true',
+      VITE_E2E_BYPASS_AUTH: process.env.VITE_E2E_BYPASS_AUTH || 'true',
+      NODE_ENV: 'test',
     },
   },
 });

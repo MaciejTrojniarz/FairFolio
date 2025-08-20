@@ -13,6 +13,8 @@ import uiReducer from './features/ui/uiSlice';
 import authReducer from './features/auth/authSlice';
 import categoriesReducer from './features/categories/categoriesSlice'; // NEW IMPORT
 import { categoriesEpics as allCategoriesEpics } from './features/categories/categoriesEpics'; // NEW IMPORT
+import costCategoriesReducer from './features/costCategories/costCategoriesSlice';
+import { costCategoriesEpics as allCostCategoriesEpics } from './features/costCategories/costCategoriesEpics';
 
 export const rootEpic = combineEpics(
   ...productsEpics,
@@ -20,6 +22,7 @@ export const rootEpic = combineEpics(
   ...allEventsEpics,
   ...allCostsEpics, // Add all costs epics
   ...allCategoriesEpics, // NEW: Add all categories epics
+  ...allCostCategoriesEpics,
 );
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,6 +38,7 @@ export const store = configureStore({
     ui: uiReducer, // Add ui reducer
     auth: authReducer, // Add auth reducer
     categories: categoriesReducer, // NEW: Add categories reducer
+    costCategories: costCategoriesReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(epicMiddleware),

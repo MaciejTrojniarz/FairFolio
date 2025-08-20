@@ -69,10 +69,18 @@ export interface BasketItem extends Product {
 export interface Cost {
   id: string;
   user_id: string;
-  event_id?: string;
-  description: string;
+  event_id?: string | null;
+  name: string; // Short label for the expense
+  category?: string | null; // Deprecated: kept for back-compat export/display
+  cost_category_id?: string | null; // FK to cost_categories
   amount: number;
   date: string; // ISO date string
+}
+
+export interface CostCategory {
+  id: string;
+  user_id: string;
+  name: string;
 }
 
 export interface Profile {

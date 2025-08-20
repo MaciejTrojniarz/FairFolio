@@ -6,6 +6,9 @@ import { Navbar } from './page-objects/Navbar';
 test.describe('Navigation to management pages', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
+    // Wait for navbar to be visible (auth bypassed in e2e)
+    const nav = new Navbar(page);
+    await nav.expectVisible();
   });
 
   test('reach Product Management page', async ({ page }) => {

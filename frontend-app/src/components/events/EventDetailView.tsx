@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store';
 import { fetchEventsCommand, deleteEventCommand } from '../../store/features/events/eventsSlice';
 import { fetchSalesCommand } from '../../store/features/sales/salesSlice';
+import { fetchCostsCommand, recordCostCommand } from '../../store/features/costs/costsSlice';
 import {
   Container,
   Typography,
@@ -19,6 +20,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import { useI18n } from '../../contexts/useI18n';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { arrayToCsv, downloadCsv } from '../../utils/csv';
@@ -31,12 +33,14 @@ const EventDetailView: React.FC = () => {
 
   const { events, loading: eventsLoading, error: eventsError } = useSelector((state: RootState) => state.events);
   const { salesHistory, loading: salesLoading, error: salesError } = useSelector((state: RootState) => state.sales);
+  const { costs, loading: costsLoading, error: costsError } = useSelector((state: RootState) => state.costs);
   const event = events.find(e => e.id === id);
 
   const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
 
   const eventsRequestedRef = useRef(false);
   const salesRequestedRef = useRef(false);
+  const costsRequestedRef = useRef(false);
 
   useEffect(() => {
     if (!eventsRequestedRef.current && events.length === 0 && !eventsLoading && !eventsError) {
@@ -52,6 +56,13 @@ const EventDetailView: React.FC = () => {
       dispatch(fetchSalesCommand());
     }
   }, [event, salesHistory.length, salesLoading, salesError, dispatch]);
+
+  useEffect(() => {
+    if (event && !costsRequestedRef.current && costs.length === 0 && !costsLoading && !costsError) {
+      costsRequestedRef.current = true;
+      dispatch(fetchCostsCommand());
+    }
+  }, [event, costs.length, costsLoading, costsError, dispatch]);
 
   const handleDeleteClick = () => {
     setOpenConfirmDelete(true);
@@ -77,7 +88,7 @@ const EventDetailView: React.FC = () => {
     }
   };
 
-  const isLoading = eventsLoading || (event && salesLoading);
+  const isLoading = eventsLoading || (event && (salesLoading || costsLoading));
   if (isLoading) {
     return (
       <Container maxWidth="md">
@@ -88,11 +99,11 @@ const EventDetailView: React.FC = () => {
     );
   }
 
-  if (eventsError || salesError) {
+  if (eventsError || salesError || costsError) {
     return (
       <Container maxWidth="md">
         <Box sx={{ my: 4 }}>
-          <Alert severity="error">Error: {eventsError || salesError}</Alert>
+          <Alert severity="error">Error: {eventsError || salesError || costsError}</Alert>
           <Button variant="contained" onClick={() => navigate('/events')} sx={{ mt: 2 }}>
             <ArrowBackIcon sx={{ mr: 1 }} /> {t('back_to_events')}
           </Button>
@@ -115,6 +126,10 @@ const EventDetailView: React.FC = () => {
   }
 
   const salesForThisEvent = salesHistory.filter(sale => sale.event_id === id);
+  const costsForThisEvent = costs.filter(c => c.event_id === id);
+  const totalSalesAmount = salesForThisEvent.reduce((sum, s) => sum + s.total_amount, 0);
+  const totalCostsAmount = costsForThisEvent.reduce((sum, c) => sum + c.amount, 0);
+  const netProfit = totalSalesAmount - totalCostsAmount;
   const handleExportCsv = () => {
     const headers = ['sale_id','timestamp','event_id','event_name','item_product_id','item_product_name','item_quantity','item_price_at_sale','sale_total_amount','sale_comment'];
     const rows: (string | number)[][] = [];
@@ -155,6 +170,12 @@ const EventDetailView: React.FC = () => {
     navigate('/sales/record', { state: { eventId: id } });
   };
 
+  const handleQuickAddCost = () => {
+    if (!id) return;
+    const todayIso = new Date().toISOString().slice(0, 10);
+    dispatch(recordCostCommand({ eventId: id, name: 'Booth Fee', category: 'Booth', amount: 0, date: todayIso }));
+  };
+
   return (
     <Container maxWidth="md">
       <Box sx={{ my: 4 }}>
@@ -189,6 +210,11 @@ const EventDetailView: React.FC = () => {
             <LocationOnIcon sx={{ cursor: 'pointer' }} onClick={handleVenueClick} />
           </Box>
           <Typography variant="body1">{t('event_city')}: {event.city}</Typography>
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="body2" color="text.secondary">
+              {t('total_sales_label')}: ${totalSalesAmount.toFixed(2)} | {t('total_costs_label')}: ${totalCostsAmount.toFixed(2)} | {t('net_profit_label')}: ${netProfit.toFixed(2)}
+            </Typography>
+          </Box>
         </Paper>
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4, mb: 2 }}>
@@ -231,6 +257,37 @@ const EventDetailView: React.FC = () => {
                     </Typography>
                   </Box>
                 </ListItemButton>
+              </Paper>
+            ))
+          )}
+        </List>
+
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4, mb: 2 }}>
+          <Typography variant="h5" component="h2">
+            {t('costs_history_title')}
+          </Typography>
+          <Button
+            variant="outlined"
+            startIcon={<AttachMoneyIcon />}
+            onClick={handleQuickAddCost}
+          >
+            {t('add_cost_button')}
+          </Button>
+        </Box>
+        <List>
+          {costsForThisEvent.length === 0 ? (
+            <ListItem>
+              <ListItemText primary={t('no_costs_recorded_yet')} />
+            </ListItem>
+          ) : (
+            costsForThisEvent.map((c) => (
+              <Paper key={c.id} elevation={1} sx={{ mb: 1 }}>
+                <ListItem>
+                  <ListItemText
+                    primary={`${c.name}${c.category ? ` · ${c.category}` : ''}`}
+                    secondary={`${new Date(c.date).toLocaleDateString()} — $${c.amount.toFixed(2)}`}
+                  />
+                </ListItem>
               </Paper>
             ))
           )}
