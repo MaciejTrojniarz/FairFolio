@@ -129,7 +129,17 @@ const EventDetailView: React.FC = () => {
   const costsForThisEvent = costs.filter(c => c.event_id === id);
   const totalSalesAmount = salesForThisEvent.reduce((sum, s) => sum + s.total_amount, 0);
   const totalCostsAmount = costsForThisEvent.reduce((sum, c) => sum + c.amount, 0);
-  const netProfit = totalSalesAmount - totalCostsAmount;
+  // Sum cost of items sold (product_cost * quantity)
+  const totalItemCostsAmount = salesForThisEvent.reduce(
+    (sum, sale) => sum + sale.items.reduce(
+      (itemSum, item) => itemSum + item.product_cost * item.quantity,
+      0
+    ),
+    0
+  );
+  // Combined event costs = manual costs + item costs
+  const combinedCostsAmount = totalCostsAmount + totalItemCostsAmount;
+  const netProfit = totalSalesAmount - combinedCostsAmount;
   const handleExportCsv = () => {
     const headers = ['sale_id','timestamp','event_id','event_name','item_product_id','item_product_name','item_quantity','item_price_at_sale','sale_total_amount','sale_comment'];
     const rows: (string | number)[][] = [];
@@ -212,7 +222,7 @@ const EventDetailView: React.FC = () => {
           <Typography variant="body1">{t('event_city')}: {event.city}</Typography>
           <Box sx={{ mt: 2 }}>
             <Typography variant="body2" color="text.secondary">
-              {t('total_sales_label')}: ${totalSalesAmount.toFixed(2)} | {t('total_costs_label')}: ${totalCostsAmount.toFixed(2)} | {t('net_profit_label')}: ${netProfit.toFixed(2)}
+              {t('total_sales_label')}: ${totalSalesAmount.toFixed(2)} | {t('total_costs_label')}: ${combinedCostsAmount.toFixed(2)} | {t('net_profit_label')}: ${netProfit.toFixed(2)}
             </Typography>
           </Box>
         </Paper>
