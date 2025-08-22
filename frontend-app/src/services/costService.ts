@@ -8,6 +8,7 @@ export const costService = {
       .select('*')
       .order('date', { ascending: false });
     if (error) throw error;
+    // Return records directly since DB now uses `name` column
     return data as Cost[];
   },
   async addCost(cost: Omit<Cost, 'id' | 'user_id'>): Promise<Cost> {
@@ -23,10 +24,9 @@ export const costService = {
           user_id: user.id,
           event_id: cost.event_id ?? null,
           name: cost.name,
-          category: cost.category ?? null,
+          cost_category_id: (cost as { cost_category_id?: string }).cost_category_id ?? null,
           amount: cost.amount,
           date: cost.date,
-          cost_category_id: (cost as { cost_category_id?: string }).cost_category_id ?? null,
         },
       ])
       .select()
@@ -40,7 +40,6 @@ export const costService = {
       .update({
         event_id: updates.event_id ?? null,
         name: updates.name,
-        category: updates.category ?? null,
         amount: updates.amount,
         date: updates.date,
       })
