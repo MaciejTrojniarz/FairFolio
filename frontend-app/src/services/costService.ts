@@ -8,9 +8,8 @@ export const costService = {
       .select('*')
       .order('date', { ascending: false });
     if (error) throw error;
-    // Map description to name for compatibility
-    const costsWithNames = (data as any[]).map(c => ({ ...c, name: c.description }));
-    return costsWithNames as Cost[];
+    // Return records directly since DB now uses `name` column
+    return data as Cost[];
   },
   async addCost(cost: Omit<Cost, 'id' | 'user_id'>): Promise<Cost> {
     const { data: { user } } = await supabase.auth.getUser();
@@ -24,7 +23,7 @@ export const costService = {
         {
           user_id: user.id,
           event_id: cost.event_id ?? null,
-          description: cost.name,
+          name: cost.name,
           cost_category_id: (cost as { cost_category_id?: string }).cost_category_id ?? null,
           amount: cost.amount,
           date: cost.date,
@@ -33,9 +32,6 @@ export const costService = {
       .select()
       .single();
     if (error) throw error;
-    // Ensure returned object has a name property for compatibility
-    const inserted = data as any;
-    inserted.name = inserted.description;
     return data as Cost;
   },
   async updateCost(costId: string, updates: Partial<Omit<Cost, 'id' | 'user_id'>>): Promise<Cost> {
@@ -43,7 +39,7 @@ export const costService = {
       .from('costs')
       .update({
         event_id: updates.event_id ?? null,
-        description: updates.name,
+        name: updates.name,
         amount: updates.amount,
         date: updates.date,
       })
@@ -51,9 +47,6 @@ export const costService = {
       .select()
       .single();
     if (error) throw error;
-    // Ensure returned object has a name property for compatibility
-    const updated = data as any;
-    updated.name = updated.description;
     return data as Cost;
   },
 };
