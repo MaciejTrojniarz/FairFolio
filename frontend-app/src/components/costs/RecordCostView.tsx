@@ -16,10 +16,11 @@ const RecordCostView: React.FC = () => {
   const { t } = useI18n();
 
   const [selectedEventId, setSelectedEventId] = useState<string | undefined>(undefined);
-  const location = useLocation<{ eventId?: string }>();
+  const location = useLocation();
   useEffect(() => {
-    if (location.state?.eventId) {
-      setSelectedEventId(location.state.eventId);
+    const state = location.state as { eventId?: string } | undefined;
+    if (state?.eventId) {
+      setSelectedEventId(state.eventId);
     }
   }, [location.state]);
   const [name, setName] = useState('');
