@@ -6,6 +6,7 @@ import EventSelector from '../events/EventSelector';
 import { recordCostCommand } from '../../store/features/costs/costsSlice';
 import { useI18n } from '../../contexts/useI18n';
 import { addCostCategoryCommand, fetchCostCategoriesCommand } from '../../store/features/costCategories/costCategoriesSlice';
+import { useLocation } from 'react-router-dom';
 
 const RecordCostView: React.FC = () => {
   const dispatch = useDispatch();
@@ -15,6 +16,12 @@ const RecordCostView: React.FC = () => {
   const { t } = useI18n();
 
   const [selectedEventId, setSelectedEventId] = useState<string | undefined>(undefined);
+  const location = useLocation<{ eventId?: string }>();
+  useEffect(() => {
+    if (location.state?.eventId) {
+      setSelectedEventId(location.state.eventId);
+    }
+  }, [location.state]);
   const [name, setName] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
   const [amount, setAmount] = useState('');
