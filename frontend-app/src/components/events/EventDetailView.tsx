@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store';
 import { fetchEventsCommand, deleteEventCommand } from '../../store/features/events/eventsSlice';
 import { fetchSalesCommand } from '../../store/features/sales/salesSlice';
-import { fetchCostsCommand, recordCostCommand } from '../../store/features/costs/costsSlice';
+import { fetchCostsCommand } from '../../store/features/costs/costsSlice';
 import {
   Container,
   Typography,
@@ -182,8 +182,8 @@ const EventDetailView: React.FC = () => {
 
   const handleQuickAddCost = () => {
     if (!id) return;
-    const todayIso = new Date().toISOString().slice(0, 10);
-    dispatch(recordCostCommand({ eventId: id, name: 'Booth Fee', category: 'Booth', amount: 0, date: todayIso }));
+    // Redirect to cost recording page with the event pre-selected
+    navigate('/costs/record', { state: { eventId: id } });
   };
 
   return (
