@@ -1,7 +1,5 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { waitFor } from '@testing-library/react';
-import { fireEvent } from '@testing-library/react';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
