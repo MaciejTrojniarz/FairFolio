@@ -17,7 +17,8 @@ describe('Image Helpers', () => {
     it('should return first letters of each word for multiple words', () => {
       expect(getInitials('John Doe')).toBe('JD')
       expect(getInitials('jane smith')).toBe('JS')
-      expect(getInitials('Mary Jane Watson')).toBe('MJW')
+      // Now only up to two initials
+      expect(getInitials('Mary Jane Watson')).toBe('MJ')
     })
 
     it('should handle extra spaces between words', () => {
@@ -26,9 +27,15 @@ describe('Image Helpers', () => {
     })
 
     it('should handle special characters and numbers', () => {
-      expect(getInitials('John-Doe')).toBe('J')
+      expect(getInitials('John-Doe')).toBe('JD')
       expect(getInitials('John123')).toBe('J')
       expect(getInitials('John Doe-Smith')).toBe('JD')
+    })
+
+    it('should skip delimiters and special characters', () => {
+      expect(getInitials('John-Doe')).toBe('JD')
+      expect(getInitials('Mary.Jane Watson')).toBe('MJ')
+      expect(getInitials('!@#$%^ Alice *&^% Bob')).toBe('AB')
     })
   })
 
