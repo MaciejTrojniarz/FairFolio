@@ -1,10 +1,11 @@
 export const getInitials = (name: string): string => {
   if (!name) return '';
-  const words = name.split(' ');
-  if (words.length === 1) {
-    return words[0].charAt(0).toUpperCase();
-  }
-  return words.map(word => word.charAt(0)).join('').toUpperCase();
+  // Split on any non-letter characters (punctuation, numbers, whitespace)
+  const words = name.split(/[^\p{L}]+/u).filter(Boolean);
+  if (words.length === 0) return '';
+  // Take up to first two words for initials
+  const initials = words.slice(0, 2).map(w => w.charAt(0).toUpperCase());
+  return initials.join('');
 };
 
 export const generateSvgPlaceholder = (name: string): string => {
