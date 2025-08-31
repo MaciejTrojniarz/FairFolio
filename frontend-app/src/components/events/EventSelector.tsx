@@ -40,6 +40,7 @@ const EventSelector: React.FC<EventSelectorProps> = ({
         labelId="event-select-label"
         value={selectedEventId || ''}
         label={t('select_event')}
+        data-testid="event-select"
         onChange={(e) => onSelectEvent(e.target.value === '' ? undefined : e.target.value as string)}
         endAdornment={
           selectedEventId && (
