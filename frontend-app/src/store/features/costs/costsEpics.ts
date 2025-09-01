@@ -31,7 +31,7 @@ export const recordCostEpic = (action$: any) =>
   action$.pipe(
     ofType(recordCostCommand.type),
     switchMap((action: ReturnType<typeof recordCostCommand>) => {
-      const { eventId, name, costCategoryId, amount, date } = action.payload as unknown as { eventId?: string; name: string; costCategoryId?: string; amount: number; date: string };
+      const { eventId, name, costCategoryId, amount, date } = action.payload;
       return from(costService.addCost({ event_id: eventId ?? null, name, amount, date, cost_category_id: costCategoryId ?? null } as Omit<Cost, 'id' | 'user_id'>)).pipe(
         mergeMap((cost) => of(
           costRecordedEvent(cost),
@@ -49,10 +49,10 @@ export const recordCostEpic = (action$: any) =>
 export const updateCostEpic = (action$: any) =>
   action$.pipe(
     ofType(updateCostCommand.type),
-    switchMap((action: any) => {
-      const { costId, updates } = action.payload as { costId: string; updates: Partial<any> };
+    switchMap((action: ReturnType<typeof updateCostCommand>) => {
+      const { costId, updates } = action.payload;
       return from(costService.updateCost(costId, updates)).pipe(
-        map((cost: any) => costUpdatedEvent(cost)),
+        map((cost: Cost) => costUpdatedEvent(cost)),
         catchError((error) => of(costsErrorEvent(error.message)))
       );
     })

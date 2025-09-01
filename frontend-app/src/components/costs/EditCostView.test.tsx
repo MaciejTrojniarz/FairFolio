@@ -5,7 +5,9 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import EditCostView from './EditCostView';
+jest.mock('../../services/costService');
 import * as costService from '../../services/costService';
+import * as ReactRouterDom from 'react-router-dom';
 
 describe('EditCostView', () => {
   const mockCost = {
@@ -57,7 +59,7 @@ describe('EditCostView', () => {
 
   it('submits updated cost and navigates back', async () => {
     const mockNavigate = jest.fn();
-    jest.spyOn(require('react-router-dom'), 'useNavigate').mockReturnValue(mockNavigate);
+    jest.spyOn(ReactRouterDom, 'useNavigate').mockReturnValue(mockNavigate);
 
     render(
       <Provider store={store}>

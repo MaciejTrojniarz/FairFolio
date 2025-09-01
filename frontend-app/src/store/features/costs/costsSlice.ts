@@ -23,7 +23,7 @@ export const costsSlice = createSlice({
       state.error = null;
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    recordCostCommand: (state, _action: PayloadAction<{ eventId?: string; name: string; category?: string | null; costCategoryId?: string | null; amount: number; date: string }>) => {
+    recordCostCommand: (state, _action: PayloadAction<{ eventId?: string; name: string; costCategoryId?: string | null; amount: number; date: string }>) => {
       state.loading = true;
       state.error = null;
     },
@@ -46,6 +46,7 @@ export const costsSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     updateCostCommand: (state, _action: PayloadAction<{ costId: string; updates: Partial<Omit<Cost, 'id' | 'user_id'>> }>) => {
       state.loading = true;
       state.error = null;
