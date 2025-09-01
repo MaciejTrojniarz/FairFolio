@@ -75,6 +75,7 @@ export interface Cost {
   cost_category_id?: string | null; // FK to cost_categories
   amount: number;
   date: string; // ISO date string
+  event?: { id: string; name: string };
 }
 
 export interface CostCategory {

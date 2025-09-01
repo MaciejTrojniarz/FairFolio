@@ -5,9 +5,11 @@ import { costService } from '../../../services/costService';
 import {
   fetchCostsCommand,
   recordCostCommand,
+  updateCostCommand,
   costsFetchedEvent,
-  costsErrorEvent,
   costRecordedEvent,
+  costUpdatedEvent,
+  costsErrorEvent,
 } from './costsSlice';
 import type { Cost } from '../../../types';
 import { showToast } from '../ui/uiSlice';
@@ -43,7 +45,21 @@ export const recordCostEpic = (action$: any) =>
     })
   );
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const updateCostEpic = (action$: any) =>
+  action$.pipe(
+    ofType(updateCostCommand.type),
+    switchMap((action: any) => {
+      const { costId, updates } = action.payload as { costId: string; updates: Partial<any> };
+      return from(costService.updateCost(costId, updates)).pipe(
+        map((cost: any) => costUpdatedEvent(cost)),
+        catchError((error) => of(costsErrorEvent(error.message)))
+      );
+    })
+  );
+
 export const costsEpics = [
   fetchCostsEpic,
   recordCostEpic,
+  updateCostEpic,
 ];

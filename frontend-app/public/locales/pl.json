@@ -57,6 +57,7 @@
   "current_basket_title": "Aktualny Koszyk",
   "dark_mode": "Tryb Ciemny",
   "date": "Data",
+  "amount": "Kwota",
   "delete": "Usuń",
   "delete_button": "Usuń",
   "delete_event": "Usuń Wydarzenie",
@@ -188,5 +189,15 @@
   "go_to_login": "Przejdź do logowania",
   "event_list": "Lista wydarzeń",
   "product_management_title": "Zarządzanie produktami",
-  "update_event_button": "Zaktualizuj wydarzenie"
+  "update_event_button": "Zaktualizuj wydarzenie",
+  "costs_management": "Zarządzanie Kosztami",
+  "filter_event": "Filtruj Wydarzenie",
+  "all": "Wszystkie",
+  "sort_asc": "Sortuj Rosnąco",
+  "sort_desc": "Sortuj Malejąco",
+  "unassigned": "Nieprzypisane",
+  "edit_cost_title": "Edytuj Koszt",
+  "update_cost_button": "Zaktualizuj Koszt",
+  "cost_updated_success": "Koszt zaktualizowany pomyślnie!",
+  "error_updating_cost": "Błąd podczas aktualizacji kosztu"
 }
