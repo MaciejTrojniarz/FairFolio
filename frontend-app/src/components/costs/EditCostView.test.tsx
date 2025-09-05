@@ -2,7 +2,7 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Provider } from 'react-redux';
 import '@testing-library/jest-dom';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 // Mock useI18n to bypass translation provider
 vi.mock('../../contexts/useI18n', () => ({ useI18n: () => ({ t: (key: string) => key }) }));
@@ -44,7 +44,6 @@ vi.mock('./useEditCostForm', () => ({
   })
 }));
 import EditCostView from './EditCostView';
-import * as ReactRouterDom from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
 import costsReducer from '../../store/features/costs/costsSlice';
 import costCategoriesReducer from '../../store/features/costCategories/costCategoriesSlice';

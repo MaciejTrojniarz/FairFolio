@@ -27,10 +27,10 @@ export const fetchCostsEpic = (action$: any): any =>
   );
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const recordCostEpic = (action$: any): any =>
+export const recordCostEpic = (action$: any) =>
   action$.pipe(
     ofType(recordCostCommand.type),
-    switchMap((action: ReturnType<typeof recordCostCommand>): any => {
+    switchMap((action: ReturnType<typeof recordCostCommand>) => {
       const { eventId, name, costCategoryId, amount, date } = action.payload;
       return from(costService.addCost({ event_id: eventId ?? null, name, amount, date, cost_category_id: costCategoryId ?? null } as Omit<Cost, 'id' | 'user_id'>)).pipe(
         mergeMap((cost) => of(
@@ -46,10 +46,10 @@ export const recordCostEpic = (action$: any): any =>
   );
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const updateCostEpic = (action$: any): any =>
+export const updateCostEpic = (action$: any) =>
   action$.pipe(
     ofType(updateCostCommand.type),
-    switchMap((action: ReturnType<typeof updateCostCommand>): any => {
+    switchMap((action: ReturnType<typeof updateCostCommand>) => {
       const { costId, updates } = action.payload;
       return from(costService.updateCost(costId, updates)).pipe(
         map((cost: Cost) => costUpdatedEvent(cost)),

@@ -6,12 +6,13 @@ import { fetchCostCategoriesCommand, addCostCategoryCommand } from '../../store/
 import { fetchEventsCommand } from '../../store/features/events/eventsSlice';
 import { costService } from '../../services/costService';
 import { showToast } from '../../store/features/ui/uiSlice';
+import { useI18n } from '../../contexts/useI18n';
 
 export function useEditCostForm() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { t } = useSelector((state: RootState) => state.i18n);
+  const { t } = useI18n();
 
   const categories = useSelector((state: RootState) => state.costCategories.categories);
   const categoriesLoading = useSelector((state: RootState) => state.costCategories.loading);
