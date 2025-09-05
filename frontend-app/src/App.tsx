@@ -7,6 +7,7 @@ import Home from './components/Home';
 import SalesView from './components/sales/SalesView';
 import SalesHistoryView from './components/sales/SalesHistoryView';
 import RecordCostView from './components/costs/RecordCostView';
+import EditCostView from './components/costs/EditCostView.tsx';
 import SaleDetailView from './components/sales/SaleDetailView';
 import SaleEditPage from './components/sales/SaleEditPage';
 import EventManagementPage from './components/events/EventManagementPage';
@@ -24,6 +25,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import { I18nProvider } from './contexts/I18nContext';
 import { AppThemeProvider } from './contexts/ThemeContext';
 import AuthInitializer from './components/AuthInitializer';
+import CostsManagementView from './components/costs/CostsManagementView';
 
 const App = () => {
   return (
@@ -47,6 +49,8 @@ const App = () => {
                     <Route path="/products/:id/edit" element={<ProductFormPage />} />
                     <Route path="/sales/record" element={<SalesView />} />
                     <Route path="/costs/record" element={<RecordCostView />} />
+                    <Route path="/costs" element={<CostsManagementView />} />
+                    <Route path="/costs/:id/edit" element={<EditCostView />} />
                     <Route path="/sales" element={<SalesHistoryView />} />
                     <Route path="/sales/:id" element={<SaleDetailView />} />
                     <Route path="/sales/:id/edit" element={<SaleEditPage />} />

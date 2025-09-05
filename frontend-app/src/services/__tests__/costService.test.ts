@@ -40,7 +40,7 @@ describe('Cost Service', () => {
 
     const costs = await costService.fetchCosts();
     expect(costs).toEqual([{ id: '1' }]);
-    expect(mockSelect).toHaveBeenCalledWith('*');
+    expect(mockSelect).toHaveBeenCalledWith('*, event:events(id,name)');
   });
 
   it('addCost throws when not authenticated', async () => {

@@ -5,15 +5,17 @@ import { costService } from '../../../services/costService';
 import {
   fetchCostsCommand,
   recordCostCommand,
+  updateCostCommand,
   costsFetchedEvent,
-  costsErrorEvent,
   costRecordedEvent,
+  costUpdatedEvent,
+  costsErrorEvent,
 } from './costsSlice';
 import type { Cost } from '../../../types';
 import { showToast } from '../ui/uiSlice';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const fetchCostsEpic = (action$: any) =>
+export const fetchCostsEpic = (action$: any): any =>
   action$.pipe(
     ofType(fetchCostsCommand.type),
     switchMap(() =>
@@ -29,7 +31,7 @@ export const recordCostEpic = (action$: any) =>
   action$.pipe(
     ofType(recordCostCommand.type),
     switchMap((action: ReturnType<typeof recordCostCommand>) => {
-      const { eventId, name, costCategoryId, amount, date } = action.payload as unknown as { eventId?: string; name: string; costCategoryId?: string; amount: number; date: string };
+      const { eventId, name, costCategoryId, amount, date } = action.payload;
       return from(costService.addCost({ event_id: eventId ?? null, name, amount, date, cost_category_id: costCategoryId ?? null } as Omit<Cost, 'id' | 'user_id'>)).pipe(
         mergeMap((cost) => of(
           costRecordedEvent(cost),
@@ -43,7 +45,21 @@ export const recordCostEpic = (action$: any) =>
     })
   );
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const updateCostEpic = (action$: any) =>
+  action$.pipe(
+    ofType(updateCostCommand.type),
+    switchMap((action: ReturnType<typeof updateCostCommand>) => {
+      const { costId, updates } = action.payload;
+      return from(costService.updateCost(costId, updates)).pipe(
+        map((cost: Cost) => costUpdatedEvent(cost)),
+        catchError((error) => of(costsErrorEvent(error.message)))
+      );
+    })
+  );
+
 export const costsEpics = [
   fetchCostsEpic,
   recordCostEpic,
+  updateCostEpic,
 ];

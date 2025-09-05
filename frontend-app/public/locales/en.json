@@ -58,6 +58,7 @@
   "current_basket_title": "Current Basket",
   "dark_mode": "Dark Mode",
   "date": "Date",
+  "amount": "Amount",
   "delete": "Delete",
   "delete_button": "Delete",
   "delete_event": "Delete Event",
@@ -189,5 +190,15 @@
   "event_name_label": "Event Name",
   "link_label": "Link",
   "event_end_date_label": "End Date",
-  "welcome_message": "Welcome to FairMerchant! Manage your products, sales, and events with ease."
+  "welcome_message": "Welcome to FairMerchant! Manage your products, sales, and events with ease.",
+  "costs_management": "Costs Management",
+  "filter_event": "Filter Event",
+  "all": "All",
+  "sort_asc": "Sort Ascending",
+  "sort_desc": "Sort Descending",
+  "unassigned": "Unassigned",
+  "edit_cost_title": "Edit Cost",
+  "update_cost_button": "Update Cost",
+  "cost_updated_success": "Cost updated successfully!",
+  "error_updating_cost": "Error updating cost"
 }

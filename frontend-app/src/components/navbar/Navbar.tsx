@@ -52,8 +52,8 @@ const Navbar: React.FC = () => {
                 <HistoryIcon />
               </IconButton>
             </RouterLink>
-            <RouterLink to="/costs/record">
-              <IconButton color="primary" aria-label={t('record_cost')} data-testid="navbar-costs">
+            <RouterLink to="/costs">
+              <IconButton color="primary" aria-label={t('costs_management')} data-testid="navbar-costs-management">
                 <AttachMoneyIcon />
               </IconButton>
             </RouterLink>

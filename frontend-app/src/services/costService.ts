@@ -5,7 +5,7 @@ export const costService = {
   async fetchCosts(): Promise<Cost[]> {
     const { data, error } = await supabase
       .from('costs')
-      .select('*')
+      .select('*, event:events(id,name)')
       .order('date', { ascending: false });
     if (error) throw error;
     // Return records directly since DB now uses `name` column
@@ -45,6 +45,15 @@ export const costService = {
       })
       .eq('id', costId)
       .select()
+      .single();
+    if (error) throw error;
+    return data as Cost;
+  },
+  async fetchCostById(costId: string): Promise<Cost> {
+    const { data, error } = await supabase
+      .from('costs')
+      .select('*, event:events(id,name)')
+      .eq('id', costId)
       .single();
     if (error) throw error;
     return data as Cost;

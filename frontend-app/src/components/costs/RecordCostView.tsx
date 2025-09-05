@@ -48,13 +48,16 @@ const RecordCostView: React.FC = () => {
 
   const handleSubmit = () => {
     if (!canSubmit) return;
-    dispatch(recordCostCommand({
-      eventId: selectedEventId,
-      name: name.trim(),
-      costCategoryId: selectedCategoryId || undefined,
-      amount: Number(amount),
-      date,
-    }));
+    dispatch({
+      type: recordCostCommand.type,
+      payload: {
+        eventId: selectedEventId,
+        name: name.trim(),
+        costCategoryId: selectedCategoryId || undefined,
+        amount: Number(amount),
+        date,
+      }
+    });
     setName('');
     setSelectedCategoryId('');
     setAmount('');
