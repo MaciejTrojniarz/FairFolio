@@ -1,7 +1,11 @@
 import React from 'react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
 import { render, screen, fireEvent } from '@testing-library/react';
 import CostsManagementView from './CostsManagementView';
+// Mock useI18n to avoid network calls and provider
+vi.mock('../../contexts/useI18n', () => ({ useI18n: () => ({ t: (key: string) => key }) }));
 
 describe('CostsManagementView', () => {
   const mockCosts = [
@@ -20,7 +24,7 @@ describe('CostsManagementView', () => {
   const mockStore = {
     getState: () => mockState,
     subscribe: () => () => {},
-    dispatch: jest.fn(),
+    dispatch: vi.fn(),
   };
 
   beforeEach(() => {
@@ -49,7 +53,7 @@ describe('CostsManagementView', () => {
 
     const filterSelect = screen.getByLabelText('filter_event');
     fireEvent.mouseDown(filterSelect);
-    const unassignedOption = screen.getByText('unassigned');
+    const unassignedOption = screen.getByRole('option', { name: 'unassigned' });
     fireEvent.click(unassignedOption);
 
     // Only Cost B should remain
